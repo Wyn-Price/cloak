@@ -15,7 +15,7 @@ public class CloakCreativeTab extends CreativeTabs
 	
 	@Override
 	public ItemStack getTabIconItem() {
-		return new ItemStack(Blocks.BEDROCK);
+		return new ItemStack(CloakItems.BLOCKSTATE_CARD);
 	}
 
 }
