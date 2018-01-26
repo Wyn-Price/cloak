@@ -21,8 +21,7 @@ public class CloakCore implements IFMLLoadingPlugin {
     public String[] getASMTransformerClass() {//ADD compat with secretroomsmod
         return new String[] 
         		{
-        				"com.wynprice.cloak.common.core.UVTransformer",
-        				"com.wynprice.cloak.common.core.SerializableTransformer"
+        				"com.wynprice.cloak.common.core.UVTransformer"
         		};
     }
 
