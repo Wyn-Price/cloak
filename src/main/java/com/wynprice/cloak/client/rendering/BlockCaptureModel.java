@@ -26,19 +26,12 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 
-public class BlockCaptureModel implements IBakedModel
+public class BlockCaptureModel extends BaseModelProxy
 {
-	
-	private static final int[] DATA_RIGHT = {1060110336, 1050673152, 1055916032, -1, 1018156810, 1034682368, 127, 1060110336, 1060110336, 1055916032, -1, 1018156810, 1033109504, 127, 1060110336, 1060110336, 1057488896, -1, 1018156810, 1033109504, 127, 1060110336, 1050673152, 1057488896, -1, 1018156810, 1034682368, 127};
-	private static final int[] DATA_LEFT = {1050673152, 1050673152, 1057488896, -1, 1008751084, 1034682368, 129, 1050673152, 1060110336, 1057488896, -1, 1008751084, 1033109504, 129, 1050673152, 1060110336, 1055916032, -1, 1008751084, 1033109504, 129, 1050673152, 1050673152, 1055916032, -1, 1008751084, 1034682368, 129};
-	private static final int[] DATA_UP = {1050673152, 1060110336, 1057488896, -1, 1008730112, 1033112126, 32512, 1060110336, 1060110336, 1057488896, -1, 1018167296, 1033112126, 32512, 1060110336, 1060110336, 1055916032, -1, 1018167296, 1033112126, 32512, 1050673152, 1060110336, 1055916032, -1, 1008730112, 1033112126, 32512};
-	private static final int[] DATA_DOWN = {1050673152, 1050673152, 1055916032, -1, 1008730112, 1034679746, 33024, 1060110336, 1050673152, 1055916032, -1, 1018167296, 1034679746, 33024, 1060110336, 1050673152, 1057488896, -1, 1018167296, 1034679746, 33024, 1050673152, 1050673152, 1057488896, -1, 1008730112, 1034679746, 33024};
-	
-	private final IBakedModel oldModel;
 	
 	public BlockCaptureModel(IBakedModel oldModel) 
 	{
-		this.oldModel = oldModel;
+		super(oldModel);
 	}
 
 	@Override
@@ -64,41 +57,16 @@ public class BlockCaptureModel implements IBakedModel
 				System.arraycopy(quad.getVertexData(), 0, vertexData, 0, vertexData.length);
 				for(int j = 0; j < 4; j++)
 				{
-					int i = (vertexData.length / 4) * j;//0.3125
-					vertexData[i + 0] = Float.floatToRawIntBits(Float.intBitsToFloat(vertexData[i + 0]) * 0.3125f + 0.34f);
-					vertexData[i + 1] = Float.floatToRawIntBits(Float.intBitsToFloat(vertexData[i + 1]) * 0.3125f + 0.34f);
-					vertexData[i + 2] = Float.floatToRawIntBits(Float.intBitsToFloat(vertexData[i + 2]) * 0.3125f + 0.34f);
+					int i = (vertexData.length / 4) * j;
+					vertexData[i + 0] = Float.floatToRawIntBits(Float.intBitsToFloat(vertexData[i + 0]) * 0.3125f + 0.5f - 0.3125f / 2f);
+					vertexData[i + 1] = Float.floatToRawIntBits(Float.intBitsToFloat(vertexData[i + 1]) * 0.3125f + 0.5f - 0.3125f / 2f);
+					vertexData[i + 2] = Float.floatToRawIntBits(Float.intBitsToFloat(vertexData[i + 2]) * 0.3125f + 0.5f - 0.3125f / 2f);
 				}
 				
 				list.add(new BakedQuad(vertexData, quad.getTintIndex() + 1, quad.getFace(), quad.getSprite(), quad.shouldApplyDiffuseLighting(), quad.getFormat()));
 			}
 		}
 		return list;
-	}
-
-
-	@Override
-	public boolean isAmbientOcclusion() 
-	{
-		return oldModel.isAmbientOcclusion();
-	}
-
-	@Override
-	public boolean isGui3d() 
-	{
-		return oldModel.isGui3d();
-	}
-
-	@Override
-	public boolean isBuiltInRenderer() 
-	{
-		return false;
-	}
-
-	@Override
-	public TextureAtlasSprite getParticleTexture()
-	{
-		return oldModel.getParticleTexture();
 	}
 	
 	private ItemStack stack = ItemStack.EMPTY;
@@ -115,17 +83,6 @@ public class BlockCaptureModel implements IBakedModel
 						return super.applyOverride(stack, worldIn, entityIn);
 					}
 				};
-	}
-	
-	@Override
-	public ItemCameraTransforms getItemCameraTransforms() {
-		return oldModel.getItemCameraTransforms();
-	}
-	
-	@Override
-	public Pair<? extends IBakedModel, Matrix4f> handlePerspective(TransformType cameraTransformType) 
-	{
-		return Pair.of(this, oldModel.handlePerspective(cameraTransformType).getRight());
 	}
 
 }

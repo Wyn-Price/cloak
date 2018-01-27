@@ -1,6 +1,10 @@
 package com.wynprice.cloak.common.items;
 
+import com.wynprice.cloak.common.tileentity.TileEntityCloakBlock;
+import com.wynprice.cloak.common.tileentity.TileEntityCloakingMachine;
+
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -24,7 +28,7 @@ public class ItemCaptureBlock extends Item
 	@Override
 	public EnumActionResult onItemUse(EntityPlayer player, World worldIn, BlockPos pos, EnumHand hand,
 			EnumFacing facing, float hitX, float hitY, float hitZ) 
-	{
+	{		
 		ItemStack stack = player.getHeldItem(hand);
 		NBTTagCompound nbt = new NBTTagCompound();
 		IBlockState state = worldIn.getBlockState(pos);

@@ -97,11 +97,11 @@ public class UVTransformer implements IClassTransformer
         faceData[i + 2] = Float.floatToRawIntBits(position.z);
         faceData[i + 3] = shadeColor;
         faceData[i + 4] = Float.floatToRawIntBits(sprite.getInterpolatedU((double)faceUV.getVertexU(vertexIndex) * .999 + faceUV.getVertexU((vertexIndex + 2) % 4) * .001));
-        faceData[i + 4 + 1] = Float.floatToRawIntBits(sprite.getInterpolatedV((double)faceUV.getVertexV(vertexIndex) * .999 + faceUV.getVertexV((vertexIndex + 2) % 4) * .001));
+        faceData[i + 5] = Float.floatToRawIntBits(sprite.getInterpolatedV((double)faceUV.getVertexV(vertexIndex) * .999 + faceUV.getVertexV((vertexIndex + 2) % 4) * .001));
         BLOCKUV_DATA.put(faceData, faceUV);        	
     }
 	
-	public static BlockFaceUV getUV(int[] list, int pos)
+	public static BlockFaceUV getUV(int[] list)
 	{
 		return BLOCKUV_DATA.containsKey(list) ? BLOCKUV_DATA.get(list) : null;
 	}

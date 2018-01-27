@@ -1,4 +1,4 @@
-package com.wynprice.cloak.common;
+package com.wynprice.cloak.common.registries;
 
 import java.util.ArrayList;
 

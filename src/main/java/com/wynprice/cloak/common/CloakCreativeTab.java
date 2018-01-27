@@ -1,6 +1,7 @@
 package com.wynprice.cloak.common;
 
 import com.wynprice.cloak.CloakMod;
+import com.wynprice.cloak.common.registries.CloakItems;
 
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.init.Blocks;

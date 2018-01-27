@@ -1,7 +1,10 @@
 package com.wynprice.cloak.common;
 
 import com.wynprice.cloak.CloakMod;
+import com.wynprice.cloak.common.registries.CloakBlocks;
+import com.wynprice.cloak.common.registries.CloakItems;
 import com.wynprice.cloak.common.tileentity.TileEntityCloakBlock;
+import com.wynprice.cloak.common.tileentity.TileEntityCloakingMachine;
 
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
@@ -13,6 +16,10 @@ public class CommonProxy
 	public void preInit(FMLPreInitializationEvent event)
 	{
 		CloakItems.preInit();
+		CloakBlocks.preInit();
+		
+		
+		registerTileEntities();
 	}
 	
 	public void init(FMLInitializationEvent event)
@@ -31,7 +38,8 @@ public class CommonProxy
 	private void registerTileEntities()
 	{
 		Class[] tileEntityClasses = {
-    			TileEntityCloakBlock.class
+    			TileEntityCloakBlock.class,
+    			TileEntityCloakingMachine.class
     	};
     	for(Class clas : tileEntityClasses)
     		GameRegistry.registerTileEntity(clas, CloakMod.MODID + clas.getSimpleName());

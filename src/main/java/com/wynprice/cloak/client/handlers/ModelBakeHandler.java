@@ -1,7 +1,9 @@
 package com.wynprice.cloak.client.handlers;
 
 import com.wynprice.cloak.CloakMod;
+import com.wynprice.cloak.client.rendering.BasicCloakingMachineModel;
 import com.wynprice.cloak.client.rendering.BlockCaptureModel;
+import com.wynprice.cloak.common.blocks.BasicCloakingMachine;
 
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.util.ResourceLocation;

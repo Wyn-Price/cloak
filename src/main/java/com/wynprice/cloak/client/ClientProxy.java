@@ -2,9 +2,12 @@ package com.wynprice.cloak.client;
 
 import com.wynprice.cloak.client.handlers.ModelBakeHandler;
 import com.wynprice.cloak.client.rendering.TileEntityCloakBlockRenderer;
-import com.wynprice.cloak.common.CloakItems;
+import com.wynprice.cloak.client.rendering.TileEntityCloakingMachineRenderer;
 import com.wynprice.cloak.common.CommonProxy;
+import com.wynprice.cloak.common.registries.CloakBlocks;
+import com.wynprice.cloak.common.registries.CloakItems;
 import com.wynprice.cloak.common.tileentity.TileEntityCloakBlock;
+import com.wynprice.cloak.common.tileentity.TileEntityCloakingMachine;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.color.IItemColor;
@@ -23,6 +26,8 @@ public class ClientProxy extends CommonProxy
 	{
 		super.preInit(event);
 		CloakItems.regRenders();
+		CloakBlocks.regRenders();
+		
 		registerHandlers();
 		registerTileEntityDispatchers();
 	}
@@ -42,7 +47,7 @@ public class ClientProxy extends CommonProxy
 	private void registerTileEntityDispatchers()
 	{
 		ClientRegistry.bindTileEntitySpecialRenderer(TileEntityCloakBlock.class, new TileEntityCloakBlockRenderer());
-
+		ClientRegistry.bindTileEntitySpecialRenderer(TileEntityCloakingMachine.class, new TileEntityCloakingMachineRenderer());
 	}
 	
 	private void registerHandlers()
