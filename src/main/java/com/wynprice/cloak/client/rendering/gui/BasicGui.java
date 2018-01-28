@@ -6,6 +6,8 @@ import java.nio.IntBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.vecmath.Matrix4f;
+
 import org.lwjgl.BufferUtils;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.util.vector.Vector3f;
@@ -13,7 +15,7 @@ import org.lwjgl.util.vector.Vector3f;
 import com.wynprice.cloak.client.rendering.CloakedModel;
 import com.wynprice.cloak.common.containers.ContainerBasicCloakingMachine;
 
-import net.minecraft.block.BlockStairs;
+import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.inventory.GuiContainer;
@@ -26,20 +28,24 @@ import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
+import net.minecraft.client.renderer.block.model.ItemCameraTransforms.TransformType;
 import net.minecraft.client.renderer.block.model.ItemTransformVec3f;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.texture.TextureUtil;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.ScreenShotHelper;
+import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.client.ForgeHooksClient;
 import net.minecraftforge.items.ItemStackHandler;
 
 public class BasicGui extends GuiContainer
 {
-	public BasicGui(ItemStackHandler handler, IBlockState state, IBakedModel displayModel) {
-		super(new ContainerBasicCloakingMachine(handler, state, displayModel));
+	public BasicGui(EntityPlayer player, ItemStackHandler handler) {
+		super(new ContainerBasicCloakingMachine(player, handler));
 	}
 	
 	private boolean clickedLastTick = false;
@@ -50,32 +56,47 @@ public class BasicGui extends GuiContainer
 	public void drawScreen(int mouseX, int mouseY, float partialTicks) 
 	{
 		super.drawScreen(mouseX, mouseY, partialTicks);
+    	
+		renderCenterBlock(mouseX, mouseY);
+    	
+	}	
+	
+	private void renderCenterBlock(int mouseX, int mouseY)
+	{
+		if(!this.inventorySlots.getSlot(37).getHasStack() || !this.inventorySlots.getSlot(36).getHasStack()) return;
+		NBTTagCompound modelStackNBT = this.inventorySlots.getSlot(this.inventorySlots.inventorySlots.size() - 1).getStack().getSubCompound("capture_info");
+		NBTTagCompound stack36NBT = this.inventorySlots.getSlot(36).getStack().getSubCompound("capture_info");
+
 		
 		//TODO make it reliant on tilevar
-		IBlockState modelState = Blocks.ACACIA_STAIRS.getDefaultState().withProperty(BlockStairs.FACING, EnumFacing.SOUTH);
-    	IBlockState renderState = Blocks.CHAIN_COMMAND_BLOCK.getDefaultState();
-    	ItemStack stack = new ItemStack(Blocks.STONE);
-    	
-    	IBakedModel bakedmodel = new CloakedModel(modelState, renderState);
+		IBlockState modelState = Block.REGISTRY.getObject(new ResourceLocation(modelStackNBT.getString("block"))).getStateFromMeta(modelStackNBT.getInteger("meta"));
+		IBlockState renderState = Block.REGISTRY.getObject(new ResourceLocation(stack36NBT.getString("block"))).getStateFromMeta(stack36NBT.getInteger("meta"));
+		ItemStackHandler localHandler = new ItemStackHandler(1);
+		localHandler.deserializeNBT(stack36NBT.getCompoundTag("item"));
+		ItemStack stack = localHandler.getStackInSlot(0);
+		//~~~~~~~~
+		
+		IBakedModel bakedmodel = new CloakedModel(modelState, renderState);
     	GlStateManager.pushMatrix();
         Minecraft.getMinecraft().getTextureManager().bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
         Minecraft.getMinecraft().getTextureManager().getTexture(TextureMap.LOCATION_BLOCKS_TEXTURE).setBlurMipmap(false, false);
         GlStateManager.enableRescaleNormal();
         GlStateManager.enableAlpha();
+        GlStateManager.disableLighting();
         GlStateManager.alphaFunc(516, 0.1F);
         GlStateManager.enableBlend();
         GlStateManager.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
         GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
         GlStateManager.translate(this.width / 2f, this.height / 2f, 100.0F + this.zLevel);
-        GlStateManager.translate(8.0F, 8.0F, 0.0F);
         GlStateManager.scale(1.0F, -1.0F, 1.0F);
         GlStateManager.scale(160F, 160F, 160F);
-        bakedmodel = net.minecraftforge.client.ForgeHooksClient.handleCameraTransforms(bakedmodel, ItemCameraTransforms.TransformType.GUI, false);
+        ForgeHooksClient.multiplyCurrentGlMatrix(new Matrix4f(-0.44194168f, 0.0f, 0.44194168f, 0.0f, 0.22097087f, 0.5412659f, 0.22097084f, 0.0f, -0.38273275f, 0.31249997f, -0.38273272f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f));
         ItemCameraTransforms.applyTransformSide(new ItemTransformVec3f(new Vector3f(0, 45, 0), new Vector3f(0f, 0f, 0f), new Vector3f(0.7f, 0.7f, 0.7f)), false);
         ItemCameraTransforms.applyTransformSide(new ItemTransformVec3f(new Vector3f(30, 0, 0), new Vector3f(0f, 0f, 0f), new Vector3f(currentZoom, currentZoom, currentZoom)), false);
         ItemCameraTransforms.applyTransformSide(new ItemTransformVec3f(new Vector3f(currentRotation.y,  -currentRotation.x, 0f), new Vector3f(0f, 0f, 0f), new Vector3f(1f, 1f, 1f)), false);
                 
         GlStateManager.translate(-0.5F, -0.5F, -0.5F);
+        GlStateManager.shadeModel(7425);
         Tessellator tessellator = Tessellator.getInstance();
         BufferBuilder bufferbuilder = tessellator.getBuffer();
         List<BakedQuad> quadList = new ArrayList<>(bakedmodel.getQuads((IBlockState)null, (EnumFacing)null, 0L));
@@ -122,9 +143,10 @@ public class BasicGui extends GuiContainer
         GlStateManager.disableLighting();
         GlStateManager.disableBlend();
         GlStateManager.popMatrix();
+        GlStateManager.shadeModel(7424);
         Minecraft.getMinecraft().getTextureManager().bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
         Minecraft.getMinecraft().getTextureManager().getTexture(TextureMap.LOCATION_BLOCKS_TEXTURE).restoreLastBlurMipmap();
-	}	
+	}
 	
 	private int getColorUnderMouse()
 	{
@@ -182,7 +204,7 @@ public class BasicGui extends GuiContainer
 	
 	private Point lastMouseClicked = new Point(0, 0);
 	
-	private Point currentRotation = new Point(45, -30);
+	private Point currentRotation = new Point(315, -30);
 	
 	private float currentZoom = 1f;
 	

@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import com.wynprice.cloak.common.containers.slots.SlotCaptureBlockOnly;
 
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.entity.player.EntityPlayer;
@@ -20,55 +21,50 @@ public class ContainerBasicCloakingMachine extends Container
 {
 	
 	private final ItemStackHandler handler;
-	
-	private ArrayList<int[]> list = new ArrayList<>();
-	
+		
 	@SideOnly(Side.CLIENT)
-	public ContainerBasicCloakingMachine(ItemStackHandler handler, IBlockState state, IBakedModel displayModel)
+	public ContainerBasicCloakingMachine(EntityPlayer player, ItemStackHandler handler)
 	{
-		ArrayList<int[]> list = new ArrayList<>();
-		for(EnumFacing facing : EnumFacing.values())
-			for(BakedQuad quad : displayModel.getQuads(state, facing, 0))
-				list.add(quad.getVertexData());
-		for(BakedQuad quad : displayModel.getQuads(state, null, 0))
-			list.add(quad.getVertexData());
-		this.list.addAll(list);
 		
 		this.handler = handler;
-		this.handler.setSize(list.size());
-		for(int i = 0; i < list.size(); i++)
-			this.addSlotToContainer(new SlotCaptureBlockOnly(handler, i, 0, 0));
+		int id = 0;
 		
-	}
-	
-	public ContainerBasicCloakingMachine(ItemStackHandler handler, int amount) 
-	{
-		this.handler = handler;
-		for(int i = 0; i < amount; i++)
-			this.addSlotToContainer(new SlotCaptureBlockOnly(handler, i, 0, 0));
-	}
+		for (int l = 0; l < 3; ++l)
+        {
+            for (int j1 = 0; j1 < 9; ++j1)
+            {
+                this.addSlotToContainer(new Slot(player.inventory, j1 + l * 9 + 9, 8 + j1 * 18, 103 + l * 18 + 20));
+            }
+        }
 
-	@Override
-	public boolean canInteractWith(EntityPlayer playerIn) {
-		return true;
+        for (int i1 = 0; i1 < 9; ++i1)
+        {
+            this.addSlotToContainer(new Slot(player.inventory, i1, 8 + i1 * 18, 161 + 20));
+        }
+		
+		
+		for(int i = 0; i < handler.getSlots() - 1; i++)
+			this.addSlotToContainer(new SlotCaptureBlockOnly(handler, i, 152, 0).setEnabled(true));	
+		
+		this.addSlotToContainer(new SlotCaptureBlockOnly(handler, handler.getSlots() - 1, 8, 0).setEnabled(true));
+
 	}
 	
 	@Override
 	public ItemStack transferStackInSlot(EntityPlayer playerIn, int fromSlot) {
 	    ItemStack previous = ItemStack.EMPTY;
-	    Slot slot = this.inventorySlots.get(fromSlot);
+	    Slot slot = (Slot) this.inventorySlots.get(fromSlot);
 
-	    if (slot != null && slot.getHasStack()) 
-	    {
+	    if (slot != null && slot.getHasStack()) {
 	        ItemStack current = slot.getStack();
 	        previous = current.copy();
-	        if (fromSlot < handler.getSlots()) 
-	        	if (!this.mergeItemStack(current, handler.getSlots(), 38, true))
-	        		return ItemStack.EMPTY;
-	        	else
-	        		;
-	        else if (!this.mergeItemStack(current, 0, handler.getSlots(), false))
+	        if (fromSlot < handler.getSlots()) {
+	            if (!this.mergeItemStack(current, 36, handler.getSlots() + 36, true))
 	                return ItemStack.EMPTY;
+	        } else {
+	            if (!this.mergeItemStack(current, 0, 36, false))
+	                return ItemStack.EMPTY;
+	        }
 	        if (current.getCount() == 0)
 	            slot.putStack(ItemStack.EMPTY);
 	        else
@@ -79,6 +75,12 @@ public class ContainerBasicCloakingMachine extends Container
 	        slot.onTake(playerIn, current);
 	    }
 	    return previous;
+	}
+	
+	
+	@Override
+	public boolean canInteractWith(EntityPlayer playerIn) {
+		return true;
 	}
 
 }
