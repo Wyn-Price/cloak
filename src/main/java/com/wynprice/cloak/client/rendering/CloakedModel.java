@@ -1,6 +1,7 @@
 package com.wynprice.cloak.client.rendering;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import javax.vecmath.Matrix4f;
@@ -33,8 +34,17 @@ public class CloakedModel implements IBakedModel
 	protected final IBlockState modelState;
 	protected final IBlockState renderState;
 	
+	protected final HashMap<Integer, Pair<IBlockState, IBakedModel>> overrideList;
+	
 	public CloakedModel(IBlockState modelState, IBlockState renderState) 
 	{
+		this(modelState, renderState, new HashMap());
+	}
+
+	
+	public CloakedModel(IBlockState modelState, IBlockState renderState, HashMap<Integer, Pair<IBlockState, IBakedModel>> overrideList) 
+	{
+		this.overrideList = overrideList;
 		this.modelState = modelState;
 		this.renderState = renderState;
 		this.oldModel_model = Minecraft.getMinecraft().getBlockRendererDispatcher().getModelForState(modelState);
@@ -45,14 +55,17 @@ public class CloakedModel implements IBakedModel
 	public List<BakedQuad> getQuads(IBlockState state, EnumFacing side, long rand) 
 	{
 		ArrayList<BakedQuad> list = Lists.newArrayList();
-		for(BakedQuad modelQuad : oldModel_model.getQuads(modelState, side, rand))
-			for(BakedQuad renderQuad : oldModel_texure.getQuads(renderState, modelQuad.getFace(), rand))
+		List<BakedQuad> ModelQuads = oldModel_model.getQuads(modelState, side, rand);
+		for(int l = 0; l < ModelQuads.size(); l++)
+		{
+			BakedQuad modelQuad = ModelQuads.get(l);
+			List<BakedQuad> textureQuads = overrideList.containsKey(l) ? overrideList.get(l).getRight().getQuads(overrideList.get(l).getLeft(), modelQuad.getFace(), rand) : oldModel_texure.getQuads(renderState, modelQuad.getFace(), rand);
+			for(BakedQuad renderQuad : textureQuads)
 			{
 				int[] modelVertex = new int[modelQuad.getVertexData().length];
 				System.arraycopy(modelQuad.getVertexData(), 0, modelVertex, 0, modelVertex.length);
 				BlockFaceUV faceUV = UVTransformer.getUV(modelQuad.getVertexData());
-				if(side == EnumFacing.UP)//Who knows why this has to be here. It just does
-					faceUV = new BlockFaceUV(faceUV.uvs, 1);
+				if(side == EnumFacing.UP) faceUV = new BlockFaceUV(faceUV.uvs, 1); //Who knows why this has to be here. It just does
 				for(int j = 0; j < 4; j++)
 				{
 					int i = (modelVertex.length / 4) * j;
@@ -61,6 +74,7 @@ public class CloakedModel implements IBakedModel
 				}
 				list.add(new BakedQuad(modelVertex, renderQuad.getTintIndex(), renderQuad.getFace(), renderQuad.getSprite(), renderQuad.shouldApplyDiffuseLighting(), renderQuad.getFormat()));
 			}
+		}
 		return list;
 	}
 	

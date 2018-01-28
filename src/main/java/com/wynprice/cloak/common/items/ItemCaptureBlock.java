@@ -1,5 +1,6 @@
 package com.wynprice.cloak.common.items;
 
+import com.wynprice.cloak.client.rendering.CloakedModel;
 import com.wynprice.cloak.client.rendering.gui.BasicGui;
 import com.wynprice.cloak.common.tileentity.TileEntityCloakBlock;
 import com.wynprice.cloak.common.tileentity.TileEntityCloakingMachine;
@@ -8,6 +9,7 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -31,7 +33,7 @@ public class ItemCaptureBlock extends Item
 	public EnumActionResult onItemUse(EntityPlayer player, World worldIn, BlockPos pos, EnumHand hand,
 			EnumFacing facing, float hitX, float hitY, float hitZ) 
 	{		
-		Minecraft.getMinecraft().displayGuiScreen(new BasicGui());
+		Minecraft.getMinecraft().displayGuiScreen(new BasicGui(new ItemStackHandler(2), Blocks.SANDSTONE_STAIRS.getDefaultState(), new CloakedModel(Blocks.SANDSTONE_STAIRS.getDefaultState(), Blocks.CHAIN_COMMAND_BLOCK.getDefaultState())));
 		ItemStack stack = player.getHeldItem(hand);
 		NBTTagCompound nbt = new NBTTagCompound();
 		IBlockState state = worldIn.getBlockState(pos);

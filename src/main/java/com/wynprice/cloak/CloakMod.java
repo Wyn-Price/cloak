@@ -7,10 +7,10 @@ import com.wynprice.cloak.common.CloakCreativeTab;
 import com.wynprice.cloak.common.CommonProxy;
 
 import net.minecraft.creativetab.CreativeTabs;
-import net.minecraft.init.Blocks;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.Mod.EventHandler;
+import net.minecraftforge.fml.common.Mod.Instance;
+import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
@@ -25,6 +25,9 @@ public class CloakMod
     public static final Logger LOGGER = LogManager.getLogger(MODID);
 
     public static final CreativeTabs TAB = new CloakCreativeTab();
+    
+    @Instance(MODID)
+    public static CloakMod instance;
     
     @SidedProxy(clientSide="com.wynprice.cloak.client.ClientProxy", serverSide="com.wynprice.cloak.server.ServerProxy")
     public static CommonProxy proxy;
