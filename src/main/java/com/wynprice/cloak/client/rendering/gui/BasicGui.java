@@ -111,7 +111,9 @@ public class BasicGui extends GuiContainer
         	}
         }
         if(selectedQuad != - 1 && clickedLastTick)
-        	this.selectedQuad = selectedQuad;
+        {
+        	this.selectedQuad = this.selectedQuad == selectedQuad ? -1 : selectedQuad;
+        }
         
         clickedLastTick = false;
         GlStateManager.disableAlpha();
