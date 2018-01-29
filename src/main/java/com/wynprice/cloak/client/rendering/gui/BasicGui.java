@@ -4,10 +4,12 @@ import java.awt.Point;
 import java.io.IOException;
 import java.nio.IntBuffer;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import javax.vecmath.Matrix4f;
 
+import org.apache.commons.lang3.tuple.Pair;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.util.vector.Vector3f;
@@ -28,13 +30,11 @@ import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
-import net.minecraft.client.renderer.block.model.ItemCameraTransforms.TransformType;
 import net.minecraft.client.renderer.block.model.ItemTransformVec3f;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.texture.TextureUtil;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
@@ -61,22 +61,34 @@ public class BasicGui extends GuiContainer
     	
 	}	
 	
+	protected CloakedModel createModel(IBlockState modelState, IBlockState basicRenderState)
+	{
+		return new CloakedModel(modelState, basicRenderState);
+	}
+	
+	protected HashMap<Integer, ItemStack> getInventoryColors(CloakedModel model, ItemStack defualt)
+	{
+		HashMap<Integer, ItemStack> finalMap = new HashMap<>();
+		List<BakedQuad> quadList = model.getFullList();
+        for(int i = 0; i < quadList.size(); i++)
+        	finalMap.put(i, defualt);
+		return finalMap;
+	}
+	
 	private void renderCenterBlock(int mouseX, int mouseY)
 	{
+		
 		if(!this.inventorySlots.getSlot(37).getHasStack() || !this.inventorySlots.getSlot(36).getHasStack()) return;
 		NBTTagCompound modelStackNBT = this.inventorySlots.getSlot(this.inventorySlots.inventorySlots.size() - 1).getStack().getSubCompound("capture_info");
 		NBTTagCompound stack36NBT = this.inventorySlots.getSlot(36).getStack().getSubCompound("capture_info");
-
-		
-		//TODO make it reliant on tilevar
 		IBlockState modelState = Block.REGISTRY.getObject(new ResourceLocation(modelStackNBT.getString("block"))).getStateFromMeta(modelStackNBT.getInteger("meta"));
 		IBlockState renderState = Block.REGISTRY.getObject(new ResourceLocation(stack36NBT.getString("block"))).getStateFromMeta(stack36NBT.getInteger("meta"));
 		ItemStackHandler localHandler = new ItemStackHandler(1);
 		localHandler.deserializeNBT(stack36NBT.getCompoundTag("item"));
 		ItemStack stack = localHandler.getStackInSlot(0);
-		//~~~~~~~~
+		CloakedModel bakedmodel = createModel(modelState, renderState);
+		HashMap<Integer, ItemStack> inventoryColors = getInventoryColors(bakedmodel, stack);
 		
-		IBakedModel bakedmodel = new CloakedModel(modelState, renderState);
     	GlStateManager.pushMatrix();
         Minecraft.getMinecraft().getTextureManager().bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
         Minecraft.getMinecraft().getTextureManager().getTexture(TextureMap.LOCATION_BLOCKS_TEXTURE).setBlurMipmap(false, false);
@@ -99,9 +111,7 @@ public class BasicGui extends GuiContainer
         GlStateManager.shadeModel(7425);
         Tessellator tessellator = Tessellator.getInstance();
         BufferBuilder bufferbuilder = tessellator.getBuffer();
-        List<BakedQuad> quadList = new ArrayList<>(bakedmodel.getQuads((IBlockState)null, (EnumFacing)null, 0L));
-        for (EnumFacing enumfacing : EnumFacing.values())
-        	quadList.addAll(bakedmodel.getQuads(null, enumfacing, 0L));
+        List<BakedQuad> quadList = bakedmodel.getFullList();
         int selectedQuad = -1;        
         int underMouseColor = getColorUnderMouse();
         for(int i = 0; i < quadList.size(); i++)
@@ -109,10 +119,10 @@ public class BasicGui extends GuiContainer
             RenderHelper.enableStandardItemLighting();
         	BakedQuad quad = quadList.get(i);
             bufferbuilder.begin(7, DefaultVertexFormats.ITEM);
-        	renderQuad(bufferbuilder, quad, stack, -1);
+        	renderQuad(bufferbuilder, quad, inventoryColors.get(i), -1);
             Minecraft.getMinecraft().getTextureManager().bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
             
-            if(i == this.selectedQuad)
+            if(bakedmodel.isParentSelected(quad, this.selectedQuad))
             {
                 RenderHelper.disableStandardItemLighting();
             	for(int l = 0; l < bufferbuilder.getVertexCount() + 1; l++)
@@ -126,7 +136,7 @@ public class BasicGui extends GuiContainer
 	        	int mouseColor = getColorUnderMouse();
 	        	if(mouseColor != underMouseColor)
 	        	{
-	        		selectedQuad = i;
+	        		selectedQuad = bakedmodel.getParentID(quad);
 	        		underMouseColor = mouseColor;
 	        	}
         	}

@@ -1,6 +1,7 @@
 package com.wynprice.cloak.common.containers;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import com.wynprice.cloak.common.containers.slots.SlotCaptureBlockOnly;
 
@@ -25,7 +26,8 @@ public class ContainerBasicCloakingMachine extends Container
 	@SideOnly(Side.CLIENT)
 	public ContainerBasicCloakingMachine(EntityPlayer player, ItemStackHandler handler)
 	{
-		
+//		if(!player.world.isRemote)
+//			OPENMAP.put(player, this);
 		this.handler = handler;
 		int id = 0;
 		
@@ -50,6 +52,14 @@ public class ContainerBasicCloakingMachine extends Container
 
 	}
 	
+//	public static final HashMap<EntityPlayer, ContainerBasicCloakingMachine> OPENMAP = new HashMap<>();
+//	
+//	@Override
+//	public void onContainerClosed(EntityPlayer playerIn) {
+//		// TODO Auto-generated method stub
+//		super.onContainerClosed(playerIn);
+//	}
+	
 	@Override
 	public ItemStack transferStackInSlot(EntityPlayer playerIn, int fromSlot) {
 	    ItemStack previous = ItemStack.EMPTY;
@@ -58,7 +68,7 @@ public class ContainerBasicCloakingMachine extends Container
 	    if (slot != null && slot.getHasStack()) {
 	        ItemStack current = slot.getStack();
 	        previous = current.copy();
-	        if (fromSlot < handler.getSlots()) {
+	        if (fromSlot < 36) {
 	            if (!this.mergeItemStack(current, 36, handler.getSlots() + 36, true))
 	                return ItemStack.EMPTY;
 	        } else {

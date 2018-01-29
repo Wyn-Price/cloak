@@ -34,6 +34,8 @@ public class CloakedModel implements IBakedModel
 	protected final IBlockState modelState;
 	protected final IBlockState renderState;
 	
+	private HashMap<BakedQuad, BakedQuad> parentQuadMap = new HashMap<>();
+	
 	protected final HashMap<Integer, Pair<IBlockState, IBakedModel>> overrideList;
 	
 	public CloakedModel(IBlockState modelState, IBlockState renderState) 
@@ -55,10 +57,10 @@ public class CloakedModel implements IBakedModel
 	public List<BakedQuad> getQuads(IBlockState state, EnumFacing side, long rand) 
 	{
 		ArrayList<BakedQuad> list = Lists.newArrayList();
-		List<BakedQuad> ModelQuads = oldModel_model.getQuads(modelState, side, rand);
-		for(int l = 0; l < ModelQuads.size(); l++)
+		List<BakedQuad> modelQuadList = oldModel_model.getQuads(modelState, side, rand);
+		for(int l = 0; l < modelQuadList.size(); l++)
 		{
-			BakedQuad modelQuad = ModelQuads.get(l);
+			BakedQuad modelQuad = modelQuadList.get(l);
 			List<BakedQuad> textureQuads = overrideList.containsKey(l) ? overrideList.get(l).getRight().getQuads(overrideList.get(l).getLeft(), modelQuad.getFace(), rand) : oldModel_texure.getQuads(renderState, modelQuad.getFace(), rand);
 			for(BakedQuad renderQuad : textureQuads)
 			{
@@ -72,12 +74,40 @@ public class CloakedModel implements IBakedModel
 					modelVertex[i + 4] = Float.floatToRawIntBits(renderQuad.getSprite().getInterpolatedU((double)faceUV.getVertexU(j) * .999 + faceUV.getVertexU((j + 2) % 4) * .001));
 					modelVertex[i + 4 + 1] = Float.floatToRawIntBits(renderQuad.getSprite().getInterpolatedV((double)faceUV.getVertexV(j) * .999 + faceUV.getVertexV((j + 2) % 4) * .001));
 				}
-				list.add(new BakedQuad(modelVertex, renderQuad.getTintIndex(), renderQuad.getFace(), renderQuad.getSprite(), renderQuad.shouldApplyDiffuseLighting(), renderQuad.getFormat()));
+				BakedQuad newQuad = new BakedQuad(modelVertex, renderQuad.getTintIndex(), renderQuad.getFace(), renderQuad.getSprite(), renderQuad.shouldApplyDiffuseLighting(), renderQuad.getFormat());
+				parentQuadMap.put(newQuad, modelQuad);
+				list.add(newQuad);
 			}
 		}
 		return list;
 	}
 	
+	public boolean isParentSelected(BakedQuad currentQuad, int selected)
+	{ 
+        return getParentID(currentQuad) == selected && selected != -1;
+	}
+	
+	public int getParentID(BakedQuad selectedQuad)
+	{
+		return getIndentifierList().indexOf(parentQuadMap.get(selectedQuad));
+	}
+	
+	public List<BakedQuad> getFullList()
+	{
+		List<BakedQuad> quadList = new ArrayList<>(this.getQuads((IBlockState)null, (EnumFacing)null, 0L));
+        for (EnumFacing enumfacing : EnumFacing.values())
+        	quadList.addAll(this.getQuads(null, enumfacing, 0L));
+        return quadList;
+	}
+	
+	public List<BakedQuad> getIndentifierList()
+	{
+		List<BakedQuad> quadList = new ArrayList<>(oldModel_model.getQuads(modelState, (EnumFacing)null, 0L));
+        for (EnumFacing enumfacing : EnumFacing.values())
+        	quadList.addAll(oldModel_model.getQuads(modelState, enumfacing, 0L));
+        return quadList;
+	}
+		
 	@Override
 	public boolean isAmbientOcclusion() 
 	{
