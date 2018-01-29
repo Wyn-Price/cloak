@@ -1,6 +1,8 @@
 package com.wynprice.cloak.common.network;
 
 import com.wynprice.cloak.CloakMod;
+import com.wynprice.cloak.common.network.packets.PacketFaceSelectionAdvancedGUI;
+import com.wynprice.cloak.common.network.packets.PacketSendRenderInfoAdvancedGUI;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -16,10 +18,12 @@ public class CloakNetwork
 	
 	public static void preInit()
 	{
-		
+		registerMessage(PacketSendRenderInfoAdvancedGUI.class, Side.SERVER);
+		registerMessage(PacketFaceSelectionAdvancedGUI.class, Side.SERVER);
 	}
 	
-	private static int idCount = -1;
+	private static int idCount = 0;
+	
     public static void registerMessage(Class claz, Side recievingSide)
     {
     	INSTANCE.registerMessage(claz, claz, idCount++, recievingSide);

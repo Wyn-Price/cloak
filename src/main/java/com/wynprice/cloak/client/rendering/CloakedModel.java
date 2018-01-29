@@ -36,7 +36,7 @@ public class CloakedModel implements IBakedModel
 	
 	private HashMap<BakedQuad, BakedQuad> parentQuadMap = new HashMap<>();
 	
-	protected final HashMap<Integer, Pair<IBlockState, IBakedModel>> overrideList;
+	protected final HashMap<Integer, IBlockState> overrideList;
 	
 	public CloakedModel(IBlockState modelState, IBlockState renderState) 
 	{
@@ -44,7 +44,7 @@ public class CloakedModel implements IBakedModel
 	}
 
 	
-	public CloakedModel(IBlockState modelState, IBlockState renderState, HashMap<Integer, Pair<IBlockState, IBakedModel>> overrideList) 
+	public CloakedModel(IBlockState modelState, IBlockState renderState, HashMap<Integer, IBlockState> overrideList) 
 	{
 		this.overrideList = overrideList;
 		this.modelState = modelState;
@@ -57,11 +57,10 @@ public class CloakedModel implements IBakedModel
 	public List<BakedQuad> getQuads(IBlockState state, EnumFacing side, long rand) 
 	{
 		ArrayList<BakedQuad> list = Lists.newArrayList();
-		List<BakedQuad> modelQuadList = oldModel_model.getQuads(modelState, side, rand);
-		for(int l = 0; l < modelQuadList.size(); l++)
+		for(BakedQuad modelQuad : oldModel_model.getQuads(modelState, side, rand))
 		{
-			BakedQuad modelQuad = modelQuadList.get(l);
-			List<BakedQuad> textureQuads = overrideList.containsKey(l) ? overrideList.get(l).getRight().getQuads(overrideList.get(l).getLeft(), modelQuad.getFace(), rand) : oldModel_texure.getQuads(renderState, modelQuad.getFace(), rand);
+			int l = getIndentifierList().indexOf(modelQuad);
+			List<BakedQuad> textureQuads = overrideList.containsKey(l) ? Minecraft.getMinecraft().getBlockRendererDispatcher().getModelForState(overrideList.get(l)).getQuads(overrideList.get(l), modelQuad.getFace(), rand) : oldModel_texure.getQuads(renderState, modelQuad.getFace(), rand);
 			for(BakedQuad renderQuad : textureQuads)
 			{
 				int[] modelVertex = new int[modelQuad.getVertexData().length];

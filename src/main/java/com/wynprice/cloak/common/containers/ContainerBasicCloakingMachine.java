@@ -22,12 +22,14 @@ public class ContainerBasicCloakingMachine extends Container
 {
 	
 	private final ItemStackHandler handler;
+	
+	public final HashMap<Integer, ItemStack> modification_list = new HashMap<>();
 		
 	@SideOnly(Side.CLIENT)
-	public ContainerBasicCloakingMachine(EntityPlayer player, ItemStackHandler handler)
+	public ContainerBasicCloakingMachine(EntityPlayer player, ItemStackHandler handler, boolean advanced)
 	{
-//		if(!player.world.isRemote)
-//			OPENMAP.put(player, this);
+		if(!player.world.isRemote)
+			OPENMAP.put(player, this);
 		this.handler = handler;
 		int id = 0;
 		
@@ -44,21 +46,23 @@ public class ContainerBasicCloakingMachine extends Container
             this.addSlotToContainer(new Slot(player.inventory, i1, 8 + i1 * 18, 161 + 20));
         }
 		
-		
-		for(int i = 0; i < handler.getSlots() - 1; i++)
-			this.addSlotToContainer(new SlotCaptureBlockOnly(handler, i, 152, 0).setEnabled(true));	
-		
-		this.addSlotToContainer(new SlotCaptureBlockOnly(handler, handler.getSlots() - 1, 8, 0).setEnabled(true));
+		if(handler.getSlots() != (advanced ? 3 : 2))
+			throw new RuntimeException("Containers was set with wrong data. Advanced :" + String.valueOf(advanced) + ", handlerSize: " + String.valueOf(handler.getSlots()));
+        
+		this.addSlotToContainer(new SlotCaptureBlockOnly(handler, 0, 152, 0).setEnabled(true));	
+		this.addSlotToContainer(new SlotCaptureBlockOnly(handler, 1, 8, 0).setEnabled(true));
+		if(advanced)
+			this.addSlotToContainer(new SlotCaptureBlockOnly(handler, 2, 170, 0));	
 
 	}
 	
-//	public static final HashMap<EntityPlayer, ContainerBasicCloakingMachine> OPENMAP = new HashMap<>();
-//	
-//	@Override
-//	public void onContainerClosed(EntityPlayer playerIn) {
-//		// TODO Auto-generated method stub
-//		super.onContainerClosed(playerIn);
-//	}
+	public static final HashMap<EntityPlayer, ContainerBasicCloakingMachine> OPENMAP = new HashMap<>();
+	
+	@Override
+	public void onContainerClosed(EntityPlayer playerIn) 
+	{
+		OPENMAP.remove(playerIn);
+	}
 	
 	@Override
 	public ItemStack transferStackInSlot(EntityPlayer playerIn, int fromSlot) {
@@ -87,6 +91,9 @@ public class ContainerBasicCloakingMachine extends Container
 	    return previous;
 	}
 	
+	public ItemStackHandler getHandler() {
+		return handler;
+	}
 	
 	@Override
 	public boolean canInteractWith(EntityPlayer playerIn) {

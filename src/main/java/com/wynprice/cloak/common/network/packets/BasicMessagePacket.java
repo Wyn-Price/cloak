@@ -24,9 +24,15 @@ public abstract class BasicMessagePacket<REQ extends IMessage> implements IMessa
 		return Minecraft.getMinecraft().player;
 	}
 	
+	/**
+	 * Write the values to bytes
+	 */
 	@Override
 	public void toBytes(ByteBuf buf) {};
 	
+	/**
+	 * Read the bytes, and convert to values
+	 */
 	@Override
 	public void fromBytes(ByteBuf buf) {};
 	

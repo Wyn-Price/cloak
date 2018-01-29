@@ -1,5 +1,6 @@
 package com.wynprice.cloak.common.handlers;
 
+import com.wynprice.cloak.client.rendering.gui.AdvancedGui;
 import com.wynprice.cloak.client.rendering.gui.BasicGui;
 import com.wynprice.cloak.common.containers.ContainerBasicCloakingMachine;
 
@@ -21,7 +22,7 @@ public class CloakGUIHandler implements IGuiHandler
 	public Object getServerGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) //Return Container
 	{
 		if(ID == BASIC_CLOAKING_MACHINE)
-			return new ContainerBasicCloakingMachine(player, new ItemStackHandler(2));
+			return new ContainerBasicCloakingMachine(player, new ItemStackHandler(3), true);
 		return null;
 	}
 
@@ -29,7 +30,7 @@ public class CloakGUIHandler implements IGuiHandler
 	public Object getClientGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) //Return GUI screen
 	{
 		if(ID == BASIC_CLOAKING_MACHINE)
-			return new BasicGui(player, new ItemStackHandler(2));
+			return new AdvancedGui(player, new ItemStackHandler(3));
 		return null;
 	}
 

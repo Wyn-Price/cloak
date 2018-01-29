@@ -2,6 +2,7 @@ package com.wynprice.cloak.common;
 
 import com.wynprice.cloak.CloakMod;
 import com.wynprice.cloak.common.handlers.CloakGUIHandler;
+import com.wynprice.cloak.common.network.CloakNetwork;
 import com.wynprice.cloak.common.registries.CloakBlocks;
 import com.wynprice.cloak.common.registries.CloakItems;
 import com.wynprice.cloak.common.tileentity.TileEntityCloakBlock;
@@ -20,6 +21,7 @@ public class CommonProxy
 		CloakItems.preInit();
 		CloakBlocks.preInit();
 		
+		CloakNetwork.preInit();
 		
 		registerTileEntities();
 	}

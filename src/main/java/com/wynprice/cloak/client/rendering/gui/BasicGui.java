@@ -44,8 +44,14 @@ import net.minecraftforge.items.ItemStackHandler;
 
 public class BasicGui extends GuiContainer
 {
-	public BasicGui(EntityPlayer player, ItemStackHandler handler) {
-		super(new ContainerBasicCloakingMachine(player, handler));
+	public BasicGui(EntityPlayer player, ItemStackHandler handler) 
+	{
+		this(player, handler, false);
+	}
+	
+	protected BasicGui(EntityPlayer player, ItemStackHandler handler, boolean advanced) 
+	{
+		super(new ContainerBasicCloakingMachine(player, handler, advanced));
 	}
 	
 	private boolean clickedLastTick = false;
@@ -69,7 +75,7 @@ public class BasicGui extends GuiContainer
 	protected HashMap<Integer, ItemStack> getInventoryColors(CloakedModel model, ItemStack defualt)
 	{
 		HashMap<Integer, ItemStack> finalMap = new HashMap<>();
-		List<BakedQuad> quadList = model.getFullList();
+		List<BakedQuad> quadList = model.getIndentifierList();
         for(int i = 0; i < quadList.size(); i++)
         	finalMap.put(i, defualt);
 		return finalMap;
@@ -79,9 +85,9 @@ public class BasicGui extends GuiContainer
 	{
 		
 		if(!this.inventorySlots.getSlot(37).getHasStack() || !this.inventorySlots.getSlot(36).getHasStack()) return;
-		NBTTagCompound modelStackNBT = this.inventorySlots.getSlot(this.inventorySlots.inventorySlots.size() - 1).getStack().getSubCompound("capture_info");
+		NBTTagCompound stack37NBT = this.inventorySlots.getSlot(37).getStack().getSubCompound("capture_info");
 		NBTTagCompound stack36NBT = this.inventorySlots.getSlot(36).getStack().getSubCompound("capture_info");
-		IBlockState modelState = Block.REGISTRY.getObject(new ResourceLocation(modelStackNBT.getString("block"))).getStateFromMeta(modelStackNBT.getInteger("meta"));
+		IBlockState modelState = Block.REGISTRY.getObject(new ResourceLocation(stack37NBT.getString("block"))).getStateFromMeta(stack37NBT.getInteger("meta"));
 		IBlockState renderState = Block.REGISTRY.getObject(new ResourceLocation(stack36NBT.getString("block"))).getStateFromMeta(stack36NBT.getInteger("meta"));
 		ItemStackHandler localHandler = new ItemStackHandler(1);
 		localHandler.deserializeNBT(stack36NBT.getCompoundTag("item"));
@@ -119,7 +125,7 @@ public class BasicGui extends GuiContainer
             RenderHelper.enableStandardItemLighting();
         	BakedQuad quad = quadList.get(i);
             bufferbuilder.begin(7, DefaultVertexFormats.ITEM);
-        	renderQuad(bufferbuilder, quad, inventoryColors.get(i), -1);
+        	renderQuad(bufferbuilder, quad, inventoryColors.get(bakedmodel.getParentID(quad)), -1);
             Minecraft.getMinecraft().getTextureManager().bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
             
             if(bakedmodel.isParentSelected(quad, this.selectedQuad))
@@ -143,7 +149,9 @@ public class BasicGui extends GuiContainer
         }
         if(selectedQuad != - 1 && clickedLastTick)
         {
+        	int preSelectedQuad = this.selectedQuad;
         	this.selectedQuad = this.selectedQuad == selectedQuad ? -1 : selectedQuad;
+    		onFaceSelected(this.selectedQuad, preSelectedQuad);
         }
         
         clickedLastTick = false;
@@ -156,6 +164,11 @@ public class BasicGui extends GuiContainer
         GlStateManager.shadeModel(7424);
         Minecraft.getMinecraft().getTextureManager().bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
         Minecraft.getMinecraft().getTextureManager().getTexture(TextureMap.LOCATION_BLOCKS_TEXTURE).restoreLastBlurMipmap();
+	}
+	
+	protected void onFaceSelected(int slotID, int OldSlotID)
+	{
+		
 	}
 	
 	private int getColorUnderMouse()
