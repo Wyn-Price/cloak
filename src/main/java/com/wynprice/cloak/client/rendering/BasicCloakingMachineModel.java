@@ -32,14 +32,19 @@ public class BasicCloakingMachineModel extends CloakedModel
 	private static double timer;
 	private static long prevTime;
 	
+	private static final double TIME = 10;
+	
 	@Override
 	public List<BakedQuad> getQuads(IBlockState state, EnumFacing side, long rand) 
 	{
+		int time = 15;
+		int weight = 5000;
+		
 		ArrayList<BakedQuad> list = Lists.newArrayList();
 		IBakedModel renderModel = Minecraft.getMinecraft().getBlockRendererDispatcher().getModelForState(renderState);
 		double angle = (System.currentTimeMillis() / 200D) % 360;
 		ArrayList<BakedQuad> quadList = new ArrayList<>();
-		if(System.currentTimeMillis() - waitTimer < -2500 || timer > 6.28319d / 2f)
+		if(System.currentTimeMillis() - waitTimer < -weight / 2 || timer > 6.28319d / 2f)
 			quadList.addAll(super.getQuads(state, side, rand));
 		else
 			quadList.addAll(this.oldModel_texure.getQuads(state, side, rand));
@@ -56,19 +61,20 @@ public class BasicCloakingMachineModel extends CloakedModel
 					if(System.currentTimeMillis() > prevTime)
 					{
 						prevTime = System.currentTimeMillis();
-						timer = timer+= 0.007d;
+						timer = timer += 0.1d / time ; //0.001 = 100 seconds
 						if(timer > 6.28319d)
 						{
 							timer = 0;
-							waitTimer = System.currentTimeMillis() + 5000;
+							waitTimer = System.currentTimeMillis() + weight;
 						}
 					}
 					angle += timer;
 				}
-				float xOrigin = Float.intBitsToFloat(vertexData[i + 0]) * 0.1875f + 0.5f - 0.1875f / 2f;
-				float zOrigin = Float.intBitsToFloat(vertexData[i + 2]) * 0.1875f + 0.5f - 0.1875f / 2f;
+				float size = 5 / 16f;
+				float xOrigin = Float.intBitsToFloat(vertexData[i + 0]) * size + 0.5f - size / 2f;
+				float zOrigin = Float.intBitsToFloat(vertexData[i + 2]) * size + 0.5f - size / 2f;
 				vertexData[i + 0] = Float.floatToRawIntBits((float) (0.5f + (xOrigin-0.5f)*Math.cos(angle) - (zOrigin-0.5f)*Math.sin(angle)));
-				vertexData[i + 1] = Float.floatToRawIntBits((float) (Float.intBitsToFloat(vertexData[i + 1]) * 0.1875f + 1f));
+				vertexData[i + 1] = Float.floatToRawIntBits((float) (Float.intBitsToFloat(vertexData[i + 1]) * size + 1f));
 				vertexData[i + 2] = Float.floatToRawIntBits((float) (0.5f + (xOrigin-0.5f)*Math.sin(angle) - (zOrigin-0.5f)*Math.cos(angle)));
 			}
 			

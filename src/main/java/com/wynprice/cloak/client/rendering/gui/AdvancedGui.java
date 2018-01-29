@@ -103,6 +103,7 @@ public class AdvancedGui extends BasicGui
 			{
 				ItemStackHandler handler = new ItemStackHandler(1);
 				handler.deserializeNBT(container.modification_list.get(i).getSubCompound("capture_info").getCompoundTag("item"));
+				map.put(i, handler.getStackInSlot(0));
 			}
 		return map;
 	}

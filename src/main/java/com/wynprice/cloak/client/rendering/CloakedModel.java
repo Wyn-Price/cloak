@@ -42,6 +42,12 @@ public class CloakedModel implements IBakedModel
 	{
 		this(modelState, renderState, new HashMap());
 	}
+	
+	public CloakedModel setParentQuadMap(HashMap<BakedQuad, BakedQuad> parentQuadMap) 
+	{
+		this.parentQuadMap = parentQuadMap;
+		return this;
+	}
 
 	
 	public CloakedModel(IBlockState modelState, IBlockState renderState, HashMap<Integer, IBlockState> overrideList) 

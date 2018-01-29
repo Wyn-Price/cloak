@@ -35,6 +35,7 @@ import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.texture.TextureUtil;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
@@ -52,7 +53,10 @@ public class BasicGui extends GuiContainer
 	protected BasicGui(EntityPlayer player, ItemStackHandler handler, boolean advanced) 
 	{
 		super(new ContainerBasicCloakingMachine(player, handler, advanced));
+		this.advanced = advanced;
 	}
+	
+	private final boolean advanced;
 	
 	private boolean clickedLastTick = false;
 	
@@ -118,17 +122,19 @@ public class BasicGui extends GuiContainer
         Tessellator tessellator = Tessellator.getInstance();
         BufferBuilder bufferbuilder = tessellator.getBuffer();
         List<BakedQuad> quadList = bakedmodel.getFullList();
-        int selectedQuad = -1;        
-        int underMouseColor = getColorUnderMouse();
+        int selectedQuad = -1;      
+        int underMouseColor = -1;
+        if(clickedLastTick)
+        	underMouseColor = getColorUnderMouse();
         for(int i = 0; i < quadList.size(); i++)
         {
             RenderHelper.enableStandardItemLighting();
         	BakedQuad quad = quadList.get(i);
             bufferbuilder.begin(7, DefaultVertexFormats.ITEM);
-        	renderQuad(bufferbuilder, quad, inventoryColors.get(bakedmodel.getParentID(quad)), -1);
+        	renderQuad(bufferbuilder, quad, bakedmodel.isParentSelected(quad, this.selectedQuad) && advanced ? new ItemStack(Blocks.STONE) : inventoryColors.get(bakedmodel.getParentID(quad)), -1);
             Minecraft.getMinecraft().getTextureManager().bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
             
-            if(bakedmodel.isParentSelected(quad, this.selectedQuad))
+            if(bakedmodel.isParentSelected(quad, this.selectedQuad) && advanced)
             {
                 RenderHelper.disableStandardItemLighting();
             	for(int l = 0; l < bufferbuilder.getVertexCount() + 1; l++)
@@ -173,29 +179,12 @@ public class BasicGui extends GuiContainer
 	
 	private int getColorUnderMouse()
 	{
-		int width = Minecraft.getMinecraft().displayWidth;
-        int height = Minecraft.getMinecraft().displayHeight;
-        if(OpenGlHelper.isFramebufferEnabled())
-        {
-        	width = Minecraft.getMinecraft().getFramebuffer().framebufferTextureWidth;
-        	height = Minecraft.getMinecraft().getFramebuffer().framebufferTextureWidth;
-        }
-        int a = width * height;
-        IntBuffer intbuffer = BufferUtils.createIntBuffer(a);
-        int[] ints = new int[a];
-        GlStateManager.glPixelStorei(3333, 1);
-        GlStateManager.glPixelStorei(3317, 1);
-        if (OpenGlHelper.isFramebufferEnabled())
-        {
-            GlStateManager.bindTexture(Minecraft.getMinecraft().getFramebuffer().framebufferTexture);
-            GlStateManager.glGetTexImage(3553, 0, 32993, 33639, intbuffer);
-        }
-        else
-            GlStateManager.glReadPixels(0, 0, width, height, 32993, 33639, intbuffer);
-
-        
+		if(!advanced) return 0;
+        IntBuffer intbuffer = BufferUtils.createIntBuffer(1);
+        int[] ints = new int[1];
+        GlStateManager.glReadPixels(Mouse.getX(), Mouse.getY(), 1, 1, 32993, 33639, intbuffer);
         intbuffer.get(ints);
-        return ints[Mouse.getY() * width + Mouse.getX()];
+        return ints[0];
 	}
 	
 	@Override
@@ -234,7 +223,7 @@ public class BasicGui extends GuiContainer
 	@Override
 	protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException 
 	{
-		if(mouseButton == 0)
+		if(mouseButton == 0 && advanced)
 			clickedLastTick = true;
 		if(mouseButton == 1)
 			this.lastMouseClicked = new Point(mouseX, mouseY);

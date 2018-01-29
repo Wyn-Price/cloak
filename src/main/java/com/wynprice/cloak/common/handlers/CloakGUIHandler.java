@@ -17,12 +17,13 @@ public class CloakGUIHandler implements IGuiHandler
 {
 	
 	public final static int BASIC_CLOAKING_MACHINE = 0;
+	public final static int ADVANCED_CLOAKING_MACHINE = 1;
 
 	@Override
 	public Object getServerGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) //Return Container
 	{
 		if(ID == BASIC_CLOAKING_MACHINE)
-			return new ContainerBasicCloakingMachine(player, new ItemStackHandler(3), true);
+			return new ContainerBasicCloakingMachine(player, new ItemStackHandler(2), false);
 		return null;
 	}
 
@@ -30,7 +31,7 @@ public class CloakGUIHandler implements IGuiHandler
 	public Object getClientGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) //Return GUI screen
 	{
 		if(ID == BASIC_CLOAKING_MACHINE)
-			return new AdvancedGui(player, new ItemStackHandler(3));
+			return new BasicGui(player, new ItemStackHandler(2));
 		return null;
 	}
 

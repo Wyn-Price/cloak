@@ -27,7 +27,7 @@ public class SlotCaptureBlockOnly extends SlotItemHandler
 	
 	@Override
 	public boolean isItemValid(ItemStack stack) {
-		return super.isItemValid(stack) && stack.getItem() == CloakItems.BLOCKSTATE_CARD;
+		return super.isItemValid(stack) && stack.getItem() == CloakItems.BLOCKSTATE_CARD && this.enabled;
 	}
 	
 	private boolean enabled = false;
