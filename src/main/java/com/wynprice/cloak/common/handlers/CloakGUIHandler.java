@@ -24,6 +24,8 @@ public class CloakGUIHandler implements IGuiHandler
 	{
 		if(ID == BASIC_CLOAKING_MACHINE)
 			return new ContainerBasicCloakingMachine(player, new ItemStackHandler(2), false);
+		else if(ID == ADVANCED_CLOAKING_MACHINE)
+			return new ContainerBasicCloakingMachine(player, new ItemStackHandler(3), true);
 		return null;
 	}
 
@@ -32,6 +34,8 @@ public class CloakGUIHandler implements IGuiHandler
 	{
 		if(ID == BASIC_CLOAKING_MACHINE)
 			return new BasicGui(player, new ItemStackHandler(2));
+		else if(ID == ADVANCED_CLOAKING_MACHINE)
+			return new AdvancedGui(player, new ItemStackHandler(3));
 		return null;
 	}
 

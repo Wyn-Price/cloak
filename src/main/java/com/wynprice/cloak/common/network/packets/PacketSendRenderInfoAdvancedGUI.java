@@ -15,57 +15,72 @@ public class PacketSendRenderInfoAdvancedGUI extends BasicMessagePacket<PacketSe
 	public PacketSendRenderInfoAdvancedGUI() {
 	}
 	
-	public PacketSendRenderInfoAdvancedGUI(int quadAmount) 
+	public PacketSendRenderInfoAdvancedGUI(boolean removeAll) 
 	{
-		this.quadAmount = quadAmount;
+		this.removeAll = removeAll;
 	}
 	
 	@Override
 	public void toBytes(ByteBuf buf) 
 	{
-		buf.writeInt(quadAmount);
+		buf.writeBoolean(removeAll);
 	}
 	
 	@Override
 	public void fromBytes(ByteBuf buf) 
 	{
-		this.quadAmount = buf.readInt();
+		this.removeAll = buf.readBoolean();
 	}
 	
-	private int quadAmount;
+	private boolean removeAll;
 
 	@Override
 	public void onReceived(PacketSendRenderInfoAdvancedGUI message, EntityPlayer player) 
 	{
 		ContainerBasicCloakingMachine container = ContainerBasicCloakingMachine.OPENMAP.get(player);
 		if(container != null)
-			updateContainer(container, player, message.quadAmount);
+			updateContainer(container, player, message.removeAll);
 	}
 	
-	public static void updateContainer(ContainerBasicCloakingMachine container, EntityPlayer player, int quadAmount)
+	public static void updateContainer(ContainerBasicCloakingMachine container, EntityPlayer player, boolean removeAll)
 	{
 		for(ItemStack stack : container.modification_list.values())
-			if(!player.world.isRemote)
+			spawnItemStack(player, stack);
+		if(removeAll)
+		{
+			for(int i = 36; i < 38; i++)
 			{
-				boolean flag = player.inventory.addItemStackToInventory(stack);
-				if (flag)
-	            {
-					player.world.playSound((EntityPlayer)null, player.posX, player.posY, player.posZ, SoundEvents.ENTITY_ITEM_PICKUP, SoundCategory.PLAYERS, 0.2F, ((player.getRNG().nextFloat() - player.getRNG().nextFloat()) * 0.7F + 1.0F) * 2.0F);
-	                player.inventoryContainer.detectAndSendChanges();
-	            }
-				else
-	            {
-	                EntityItem entityitem = player.dropItem(stack, false);
-	
-	                if (entityitem != null)
-	                {
-	                    entityitem.setNoPickupDelay();
-	                    entityitem.setOwner(player.getName());
-	                }
-	            }
+				spawnItemStack(player, container.inventorySlots.get(i).getStack());
 			}
+			if(!player.world.isRemote)
+				ContainerBasicCloakingMachine.OPENMAP.remove(player);
+		}
+				
 		container.modification_list.clear();
 
+	}
+	
+	private static void spawnItemStack(EntityPlayer player, ItemStack stack)
+	{
+		if(!player.world.isRemote)
+		{
+			boolean flag = player.inventory.addItemStackToInventory(stack);
+			if (flag)
+            {
+				player.world.playSound((EntityPlayer)null, player.posX, player.posY, player.posZ, SoundEvents.ENTITY_ITEM_PICKUP, SoundCategory.PLAYERS, 0.2F, ((player.getRNG().nextFloat() - player.getRNG().nextFloat()) * 0.7F + 1.0F) * 2.0F);
+                player.inventoryContainer.detectAndSendChanges();
+            }
+			else
+            {
+                EntityItem entityitem = player.dropItem(stack, false);
+
+                if (entityitem != null)
+                {
+                    entityitem.setNoPickupDelay();
+                    entityitem.setOwner(player.getName());
+                }
+            }
+		}
 	}
 
 }

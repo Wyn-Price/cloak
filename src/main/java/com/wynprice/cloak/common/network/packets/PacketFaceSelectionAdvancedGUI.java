@@ -46,10 +46,11 @@ public class PacketFaceSelectionAdvancedGUI extends BasicMessagePacket<PacketFac
 	
 	public static void setContainerFace(ContainerBasicCloakingMachine container, int newFace, int oldFace)
 	{
+		container.selectedContainer = newFace;
 		SlotCaptureBlockOnly slot = (SlotCaptureBlockOnly) container.getSlot(38);
 		if(oldFace != -1)
 			container.modification_list.put(oldFace, slot.getStack());
-				
+//				
 		if(newFace != -1)
 		{
 			ItemStack stack = container.modification_list.get(newFace);

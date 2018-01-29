@@ -40,7 +40,6 @@ public class AdvancedGui extends BasicGui
 	@Override
 	public void updateScreen() 
 	{
-		int updateSize = -1;
 		boolean update = false;
 		if(this.inventorySlots.getSlot(37).getHasStack())
 		{
@@ -58,7 +57,6 @@ public class AdvancedGui extends BasicGui
 				if(size != previousSize)
 				{
 					previousSize = size;
-					updateSize = size;
 					update = true;
 				}
 			}
@@ -71,8 +69,8 @@ public class AdvancedGui extends BasicGui
 		
 		if(update)
 		{
-			PacketSendRenderInfoAdvancedGUI.updateContainer((ContainerBasicCloakingMachine) this.inventorySlots, Minecraft.getMinecraft().player, updateSize);
-			CloakNetwork.sendToServer(new PacketSendRenderInfoAdvancedGUI(updateSize));
+			PacketSendRenderInfoAdvancedGUI.updateContainer((ContainerBasicCloakingMachine) this.inventorySlots, Minecraft.getMinecraft().player, false);
+			CloakNetwork.sendToServer(new PacketSendRenderInfoAdvancedGUI(false));
 		}
 	}
 	
@@ -90,6 +88,7 @@ public class AdvancedGui extends BasicGui
 				overrideList.put(i, stackState);
 			}
 		}
+//		System.out.println(overrideList);
 		return new CloakedModel(modelState, basicRenderState, overrideList);
 	}
 	

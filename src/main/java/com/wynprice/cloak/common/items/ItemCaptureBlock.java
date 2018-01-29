@@ -29,7 +29,7 @@ public class ItemCaptureBlock extends Item
 			EnumFacing facing, float hitX, float hitY, float hitZ) 
 	{		
 		if(!worldIn.isRemote)
-			player.openGui(CloakMod.instance, CloakGUIHandler.BASIC_CLOAKING_MACHINE, worldIn, pos.getX(), pos.getY(), pos.getZ());
+			player.openGui(CloakMod.instance, player.isSneaking() ? CloakGUIHandler.ADVANCED_CLOAKING_MACHINE : CloakGUIHandler.BASIC_CLOAKING_MACHINE, worldIn, pos.getX(), pos.getY(), pos.getZ());
 		ItemStack stack = player.getHeldItem(hand);
 		NBTTagCompound nbt = new NBTTagCompound();
 		IBlockState state = worldIn.getBlockState(pos);

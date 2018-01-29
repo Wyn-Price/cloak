@@ -16,6 +16,8 @@ import org.lwjgl.util.vector.Vector3f;
 
 import com.wynprice.cloak.client.rendering.CloakedModel;
 import com.wynprice.cloak.common.containers.ContainerBasicCloakingMachine;
+import com.wynprice.cloak.common.network.CloakNetwork;
+import com.wynprice.cloak.common.network.packets.PacketSendRenderInfoAdvancedGUI;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
@@ -254,7 +256,11 @@ public class BasicGui extends GuiContainer
 	protected void keyTyped(char typedChar, int keyCode) throws IOException 
 	{
 		if(keyCode == 1)
+		{
+			PacketSendRenderInfoAdvancedGUI.updateContainer((ContainerBasicCloakingMachine) this.inventorySlots, Minecraft.getMinecraft().player, true);
+			CloakNetwork.sendToServer(new PacketSendRenderInfoAdvancedGUI(true));
 			Minecraft.getMinecraft().displayGuiScreen(null);
+		}
 		super.keyTyped(typedChar, keyCode);
 	}
 }

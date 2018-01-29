@@ -10,19 +10,10 @@ import net.minecraftforge.items.SlotItemHandler;
 
 public class SlotCaptureBlockOnly extends SlotItemHandler
 {
-
-	private final int xPosition;
-	
-	private final int yPosition;
 	
 	public SlotCaptureBlockOnly(ItemStackHandler itemHandler, int index, int xPosition, int yPosition) 
 	{
 		super(itemHandler, index, xPosition, yPosition);
-		this.xPosition = xPosition;
-		this.yPosition = yPosition;
-		
-		this.xPos = -10000;
-		this.yPos = -10000;
 	}
 	
 	@Override
@@ -35,16 +26,6 @@ public class SlotCaptureBlockOnly extends SlotItemHandler
 	public SlotCaptureBlockOnly setEnabled(boolean enabled) 
 	{
 		this.enabled = enabled;
-		if(enabled)
-		{
-			this.xPos = xPosition;
-			this.yPos = yPosition;
-		}
-		else
-		{
-			this.xPos = -10000;
-			this.yPos = -10000;
-		}
 		return this;
 	}
 	

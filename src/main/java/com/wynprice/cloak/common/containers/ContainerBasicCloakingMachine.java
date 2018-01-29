@@ -1,19 +1,14 @@
 package com.wynprice.cloak.common.containers;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 
 import com.wynprice.cloak.common.containers.slots.SlotCaptureBlockOnly;
+import com.wynprice.cloak.common.containers.slots.SlotCaptureBlockOnlyAdvanced;
 
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.block.model.BakedQuad;
-import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.EnumFacing;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.ItemStackHandler;
@@ -24,6 +19,8 @@ public class ContainerBasicCloakingMachine extends Container
 	private final ItemStackHandler handler;
 	
 	public final HashMap<Integer, ItemStack> modification_list = new HashMap<>();
+	
+	public int selectedContainer = -1;
 		
 	@SideOnly(Side.CLIENT)
 	public ContainerBasicCloakingMachine(EntityPlayer player, ItemStackHandler handler, boolean advanced)
@@ -52,17 +49,11 @@ public class ContainerBasicCloakingMachine extends Container
 		this.addSlotToContainer(new SlotCaptureBlockOnly(handler, 0, 152, 0).setEnabled(true));	
 		this.addSlotToContainer(new SlotCaptureBlockOnly(handler, 1, 8, 0).setEnabled(true));
 		if(advanced)
-			this.addSlotToContainer(new SlotCaptureBlockOnly(handler, 2, 170, 0));	
+			this.addSlotToContainer(new SlotCaptureBlockOnlyAdvanced(this, handler, 2, 170, 0));	
 
 	}
-	
+		
 	public static final HashMap<EntityPlayer, ContainerBasicCloakingMachine> OPENMAP = new HashMap<>();
-	
-	@Override
-	public void onContainerClosed(EntityPlayer playerIn) 
-	{
-		OPENMAP.remove(playerIn);
-	}
 	
 	@Override
 	public ItemStack transferStackInSlot(EntityPlayer playerIn, int fromSlot) {
@@ -89,10 +80,6 @@ public class ContainerBasicCloakingMachine extends Container
 	        slot.onTake(playerIn, current);
 	    }
 	    return previous;
-	}
-	
-	public ItemStackHandler getHandler() {
-		return handler;
 	}
 	
 	@Override
