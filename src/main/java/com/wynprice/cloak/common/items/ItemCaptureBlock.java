@@ -1,8 +1,5 @@
 package com.wynprice.cloak.common.items;
 
-import com.wynprice.cloak.CloakMod;
-import com.wynprice.cloak.common.handlers.CloakGUIHandler;
-
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
@@ -28,8 +25,6 @@ public class ItemCaptureBlock extends Item
 	public EnumActionResult onItemUse(EntityPlayer player, World worldIn, BlockPos pos, EnumHand hand,
 			EnumFacing facing, float hitX, float hitY, float hitZ) 
 	{		
-		if(!worldIn.isRemote)
-			player.openGui(CloakMod.instance, player.isSneaking() ? CloakGUIHandler.ADVANCED_CLOAKING_MACHINE : CloakGUIHandler.BASIC_CLOAKING_MACHINE, worldIn, pos.getX(), pos.getY(), pos.getZ());
 		ItemStack stack = player.getHeldItem(hand);
 		NBTTagCompound nbt = new NBTTagCompound();
 		IBlockState state = worldIn.getBlockState(pos);

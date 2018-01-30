@@ -22,7 +22,8 @@ public class SlotCaptureBlockOnlyAdvanced extends SlotCaptureBlockOnly
 	
 	private final ContainerBasicCloakingMachine container;
 
-	public SlotCaptureBlockOnlyAdvanced(ContainerBasicCloakingMachine container, ItemStackHandler itemHandler, int index, int xPosition, int yPosition) {
+	public SlotCaptureBlockOnlyAdvanced(ContainerBasicCloakingMachine container, ItemStackHandler itemHandler, int index, int xPosition, int yPosition) 
+	{
 		super(itemHandler, index, xPosition, yPosition);
 		this.container = container;
 	}
@@ -30,12 +31,14 @@ public class SlotCaptureBlockOnlyAdvanced extends SlotCaptureBlockOnly
 	@Override
 	public void putStack(ItemStack stack) {
 		this.container.modification_list.put(this.container.selectedContainer, stack);
+		this.container.markDirty();
 		super.putStack(stack);
 	}
 	
 	@Override
 	public ItemStack onTake(EntityPlayer thePlayer, ItemStack stack) {
 		this.container.modification_list.put(this.container.selectedContainer, ItemStack.EMPTY);
+		this.container.markDirty();
 		return super.onTake(thePlayer, stack);
 	}
 }

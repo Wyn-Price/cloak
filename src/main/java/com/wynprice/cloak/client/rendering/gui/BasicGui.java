@@ -14,10 +14,12 @@ import org.lwjgl.BufferUtils;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.util.vector.Vector3f;
 
+import com.wynprice.cloak.client.handlers.TextureStitchHandler;
 import com.wynprice.cloak.client.rendering.CloakedModel;
 import com.wynprice.cloak.common.containers.ContainerBasicCloakingMachine;
 import com.wynprice.cloak.common.network.CloakNetwork;
 import com.wynprice.cloak.common.network.packets.PacketSendRenderInfoAdvancedGUI;
+import com.wynprice.cloak.common.tileentity.TileEntityCloakingMachine;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
@@ -30,6 +32,7 @@ import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.block.model.BakedQuad;
+import net.minecraft.client.renderer.block.model.BlockFaceUV;
 import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
 import net.minecraft.client.renderer.block.model.ItemTransformVec3f;
@@ -47,15 +50,11 @@ import net.minecraftforge.items.ItemStackHandler;
 
 public class BasicGui extends GuiContainer
 {
-	public BasicGui(EntityPlayer player, ItemStackHandler handler) 
-	{
-		this(player, handler, false);
-	}
 	
-	protected BasicGui(EntityPlayer player, ItemStackHandler handler, boolean advanced) 
+	public BasicGui(EntityPlayer player, TileEntityCloakingMachine tileEntity) 
 	{
-		super(new ContainerBasicCloakingMachine(player, handler, advanced));
-		this.advanced = advanced;
+		super(new ContainerBasicCloakingMachine(player, tileEntity));
+		this.advanced = tileEntity.isAdvanced();
 	}
 	
 	private final boolean advanced;
@@ -133,8 +132,21 @@ public class BasicGui extends GuiContainer
             RenderHelper.enableStandardItemLighting();
         	BakedQuad quad = quadList.get(i);
             bufferbuilder.begin(7, DefaultVertexFormats.ITEM);
-        	renderQuad(bufferbuilder, quad, bakedmodel.isParentSelected(quad, this.selectedQuad) && advanced ? new ItemStack(Blocks.STONE) : inventoryColors.get(bakedmodel.getParentID(quad)), -1);
-            Minecraft.getMinecraft().getTextureManager().bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
+        	renderQuad(bufferbuilder, quad, bakedmodel.isParentSelected(quad, this.selectedQuad) && advanced ? new ItemStack(Blocks.STONE) : inventoryColors.get(bakedmodel.getParentID(quad)));
+        	
+        	int[] vertexData = new int[quad.getVertexData().length];
+        	System.arraycopy(quad.getVertexData(), 0, vertexData, 0, vertexData.length);
+        	BlockFaceUV faceUV = new BlockFaceUV(new float[]{0, 0, 1, 1}, 0);
+        	
+        	for(int j = 0; j < 4; j++)
+        	{
+        		int l = (vertexData.length / 4) * j;
+        		vertexData[l + 4] = Float.floatToRawIntBits(TextureStitchHandler.blockrender_overlay.getInterpolatedU((double)faceUV.getVertexU(j) * .999 + faceUV.getVertexU((j + 2) % 4) * .001));
+        		vertexData[l + 5] = Float.floatToRawIntBits(TextureStitchHandler.blockrender_overlay.getInterpolatedV((double)faceUV.getVertexV(j) * .999 + faceUV.getVertexV((j + 2) % 4) * .001));
+        	}
+        	BakedQuad colorlessQuad = new BakedQuad(vertexData, quad.getTintIndex(), quad.getFace(), quad.getSprite(), quad.shouldApplyDiffuseLighting(), quad.getFormat());
+            renderQuad(bufferbuilder, colorlessQuad, new ItemStack(Blocks.STONE));
+        	Minecraft.getMinecraft().getTextureManager().bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
             
             if(bakedmodel.isParentSelected(quad, this.selectedQuad) && advanced)
             {
@@ -194,9 +206,9 @@ public class BasicGui extends GuiContainer
 		this.drawDefaultBackground();
 	}
 	
-	private void renderQuad(BufferBuilder renderer, BakedQuad bakedquad, ItemStack stack, int color)
+	private void renderQuad(BufferBuilder renderer, BakedQuad bakedquad, ItemStack stack)
     {
-		int k = color;
+		int k = -1;
 
         if (bakedquad.hasTintIndex())
         {
@@ -255,10 +267,7 @@ public class BasicGui extends GuiContainer
 	@Override
 	protected void keyTyped(char typedChar, int keyCode) throws IOException 
 	{
-		if(keyCode == 1)
-		{
-			PacketSendRenderInfoAdvancedGUI.updateContainer((ContainerBasicCloakingMachine) this.inventorySlots, Minecraft.getMinecraft().player, true);
-			CloakNetwork.sendToServer(new PacketSendRenderInfoAdvancedGUI(true));
+		if(keyCode == 1) {
 			Minecraft.getMinecraft().displayGuiScreen(null);
 		}
 		super.keyTyped(typedChar, keyCode);

@@ -1,5 +1,7 @@
 package com.wynprice.cloak.common.blocks;
 
+import com.wynprice.cloak.CloakMod;
+import com.wynprice.cloak.common.handlers.CloakGUIHandler;
 import com.wynprice.cloak.common.tileentity.TileEntityCloakingMachine;
 
 import net.minecraft.block.Block;
@@ -25,14 +27,16 @@ public class BasicCloakingMachine extends Block implements ITileEntityProvider
 
 	@Override
 	public TileEntity createNewTileEntity(World worldIn, int meta) {
-		return new TileEntityCloakingMachine();
+		return new TileEntityCloakingMachine(true);
 	}
 	
 	@Override
 	public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn,
 			EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) 
 	{
-		return super.onBlockActivated(worldIn, pos, state, playerIn, hand, facing, hitX, hitY, hitZ);
+		if(!worldIn.isRemote)
+			playerIn.openGui(CloakMod.instance, CloakGUIHandler.ADVANCED_CLOAKING_MACHINE, worldIn, pos.getX(), pos.getY(), pos.getZ());
+		return true;
 	}
 
 }

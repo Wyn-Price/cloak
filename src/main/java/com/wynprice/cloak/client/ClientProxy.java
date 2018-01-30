@@ -1,6 +1,7 @@
 package com.wynprice.cloak.client;
 
 import com.wynprice.cloak.client.handlers.ModelBakeHandler;
+import com.wynprice.cloak.client.handlers.TextureStitchHandler;
 import com.wynprice.cloak.client.rendering.TileEntityCloakBlockRenderer;
 import com.wynprice.cloak.client.rendering.TileEntityCloakingMachineRenderer;
 import com.wynprice.cloak.common.CommonProxy;
@@ -54,7 +55,8 @@ public class ClientProxy extends CommonProxy
 	{
 		Object[] handlers = 
 			{
-					new ModelBakeHandler()
+					new ModelBakeHandler(),
+					new TextureStitchHandler()
 			};
 		
 		for(Object o : handlers)

@@ -48,6 +48,10 @@ public class CloakedModel implements IBakedModel
 		this.parentQuadMap = parentQuadMap;
 		return this;
 	}
+	
+	public HashMap<Integer, IBlockState> getOverrideList() {
+		return overrideList;
+	}
 
 	
 	public CloakedModel(IBlockState modelState, IBlockState renderState, HashMap<Integer, IBlockState> overrideList) 
@@ -62,6 +66,12 @@ public class CloakedModel implements IBakedModel
 	@Override
 	public List<BakedQuad> getQuads(IBlockState state, EnumFacing side, long rand) 
 	{
+		return getQuadsInternal(state, side, rand);
+	}
+	
+	private List<BakedQuad> getQuadsInternal(IBlockState state, EnumFacing side, long rand) 
+	{
+		rand = 0L;
 		ArrayList<BakedQuad> list = Lists.newArrayList();
 		for(BakedQuad modelQuad : oldModel_model.getQuads(modelState, side, rand))
 		{
@@ -86,6 +96,7 @@ public class CloakedModel implements IBakedModel
 		}
 		return list;
 	}
+
 	
 	public boolean isParentSelected(BakedQuad currentQuad, int selected)
 	{ 
@@ -99,9 +110,9 @@ public class CloakedModel implements IBakedModel
 	
 	public List<BakedQuad> getFullList()
 	{
-		List<BakedQuad> quadList = new ArrayList<>(this.getQuads((IBlockState)null, (EnumFacing)null, 0L));
+		List<BakedQuad> quadList = new ArrayList<>(this.getQuadsInternal((IBlockState)null, (EnumFacing)null, 0L));
         for (EnumFacing enumfacing : EnumFacing.values())
-        	quadList.addAll(this.getQuads(null, enumfacing, 0L));
+        	quadList.addAll(this.getQuadsInternal(null, enumfacing, 0L));
         return quadList;
 	}
 	

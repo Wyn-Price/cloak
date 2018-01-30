@@ -2,7 +2,6 @@ package com.wynprice.cloak.common.network.packets;
 
 import com.wynprice.cloak.common.containers.ContainerBasicCloakingMachine;
 
-import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.SoundEvents;
@@ -11,52 +10,21 @@ import net.minecraft.util.SoundCategory;
 
 public class PacketSendRenderInfoAdvancedGUI extends BasicMessagePacket<PacketSendRenderInfoAdvancedGUI>
 {
-	
-	public PacketSendRenderInfoAdvancedGUI() {
-	}
-	
-	public PacketSendRenderInfoAdvancedGUI(boolean removeAll) 
-	{
-		this.removeAll = removeAll;
-	}
-	
-	@Override
-	public void toBytes(ByteBuf buf) 
-	{
-		buf.writeBoolean(removeAll);
-	}
-	
-	@Override
-	public void fromBytes(ByteBuf buf) 
-	{
-		this.removeAll = buf.readBoolean();
-	}
-	
-	private boolean removeAll;
-
 	@Override
 	public void onReceived(PacketSendRenderInfoAdvancedGUI message, EntityPlayer player) 
 	{
 		ContainerBasicCloakingMachine container = ContainerBasicCloakingMachine.OPENMAP.get(player);
 		if(container != null)
-			updateContainer(container, player, message.removeAll);
+			updateContainer(container, player);
 	}
 	
-	public static void updateContainer(ContainerBasicCloakingMachine container, EntityPlayer player, boolean removeAll)
+	public static void updateContainer(ContainerBasicCloakingMachine container, EntityPlayer player)
 	{
 		for(ItemStack stack : container.modification_list.values())
-			spawnItemStack(player, stack);
-		if(removeAll)
-		{
-			for(int i = 36; i < 38; i++)
-			{
-				spawnItemStack(player, container.inventorySlots.get(i).getStack());
-			}
-			if(!player.world.isRemote)
-				ContainerBasicCloakingMachine.OPENMAP.remove(player);
-		}
-				
+			spawnItemStack(player, stack);		
 		container.modification_list.clear();
+		
+		container.markDirty();
 
 	}
 	

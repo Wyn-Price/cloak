@@ -4,11 +4,16 @@ import java.util.HashMap;
 
 import com.wynprice.cloak.common.containers.slots.SlotCaptureBlockOnly;
 import com.wynprice.cloak.common.containers.slots.SlotCaptureBlockOnlyAdvanced;
+import com.wynprice.cloak.common.tileentity.TileEntityCloakingMachine;
 
+import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.ItemStackHandler;
@@ -18,16 +23,25 @@ public class ContainerBasicCloakingMachine extends Container
 	
 	private final ItemStackHandler handler;
 	
-	public final HashMap<Integer, ItemStack> modification_list = new HashMap<>();
+	public final HashMap<Integer, ItemStack> modification_list;
 	
 	public int selectedContainer = -1;
+	
+	private final TileEntityCloakingMachine tileEntity;
 		
 	@SideOnly(Side.CLIENT)
-	public ContainerBasicCloakingMachine(EntityPlayer player, ItemStackHandler handler, boolean advanced)
+	public ContainerBasicCloakingMachine(EntityPlayer player, TileEntityCloakingMachine machine)
 	{
+		this.tileEntity = machine;
 		if(!player.world.isRemote)
 			OPENMAP.put(player, this);
-		this.handler = handler;
+		boolean advanced = machine.isAdvanced();
+		if(!advanced)
+			modification_list = new HashMap<>();
+		else
+			this.modification_list = machine.getCurrentModificationList();
+		this.handler = machine.getHandler();
+		
 		int id = 0;
 		
 		for (int l = 0; l < 3; ++l)
@@ -44,17 +58,17 @@ public class ContainerBasicCloakingMachine extends Container
         }
 		
 		if(handler.getSlots() != (advanced ? 3 : 2))
-			throw new RuntimeException("Containers was set with wrong data. Advanced :" + String.valueOf(advanced) + ", handlerSize: " + String.valueOf(handler.getSlots()));
+			throw new RuntimeException("Containers was set with wrong data. Advanced: " + String.valueOf(advanced) + ", handlerSize: " + String.valueOf(handler.getSlots()));
         
 		this.addSlotToContainer(new SlotCaptureBlockOnly(handler, 0, 152, 0).setEnabled(true));	
 		this.addSlotToContainer(new SlotCaptureBlockOnly(handler, 1, 8, 0).setEnabled(true));
+		
 		if(advanced)
 			this.addSlotToContainer(new SlotCaptureBlockOnlyAdvanced(this, handler, 2, 170, 0));	
 
 	}
 		
 	public static final HashMap<EntityPlayer, ContainerBasicCloakingMachine> OPENMAP = new HashMap<>();
-	
 	@Override
 	public ItemStack transferStackInSlot(EntityPlayer playerIn, int fromSlot) {
 	    ItemStack previous = ItemStack.EMPTY;
@@ -82,9 +96,31 @@ public class ContainerBasicCloakingMachine extends Container
 	    return previous;
 	}
 	
+	public void markDirty()
+	{
+		tileEntity.setCurrentModificationList(modification_list);
+		if(!tileEntity.getWorld().isRemote)
+			tileEntity.markDirty();
+	}
+	
 	@Override
 	public boolean canInteractWith(EntityPlayer playerIn) {
 		return true;
+	}
+	
+	public HashMap<Integer, IBlockState> getBlockStateMap()
+	{
+		HashMap<Integer, IBlockState> overrideList = new HashMap<>();
+		for(int i : this.modification_list.keySet())
+		{
+			if(this.modification_list.get(i) != null && !this.modification_list.get(i).isEmpty())
+			{
+				NBTTagCompound stackNBT = this.modification_list.get(i).getSubCompound("capture_info");
+				IBlockState stackState = Block.REGISTRY.getObject(new ResourceLocation(stackNBT.getString("block"))).getStateFromMeta(stackNBT.getInteger("meta"));
+				overrideList.put(i, stackState);
+			}
+		}
+		return overrideList;
 	}
 
 }

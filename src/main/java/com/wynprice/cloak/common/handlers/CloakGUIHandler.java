@@ -1,14 +1,14 @@
 package com.wynprice.cloak.common.handlers;
 
+import java.util.HashMap;
+
 import com.wynprice.cloak.client.rendering.gui.AdvancedGui;
 import com.wynprice.cloak.client.rendering.gui.BasicGui;
 import com.wynprice.cloak.common.containers.ContainerBasicCloakingMachine;
+import com.wynprice.cloak.common.tileentity.TileEntityCloakingMachine;
 
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Blocks;
-import net.minecraft.init.Items;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.NonNullList;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.network.IGuiHandler;
 import net.minecraftforge.items.ItemStackHandler;
@@ -22,20 +22,26 @@ public class CloakGUIHandler implements IGuiHandler
 	@Override
 	public Object getServerGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) //Return Container
 	{
-		if(ID == BASIC_CLOAKING_MACHINE)
-			return new ContainerBasicCloakingMachine(player, new ItemStackHandler(2), false);
+		BlockPos position = new BlockPos(x, y, z);
+		if(ID == BASIC_CLOAKING_MACHINE && world.getTileEntity(position) instanceof TileEntityCloakingMachine) {
+			return new ContainerBasicCloakingMachine(player, (TileEntityCloakingMachine)world.getTileEntity(position));
+		}
+		
 		else if(ID == ADVANCED_CLOAKING_MACHINE)
-			return new ContainerBasicCloakingMachine(player, new ItemStackHandler(3), true);
+			return new ContainerBasicCloakingMachine(player, (TileEntityCloakingMachine)world.getTileEntity(position));
+		
 		return null;
 	}
 
 	@Override
 	public Object getClientGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) //Return GUI screen
 	{
-		if(ID == BASIC_CLOAKING_MACHINE)
-			return new BasicGui(player, new ItemStackHandler(2));
+		BlockPos position = new BlockPos(x, y, z);
+		if(ID == BASIC_CLOAKING_MACHINE && world.getTileEntity(position) instanceof TileEntityCloakingMachine) {
+			return new BasicGui(player, (TileEntityCloakingMachine)world.getTileEntity(position));
+		}
 		else if(ID == ADVANCED_CLOAKING_MACHINE)
-			return new AdvancedGui(player, new ItemStackHandler(3));
+			return new AdvancedGui(player, (TileEntityCloakingMachine)world.getTileEntity(position));
 		return null;
 	}
 

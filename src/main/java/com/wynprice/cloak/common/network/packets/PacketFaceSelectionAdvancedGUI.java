@@ -50,13 +50,12 @@ public class PacketFaceSelectionAdvancedGUI extends BasicMessagePacket<PacketFac
 		SlotCaptureBlockOnly slot = (SlotCaptureBlockOnly) container.getSlot(38);
 		if(oldFace != -1)
 			container.modification_list.put(oldFace, slot.getStack());
-//				
 		if(newFace != -1)
 		{
 			ItemStack stack = container.modification_list.get(newFace);
 			slot.putStack(stack == null ? ItemStack.EMPTY : stack);
 		}
-		
+						
 		slot.setEnabled(newFace != -1);
 	}
 }

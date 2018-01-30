@@ -12,6 +12,7 @@ import com.wynprice.cloak.common.network.CloakNetwork;
 import com.wynprice.cloak.common.network.packets.PacketFaceSelectionAdvancedGUI;
 import com.wynprice.cloak.common.network.packets.PacketOpenBasicCloakingMachine;
 import com.wynprice.cloak.common.network.packets.PacketSendRenderInfoAdvancedGUI;
+import com.wynprice.cloak.common.tileentity.TileEntityCloakingMachine;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
@@ -31,11 +32,11 @@ public class AdvancedGui extends BasicGui
 
 	private EntityPlayer player;
 	
-	public AdvancedGui(EntityPlayer player, ItemStackHandler handler) {
-		super(player, handler, true);
+	public AdvancedGui(EntityPlayer player, TileEntityCloakingMachine tileEntity) {
+		super(player, tileEntity);
 	}
 	
-	private int previousSize;
+	private int previousSize = -1;
 	
 	@Override
 	public void updateScreen() 
@@ -56,8 +57,9 @@ public class AdvancedGui extends BasicGui
 				
 				if(size != previousSize)
 				{
+					if(previousSize != -1)
+						update = true;
 					previousSize = size;
-					update = true;
 				}
 			}
 		}
@@ -69,27 +71,15 @@ public class AdvancedGui extends BasicGui
 		
 		if(update)
 		{
-			PacketSendRenderInfoAdvancedGUI.updateContainer((ContainerBasicCloakingMachine) this.inventorySlots, Minecraft.getMinecraft().player, false);
-			CloakNetwork.sendToServer(new PacketSendRenderInfoAdvancedGUI(false));
+			PacketSendRenderInfoAdvancedGUI.updateContainer((ContainerBasicCloakingMachine) this.inventorySlots, Minecraft.getMinecraft().player);
+			CloakNetwork.sendToServer(new PacketSendRenderInfoAdvancedGUI());
 		}
 	}
 	
 	@Override
 	protected CloakedModel createModel(IBlockState modelState, IBlockState basicRenderState) 
 	{
-		HashMap<Integer, IBlockState> overrideList = new HashMap<>();
-		ContainerBasicCloakingMachine container = ((ContainerBasicCloakingMachine)this.inventorySlots);
-		for(int i : container.modification_list.keySet())
-		{
-			if(container.modification_list.get(i) != null && !container.modification_list.get(i).isEmpty())
-			{
-				NBTTagCompound stackNBT = container.modification_list.get(i).getSubCompound("capture_info");
-				IBlockState stackState = Block.REGISTRY.getObject(new ResourceLocation(stackNBT.getString("block"))).getStateFromMeta(stackNBT.getInteger("meta"));
-				overrideList.put(i, stackState);
-			}
-		}
-//		System.out.println(overrideList);
-		return new CloakedModel(modelState, basicRenderState, overrideList);
+		return new CloakedModel(modelState, basicRenderState, ((ContainerBasicCloakingMachine)this.inventorySlots).getBlockStateMap());
 	}
 	
 	@Override
