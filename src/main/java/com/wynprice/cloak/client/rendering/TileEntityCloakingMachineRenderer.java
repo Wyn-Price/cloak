@@ -71,7 +71,7 @@ public class TileEntityCloakingMachineRenderer<T extends BasicCloakedModelTileEn
     	IBlockState renderState = NBTUtil.readBlockState(te.getHandler().getStackInSlot(0).getOrCreateSubCompound("capture_info"));
     	IBlockState modelState = NBTUtil.readBlockState(te.getHandler().getStackInSlot(1).getOrCreateSubCompound("capture_info"));
     	
-    	CloakedModel model = factory.createModel(modelState, renderState);
+    	CloakedModel model = factory.createModel(world, te.getPos(), modelState, renderState);
     	
     	HashMap<Integer, IBlockState> overrideList = new HashMap<>();
 		for(int i : te.getCurrentModificationList().keySet())

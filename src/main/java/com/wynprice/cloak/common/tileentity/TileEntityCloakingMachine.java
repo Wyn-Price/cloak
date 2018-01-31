@@ -1,19 +1,15 @@
 package com.wynprice.cloak.common.tileentity;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-
 import com.wynprice.cloak.client.rendering.CloakedRenderingFactory;
 import com.wynprice.cloak.client.rendering.models.BasicCloakingMachineModel;
 import com.wynprice.cloak.client.rendering.models.CloakedModel;
 
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.init.Blocks;
-import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import net.minecraftforge.items.ItemStackHandler;
 
 public class TileEntityCloakingMachine extends BasicCloakedModelTileEntity
 {
@@ -54,7 +50,7 @@ public class TileEntityCloakingMachine extends BasicCloakedModelTileEntity
 	public static final CloakedRenderingFactory FACTORY = new CloakedRenderingFactory() {
 		
 		@Override
-		public CloakedModel createModel(IBlockState modelState, IBlockState renderState) 
+		public CloakedModel createModel(World world, BlockPos pos, IBlockState modelState, IBlockState renderState) 
 		{
 			return new BasicCloakingMachineModel(modelState, renderState);
 		}

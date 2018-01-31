@@ -28,9 +28,9 @@ public class TileEntityCloakBlockRenderer extends TileEntityCloakingMachineRende
 		super(new CloakedRenderingFactory() {
 			
 			@Override
-			public CloakedModel createModel(IBlockState modelState, IBlockState renderState) 
+			public CloakedModel createModel(World world, BlockPos pos, IBlockState modelState, IBlockState renderState) 
 			{
-				return new CloakedModel(modelState, renderState);
+				return new CloakedModel(modelState.getActualState(world, pos), renderState);
 			}
 		});
 	}
