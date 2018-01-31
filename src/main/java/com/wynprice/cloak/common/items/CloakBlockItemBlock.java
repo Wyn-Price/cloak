@@ -34,9 +34,7 @@ public class CloakBlockItemBlock extends ItemBlock
         if (state.getBlock() == this.block)
         {
         	TileEntityCloakBlock te = (TileEntityCloakBlock) world.getTileEntity(pos);
-        	NBTTagCompound nbt = stack.getOrCreateSubCompound("capture_info");
-        	te.setModelState(Block.REGISTRY.getObject(new ResourceLocation(nbt.getString("model_block"))).getStateFromMeta(nbt.getInteger("model_meta")));
-        	te.setRenderState(Block.REGISTRY.getObject(new ResourceLocation(nbt.getString("render_block"))).getStateFromMeta(nbt.getInteger("render_meta")));
+        	te.readRenderData(stack.getOrCreateSubCompound("rendering_info"));
             this.block.onBlockPlacedBy(world, pos, state, player, stack);
 
             if (player instanceof EntityPlayerMP)

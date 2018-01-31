@@ -1,8 +1,9 @@
 package com.wynprice.cloak.client.handlers;
 
 import com.wynprice.cloak.CloakMod;
-import com.wynprice.cloak.client.rendering.BasicCloakingMachineModel;
-import com.wynprice.cloak.client.rendering.BlockCaptureModel;
+import com.wynprice.cloak.client.rendering.models.BasicCloakingMachineModel;
+import com.wynprice.cloak.client.rendering.models.BlockCaptureModel;
+import com.wynprice.cloak.client.rendering.models.CloakBlockItemModel;
 import com.wynprice.cloak.common.blocks.BasicCloakingMachine;
 
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
@@ -21,6 +22,8 @@ public class ModelBakeHandler
 				String loc = location.getResourcePath();
 				if(loc.equals("block_capture"))
 					event.getModelRegistry().putObject(location, new BlockCaptureModel(event.getModelRegistry().getObject(location)));
+				if(loc.equals("cloak_block"))
+					event.getModelRegistry().putObject(location, new CloakBlockItemModel(event.getModelRegistry().getObject(location)));
 			}
 
 	}

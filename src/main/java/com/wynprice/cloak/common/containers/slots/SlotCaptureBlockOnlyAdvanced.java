@@ -17,14 +17,14 @@ import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
 import net.minecraftforge.items.SlotItemHandler;
 
-public class SlotCaptureBlockOnlyAdvanced extends SlotCaptureBlockOnly
+public class SlotCaptureBlockOnlyAdvanced extends SlotItemOnly
 {
 	
 	private final ContainerBasicCloakingMachine container;
 
 	public SlotCaptureBlockOnlyAdvanced(ContainerBasicCloakingMachine container, ItemStackHandler itemHandler, int index, int xPosition, int yPosition) 
 	{
-		super(itemHandler, index, xPosition, yPosition);
+		super(itemHandler, CloakItems.BLOCKSTATE_CARD ,1,  index, xPosition, yPosition);
 		this.container = container;
 	}
 	

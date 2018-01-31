@@ -1,4 +1,4 @@
-package com.wynprice.cloak.client.rendering;
+package com.wynprice.cloak.client.rendering.models;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,6 +22,7 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTUtil;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
@@ -40,10 +41,8 @@ public class BlockCaptureModel extends BaseModelProxy
 		List<BakedQuad> list = new ArrayList<>(oldModel.getQuads(state, side, rand));
 		if(list.isEmpty() || stack.isEmpty())
 			return Lists.newArrayList();
-		NBTTagCompound nbt = stack.getOrCreateSubCompound("capture_info");
-		Block block = Block.REGISTRY.getObject(new ResourceLocation(nbt.getString("block")));
-		if(block == Blocks.AIR) return list;
-		IBlockState renderState = block.getStateFromMeta(nbt.getInteger("meta"));
+		IBlockState renderState = NBTUtil.readBlockState(stack.getOrCreateSubCompound("capture_info"));
+		if(renderState.getBlock() == Blocks.AIR) return list;
 		if(!list.isEmpty())
 		{
 			IBakedModel renderModel = Minecraft.getMinecraft().getBlockRendererDispatcher().getModelForState(renderState);

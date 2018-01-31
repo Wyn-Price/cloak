@@ -1,4 +1,4 @@
-package com.wynprice.cloak.client.rendering;
+package com.wynprice.cloak.client.rendering.models;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -21,6 +21,7 @@ import net.minecraft.client.renderer.block.model.ItemCameraTransforms.TransformT
 import net.minecraft.client.renderer.block.model.ItemOverrideList;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
@@ -69,6 +70,8 @@ public class CloakedModel implements IBakedModel
 		return getQuadsInternal(state, side, rand);
 	}
 	
+	protected HashMap<BakedQuad, IBlockState> currentRenderingMap = new HashMap<>();
+	
 	private List<BakedQuad> getQuadsInternal(IBlockState state, EnumFacing side, long rand) 
 	{
 		rand = 0L;
@@ -76,7 +79,10 @@ public class CloakedModel implements IBakedModel
 		for(BakedQuad modelQuad : oldModel_model.getQuads(modelState, side, rand))
 		{
 			int l = getIndentifierList().indexOf(modelQuad);
-			List<BakedQuad> textureQuads = overrideList.containsKey(l) ? Minecraft.getMinecraft().getBlockRendererDispatcher().getModelForState(overrideList.get(l)).getQuads(overrideList.get(l), modelQuad.getFace(), rand) : oldModel_texure.getQuads(renderState, modelQuad.getFace(), rand);
+			Pair<IBakedModel, IBlockState> blocklistPair = overrideList.containsKey(l) ? Pair.of(Minecraft.getMinecraft().getBlockRendererDispatcher().getModelForState(overrideList.get(l)), overrideList.get(l)) : Pair.of(oldModel_texure, renderState);
+			List<BakedQuad> textureQuads = blocklistPair.getKey().getQuads(blocklistPair.getRight(), modelQuad.getFace(), rand);
+			if(textureQuads.isEmpty())
+				textureQuads = blocklistPair.getKey().getQuads(blocklistPair.getRight(), null, rand);
 			for(BakedQuad renderQuad : textureQuads)
 			{
 				int[] modelVertex = new int[modelQuad.getVertexData().length];
@@ -91,10 +97,18 @@ public class CloakedModel implements IBakedModel
 				}
 				BakedQuad newQuad = new BakedQuad(modelVertex, renderQuad.getTintIndex(), renderQuad.getFace(), renderQuad.getSprite(), renderQuad.shouldApplyDiffuseLighting(), renderQuad.getFormat());
 				parentQuadMap.put(newQuad, modelQuad);
+				currentRenderingMap.put(newQuad, overrideList.containsKey(l) ? overrideList.get(l) : renderState);
 				list.add(newQuad);
 			}
 		}
 		return list;
+	}
+	
+	public IBlockState getStateFromQuad(BakedQuad quad)
+	{
+		IBlockState state = currentRenderingMap.get(quad);
+		if(state == null) state = Blocks.STONE.getDefaultState();
+		return state;
 	}
 
 	

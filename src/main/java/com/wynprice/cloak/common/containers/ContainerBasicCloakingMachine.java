@@ -2,21 +2,25 @@ package com.wynprice.cloak.common.containers;
 
 import java.util.HashMap;
 
-import com.wynprice.cloak.common.containers.slots.SlotCaptureBlockOnly;
+import com.wynprice.cloak.common.containers.slots.SlotItemOnly;
+import com.wynprice.cloak.common.registries.CloakBlocks;
+import com.wynprice.cloak.common.registries.CloakItems;
+import com.wynprice.cloak.common.blocks.CloakBlock;
 import com.wynprice.cloak.common.containers.slots.SlotCaptureBlockOnlyAdvanced;
+import com.wynprice.cloak.common.containers.slots.SlotItemHandlerOutput;
 import com.wynprice.cloak.common.tileentity.TileEntityCloakingMachine;
 
-import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.Slot;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.nbt.NBTUtil;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.ItemStackHandler;
+import net.minecraftforge.items.SlotItemHandler;
 
 public class ContainerBasicCloakingMachine extends Container
 {
@@ -56,16 +60,15 @@ public class ContainerBasicCloakingMachine extends Container
         {
             this.addSlotToContainer(new Slot(player.inventory, i1, 8 + i1 * 18, 161 + 20));
         }
+				
+		this.addSlotToContainer(new SlotItemOnly(handler, CloakItems.BLOCKSTATE_CARD, 1, 1, 8, 0).setEnabled(true)); //36
+		this.addSlotToContainer(new SlotItemOnly(handler, CloakItems.BLOCKSTATE_CARD, 1, 0, 152, 0).setEnabled(true)); //37
 		
-		if(handler.getSlots() != (advanced ? 3 : 2))
-			throw new RuntimeException("Containers was set with wrong data. Advanced: " + String.valueOf(advanced) + ", handlerSize: " + String.valueOf(handler.getSlots()));
-        
-		this.addSlotToContainer(new SlotCaptureBlockOnly(handler, 0, 152, 0).setEnabled(true));	
-		this.addSlotToContainer(new SlotCaptureBlockOnly(handler, 1, 8, 0).setEnabled(true));
+		this.addSlotToContainer(new SlotItemOnly(handler, Item.getItemFromBlock(CloakBlocks.CLOAK_BLOCK), 64, 3, 170, 100).setEnabled(true)); //38
+		this.addSlotToContainer(new SlotItemHandlerOutput(handler, 4, 170, 110)); //39
 		
 		if(advanced)
-			this.addSlotToContainer(new SlotCaptureBlockOnlyAdvanced(this, handler, 2, 170, 0));	
-
+			this.addSlotToContainer(new SlotCaptureBlockOnlyAdvanced(this, handler, 2, 170, 0)); //40
 	}
 		
 	public static final HashMap<EntityPlayer, ContainerBasicCloakingMachine> OPENMAP = new HashMap<>();
@@ -78,7 +81,7 @@ public class ContainerBasicCloakingMachine extends Container
 	        ItemStack current = slot.getStack();
 	        previous = current.copy();
 	        if (fromSlot < 36) {
-	            if (!this.mergeItemStack(current, 36, handler.getSlots() + 36, true))
+	            if (!this.mergeItemStack(current, 36, handler.getSlots() + 36 - (this.tileEntity.isAdvanced() ? 0 : 1), false))
 	                return ItemStack.EMPTY;
 	        } else {
 	            if (!this.mergeItemStack(current, 0, 36, false))
@@ -96,11 +99,21 @@ public class ContainerBasicCloakingMachine extends Container
 	    return previous;
 	}
 	
+	@Override
+	public void detectAndSendChanges() {
+		super.detectAndSendChanges();
+		markDirty();
+	}
+	
 	public void markDirty()
 	{
 		tileEntity.setCurrentModificationList(modification_list);
 		if(!tileEntity.getWorld().isRemote)
 			tileEntity.markDirty();
+	}
+	
+	public TileEntityCloakingMachine getTileEntity() {
+		return tileEntity;
 	}
 	
 	@Override
@@ -112,14 +125,8 @@ public class ContainerBasicCloakingMachine extends Container
 	{
 		HashMap<Integer, IBlockState> overrideList = new HashMap<>();
 		for(int i : this.modification_list.keySet())
-		{
 			if(this.modification_list.get(i) != null && !this.modification_list.get(i).isEmpty())
-			{
-				NBTTagCompound stackNBT = this.modification_list.get(i).getSubCompound("capture_info");
-				IBlockState stackState = Block.REGISTRY.getObject(new ResourceLocation(stackNBT.getString("block"))).getStateFromMeta(stackNBT.getInteger("meta"));
-				overrideList.put(i, stackState);
-			}
-		}
+				overrideList.put(i, NBTUtil.readBlockState(this.modification_list.get(i).getSubCompound("capture_info")));
 		return overrideList;
 	}
 

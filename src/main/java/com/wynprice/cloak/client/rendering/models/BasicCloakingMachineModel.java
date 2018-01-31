@@ -1,4 +1,4 @@
-package com.wynprice.cloak.client.rendering;
+package com.wynprice.cloak.client.rendering.models;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -29,72 +29,22 @@ public class BasicCloakingMachineModel extends CloakedModel
 	public BasicCloakingMachineModel(IBlockState modelState, IBlockState renderState) {
 		super(modelState, renderState);
 	}	
-	
-	private static long waitTimer;
-	
-	private static double timer;
-	private static long prevTime;
-	
-	private HashMap<BakedQuad, IBlockState> currentRenderingMap = new HashMap<>();
-	
+		
 	@Override
 	public List<BakedQuad> getQuads(IBlockState state, EnumFacing side, long rand) 
-	{
-		int time = 20;
-		int weight = 5000;
-		
+	{		
 		ArrayList<BakedQuad> list = Lists.newArrayList();
 		IBakedModel renderModel = Minecraft.getMinecraft().getBlockRendererDispatcher().getModelForState(renderState);
-		double angle = (System.currentTimeMillis() / 200D) % 360;
-		ArrayList<BakedQuad> quadList = new ArrayList<>();
-		
+		double angle = (System.currentTimeMillis() / 500D) % 360;
 		HashMap<BakedQuad, IBlockState> localParentMap = new HashMap<>();
-		
-//		if(System.currentTimeMillis() - waitTimer < -weight / 2 || timer > 6.28319d / 2f)
-			for(BakedQuad quad : super.getQuads(state, side, rand))
-			{
-				localParentMap.put(quad, state);
-				quadList.add(quad);
-			}
-//		else
-//		{
-//			for(IBlockState renderingModel : this.overrideList.values())
-//				for(BakedQuad quad : Minecraft.getMinecraft().getBlockRendererDispatcher().getModelForState(renderingModel).getQuads(renderingModel, side, rand))
-//				{
-//					localParentMap.put(quad, renderingModel);
-//					quadList.add(quad);
-//				}
-//			
-//			for(BakedQuad quad : this.oldModel_texure.getQuads(state, side, rand))
-//			{
-//				localParentMap.put(quad, this.renderState);
-//				quadList.add(quad);
-//			}
-//		}
-		
 		int reset = 0;
-		
-		for(BakedQuad quad : quadList)
+		for(BakedQuad quad : super.getQuads(state, side, rand))
 		{
 			int[] vertexData = new int[quad.getVertexData().length];
 			System.arraycopy(quad.getVertexData(), 0, vertexData, 0, vertexData.length);
 			for(int j = 0; j < 4; j++)
 			{
 				int i = (vertexData.length / 4) * j;
-				if(System.currentTimeMillis() - waitTimer > 0)
-				{
-					if(System.currentTimeMillis() > prevTime)
-					{
-						prevTime = System.currentTimeMillis();
-						timer = timer += 0.1d / time; //0.001 = 100 seconds
-						if(timer > 6.28319d)
-						{
-							timer = 0;
-							waitTimer = System.currentTimeMillis() + weight;
-						}
-					}
-//					angle += timer;
-				}
 				float size = 5 / 16f;
 				float xOrigin = Float.intBitsToFloat(vertexData[i + 0]) * size + 0.5f - size / 2f;
 				float zOrigin = Float.intBitsToFloat(vertexData[i + 2]) * size + 0.5f - size / 2f;
@@ -104,18 +54,14 @@ public class BasicCloakingMachineModel extends CloakedModel
 			}
 			
 			BakedQuad newQuad = new BakedQuad(vertexData, quad.getTintIndex(), quad.getFace(), quad.getSprite(), quad.shouldApplyDiffuseLighting(), quad.getFormat());
-			currentRenderingMap.put(newQuad, localParentMap.get(quad));
+			localParentMap.put(newQuad, currentRenderingMap.get(quad));
 			list.add(newQuad);
 		}
+		currentRenderingMap.clear();
+		currentRenderingMap.putAll(localParentMap);
 		return list;
 	}
 	
-	public IBlockState getStateFromQuad(BakedQuad quad)
-	{
-		IBlockState state = currentRenderingMap.get(quad);
-		if(state == null) state = Blocks.STONE.getDefaultState();
-		return state;
-	}
 	
 	@Override
 	public boolean isAmbientOcclusion() {

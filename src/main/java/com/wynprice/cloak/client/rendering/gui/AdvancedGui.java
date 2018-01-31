@@ -3,28 +3,22 @@ package com.wynprice.cloak.client.rendering.gui;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import org.apache.commons.lang3.tuple.Pair;
-
 import com.google.common.collect.Lists;
-import com.wynprice.cloak.client.rendering.CloakedModel;
+import com.wynprice.cloak.client.rendering.models.CloakedModel;
 import com.wynprice.cloak.common.containers.ContainerBasicCloakingMachine;
 import com.wynprice.cloak.common.network.CloakNetwork;
 import com.wynprice.cloak.common.network.packets.PacketFaceSelectionAdvancedGUI;
-import com.wynprice.cloak.common.network.packets.PacketOpenBasicCloakingMachine;
-import com.wynprice.cloak.common.network.packets.PacketSendRenderInfoAdvancedGUI;
+import com.wynprice.cloak.common.network.packets.PacketRemoveModificationList;
 import com.wynprice.cloak.common.tileentity.TileEntityCloakingMachine;
 
-import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.BakedQuad;
-import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTUtil;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.items.ItemStackHandler;
 
 public class AdvancedGui extends BasicGui
@@ -36,44 +30,25 @@ public class AdvancedGui extends BasicGui
 		super(player, tileEntity);
 	}
 	
-	private int previousSize = -1;
+	private boolean previous36;
+	private boolean previous37;
+	private boolean hasOpened;
 	
 	@Override
 	public void updateScreen() 
 	{
-		boolean update = false;
-		if(this.inventorySlots.getSlot(37).getHasStack())
+		if(previous36 != this.inventorySlots.getSlot(36).getHasStack() || previous37 != this.inventorySlots.getSlot(37).getHasStack())
 		{
-			NBTTagCompound modelStackNBT = this.inventorySlots.getSlot(37).getStack().getSubCompound("capture_info");
-			IBlockState modelState = Block.REGISTRY.getObject(new ResourceLocation(modelStackNBT.getString("block"))).getStateFromMeta(modelStackNBT.getInteger("meta"));
-			ArrayList<EnumFacing> facingList = Lists.newArrayList((EnumFacing)null);
-			if(modelState.getBlock() != Blocks.AIR)
+			previous36 = this.inventorySlots.getSlot(36).getHasStack();
+			previous37 = this.inventorySlots.getSlot(37).getHasStack();
+			
+			if(hasOpened)
 			{
-				facingList.addAll(Lists.newArrayList(EnumFacing.VALUES));
-				int size = 0;
-				for(EnumFacing facing : facingList)
-					for(BakedQuad quad : Minecraft.getMinecraft().getBlockRendererDispatcher().getModelForState(modelState).getQuads(modelState, facing, 0L))
-						size++;
-				
-				if(size != previousSize)
-				{
-					if(previousSize != -1)
-						update = true;
-					previousSize = size;
-				}
+				PacketRemoveModificationList.updateContainer((ContainerBasicCloakingMachine) this.inventorySlots, Minecraft.getMinecraft().player);
+				CloakNetwork.sendToServer(new PacketRemoveModificationList());
 			}
 		}
-		else if(previousSize != 0)
-		{
-			previousSize = 0;
-			update = true;
-		}
-		
-		if(update)
-		{
-			PacketSendRenderInfoAdvancedGUI.updateContainer((ContainerBasicCloakingMachine) this.inventorySlots, Minecraft.getMinecraft().player);
-			CloakNetwork.sendToServer(new PacketSendRenderInfoAdvancedGUI());
-		}
+		hasOpened = true;
 	}
 	
 	@Override

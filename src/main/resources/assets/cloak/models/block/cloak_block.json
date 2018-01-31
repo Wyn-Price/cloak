@@ -1,6 +1,7 @@
 {
     "parent": "block/cube_all",
     "textures": {
-        "all": "cloak:blocks/cloak_block"
+        "all": "cloak:blocks/cloak_block",
+        "particle": "cloak:blocks/empty"
     }
 }

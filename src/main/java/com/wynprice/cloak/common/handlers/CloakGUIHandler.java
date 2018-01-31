@@ -27,7 +27,7 @@ public class CloakGUIHandler implements IGuiHandler
 			return new ContainerBasicCloakingMachine(player, (TileEntityCloakingMachine)world.getTileEntity(position));
 		}
 		
-		else if(ID == ADVANCED_CLOAKING_MACHINE)
+		else if(ID == ADVANCED_CLOAKING_MACHINE && world.getTileEntity(position) instanceof TileEntityCloakingMachine)
 			return new ContainerBasicCloakingMachine(player, (TileEntityCloakingMachine)world.getTileEntity(position));
 		
 		return null;
@@ -40,7 +40,7 @@ public class CloakGUIHandler implements IGuiHandler
 		if(ID == BASIC_CLOAKING_MACHINE && world.getTileEntity(position) instanceof TileEntityCloakingMachine) {
 			return new BasicGui(player, (TileEntityCloakingMachine)world.getTileEntity(position));
 		}
-		else if(ID == ADVANCED_CLOAKING_MACHINE)
+		else if(ID == ADVANCED_CLOAKING_MACHINE && world.getTileEntity(position) instanceof TileEntityCloakingMachine)
 			return new AdvancedGui(player, (TileEntityCloakingMachine)world.getTileEntity(position));
 		return null;
 	}

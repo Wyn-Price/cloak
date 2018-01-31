@@ -2,28 +2,32 @@ package com.wynprice.cloak.common.containers.slots;
 
 import com.wynprice.cloak.common.registries.CloakItems;
 
-import net.minecraft.inventory.Slot;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
 import net.minecraftforge.items.SlotItemHandler;
 
-public class SlotCaptureBlockOnly extends SlotItemHandler
+public class SlotItemOnly extends SlotItemHandler
 {
 	
-	public SlotCaptureBlockOnly(ItemStackHandler itemHandler, int index, int xPosition, int yPosition) 
+	private final Item item;
+	private final int slotLimit;
+	
+	public SlotItemOnly(ItemStackHandler itemHandler, Item item, int slotLimit, int index, int xPosition, int yPosition) 
 	{
 		super(itemHandler, index, xPosition, yPosition);
+		this.item = item;
+		this.slotLimit = slotLimit;
 	}
 	
 	@Override
 	public boolean isItemValid(ItemStack stack) {
-		return super.isItemValid(stack) && stack.getItem() == CloakItems.BLOCKSTATE_CARD && this.enabled;
+		return super.isItemValid(stack) && stack.getItem() == item && this.enabled;
 	}
 	
 	private boolean enabled = false;
 	
-	public SlotCaptureBlockOnly setEnabled(boolean enabled) 
+	public SlotItemOnly setEnabled(boolean enabled) 
 	{
 		this.enabled = enabled;
 		return this;
@@ -37,7 +41,7 @@ public class SlotCaptureBlockOnly extends SlotItemHandler
 	@Override
 	public int getSlotStackLimit() 
 	{
-		return 1;
+		return slotLimit;
 	}
 
 }

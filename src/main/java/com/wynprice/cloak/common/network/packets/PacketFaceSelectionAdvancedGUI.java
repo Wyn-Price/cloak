@@ -1,7 +1,7 @@
 package com.wynprice.cloak.common.network.packets;
 
 import com.wynprice.cloak.common.containers.ContainerBasicCloakingMachine;
-import com.wynprice.cloak.common.containers.slots.SlotCaptureBlockOnly;
+import com.wynprice.cloak.common.containers.slots.SlotItemOnly;
 
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayer;
@@ -46,8 +46,10 @@ public class PacketFaceSelectionAdvancedGUI extends BasicMessagePacket<PacketFac
 	
 	public static void setContainerFace(ContainerBasicCloakingMachine container, int newFace, int oldFace)
 	{
+		if(!container.getTileEntity().isAdvanced())
+			return;
 		container.selectedContainer = newFace;
-		SlotCaptureBlockOnly slot = (SlotCaptureBlockOnly) container.getSlot(38);
+		SlotItemOnly slot = (SlotItemOnly) container.getSlot(40);
 		if(oldFace != -1)
 			container.modification_list.put(oldFace, slot.getStack());
 		if(newFace != -1)

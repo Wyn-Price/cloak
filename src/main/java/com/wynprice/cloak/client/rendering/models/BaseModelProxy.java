@@ -1,4 +1,4 @@
-package com.wynprice.cloak.client.rendering;
+package com.wynprice.cloak.client.rendering.models;
 
 import java.util.List;
 

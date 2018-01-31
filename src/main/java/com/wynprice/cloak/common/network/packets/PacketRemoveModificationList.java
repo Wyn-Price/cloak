@@ -8,10 +8,10 @@ import net.minecraft.init.SoundEvents;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.SoundCategory;
 
-public class PacketSendRenderInfoAdvancedGUI extends BasicMessagePacket<PacketSendRenderInfoAdvancedGUI>
+public class PacketRemoveModificationList extends BasicMessagePacket<PacketRemoveModificationList>
 {
 	@Override
-	public void onReceived(PacketSendRenderInfoAdvancedGUI message, EntityPlayer player) 
+	public void onReceived(PacketRemoveModificationList message, EntityPlayer player) 
 	{
 		ContainerBasicCloakingMachine container = ContainerBasicCloakingMachine.OPENMAP.get(player);
 		if(container != null)
@@ -20,10 +20,12 @@ public class PacketSendRenderInfoAdvancedGUI extends BasicMessagePacket<PacketSe
 	
 	public static void updateContainer(ContainerBasicCloakingMachine container, EntityPlayer player)
 	{
+		if(!container.getTileEntity().isAdvanced())
+			return;
 		for(ItemStack stack : container.modification_list.values())
 			spawnItemStack(player, stack);		
 		container.modification_list.clear();
-		
+		container.getSlot(40).putStack(ItemStack.EMPTY);
 		container.markDirty();
 
 	}

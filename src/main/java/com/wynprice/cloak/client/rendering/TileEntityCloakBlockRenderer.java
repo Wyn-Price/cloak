@@ -2,6 +2,7 @@ package com.wynprice.cloak.client.rendering;
 
 import org.lwjgl.opengl.GL11;
 
+import com.wynprice.cloak.client.rendering.models.CloakedModel;
 import com.wynprice.cloak.common.tileentity.TileEntityCloakBlock;
 
 import net.minecraft.block.Block;
@@ -20,56 +21,17 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
-public class TileEntityCloakBlockRenderer extends TileEntitySpecialRenderer<TileEntityCloakBlock>
+public class TileEntityCloakBlockRenderer extends TileEntityCloakingMachineRenderer<TileEntityCloakBlock>
 {
-	
-	public static IBlockState currentRender;
-	public static World currentWorld;
-	public static BlockPos currentPos;
-	
-	@Override
-	public void render(TileEntityCloakBlock te, double x, double y, double z, float partialTicks, int destroyStage,
-			float alpha) 
+	public TileEntityCloakBlockRenderer() 
 	{
-		GlStateManager.pushMatrix();
-    	GlStateManager.enableBlend();
-        GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-        EntityPlayer entityplayer = Minecraft.getMinecraft().player;
-        double d0 = (entityplayer.lastTickPosX + (entityplayer.posX - entityplayer.lastTickPosX) * (double)partialTicks);
-        double d1 = (entityplayer.lastTickPosY + (entityplayer.posY - entityplayer.lastTickPosY) * (double)partialTicks);
-        double d2 = (entityplayer.lastTickPosZ + (entityplayer.posZ - entityplayer.lastTickPosZ) * (double)partialTicks);
-        Tessellator.getInstance().getBuffer().setTranslation(-d0, -d1, -d2);
-        this.bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
-        RenderHelper.disableStandardItemLighting();
-        GlStateManager.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
-        GlStateManager.enableBlend();
-        World world = getWorld();
-        Tessellator.getInstance().getBuffer().noColor();
-        Tessellator tessellator = Tessellator.getInstance();
-        Block block = te.getWorld().getBlockState(te.getPos()).getBlock();
-        currentRender = te.getWorld().getBlockState(te.getPos()).getActualState(te.getWorld(), te.getPos());
-        currentPos = te.getPos();
-        currentWorld = te.getWorld();
-        tessellator.getBuffer().begin(GL11.GL_QUADS, DefaultVertexFormats.BLOCK);
-        GlStateManager.shadeModel(Minecraft.isAmbientOcclusionEnabled() ? 7425 : 7424);
-        
-//        if(te.getState().getBlock() != Blocks.AIR)
-        {
-        	IBlockState modelState = Blocks.ACACIA_STAIRS.getDefaultState().withProperty(BlockStairs.FACING, EnumFacing.SOUTH);
-        	IBlockState renderState = Blocks.CHAIN_COMMAND_BLOCK.getDefaultState();
-        	Minecraft.getMinecraft().getBlockRendererDispatcher().getBlockModelRenderer().renderModel(world, new CloakedModel(modelState, renderState), renderState, te.getPos().up(), tessellator.getBuffer(), true);
-        }
-        tessellator.draw();
-        GlStateManager.shadeModel(7424);
-        Tessellator.getInstance().getBuffer().setTranslation(0, 0, 0);
-    	GlStateManager.disableBlend();
-        RenderHelper.enableStandardItemLighting();
-		GlStateManager.popMatrix();
-		super.render(te, x, y, z, partialTicks, destroyStage, alpha);
-	}
-	
-	@Override
-	public boolean isGlobalRenderer(TileEntityCloakBlock te) {
-		return true;
+		super(new CloakedRenderingFactory() {
+			
+			@Override
+			public CloakedModel createModel(IBlockState modelState, IBlockState renderState) 
+			{
+				return new CloakedModel(modelState, renderState);
+			}
+		});
 	}
 }

@@ -15,15 +15,17 @@ import org.lwjgl.input.Mouse;
 import org.lwjgl.util.vector.Vector3f;
 
 import com.wynprice.cloak.client.handlers.TextureStitchHandler;
-import com.wynprice.cloak.client.rendering.CloakedModel;
+import com.wynprice.cloak.client.rendering.models.CloakedModel;
 import com.wynprice.cloak.common.containers.ContainerBasicCloakingMachine;
 import com.wynprice.cloak.common.network.CloakNetwork;
-import com.wynprice.cloak.common.network.packets.PacketSendRenderInfoAdvancedGUI;
+import com.wynprice.cloak.common.network.packets.PacketInitiateCloakingRecipe;
+import com.wynprice.cloak.common.network.packets.PacketRemoveModificationList;
 import com.wynprice.cloak.common.tileentity.TileEntityCloakingMachine;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.EntityRenderer;
@@ -43,6 +45,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTUtil;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.ForgeHooksClient;
@@ -69,8 +72,14 @@ public class BasicGui extends GuiContainer
 		super.drawScreen(mouseX, mouseY, partialTicks);
     	
 		renderCenterBlock(mouseX, mouseY);
-    	
 	}	
+	
+	@Override
+	public void initGui() 
+	{
+		addButton(new GuiButton(0, 320, 130, 50, 20, "ting"));
+		super.initGui();
+	}
 	
 	protected CloakedModel createModel(IBlockState modelState, IBlockState basicRenderState)
 	{
@@ -91,11 +100,10 @@ public class BasicGui extends GuiContainer
 		
 		if(!this.inventorySlots.getSlot(37).getHasStack() || !this.inventorySlots.getSlot(36).getHasStack()) return;
 		NBTTagCompound stack37NBT = this.inventorySlots.getSlot(37).getStack().getSubCompound("capture_info");
-		NBTTagCompound stack36NBT = this.inventorySlots.getSlot(36).getStack().getSubCompound("capture_info");
-		IBlockState modelState = Block.REGISTRY.getObject(new ResourceLocation(stack37NBT.getString("block"))).getStateFromMeta(stack37NBT.getInteger("meta"));
-		IBlockState renderState = Block.REGISTRY.getObject(new ResourceLocation(stack36NBT.getString("block"))).getStateFromMeta(stack36NBT.getInteger("meta"));
+		IBlockState modelState = NBTUtil.readBlockState(this.inventorySlots.getSlot(36).getStack().getSubCompound("capture_info"));
+		IBlockState renderState = NBTUtil.readBlockState(stack37NBT);
 		ItemStackHandler localHandler = new ItemStackHandler(1);
-		localHandler.deserializeNBT(stack36NBT.getCompoundTag("item"));
+		localHandler.deserializeNBT(stack37NBT.getCompoundTag("item"));
 		ItemStack stack = localHandler.getStackInSlot(0);
 		CloakedModel bakedmodel = createModel(modelState, renderState);
 		HashMap<Integer, ItemStack> inventoryColors = getInventoryColors(bakedmodel, stack);
@@ -267,9 +275,19 @@ public class BasicGui extends GuiContainer
 	@Override
 	protected void keyTyped(char typedChar, int keyCode) throws IOException 
 	{
-		if(keyCode == 1) {
+		if(keyCode == 1)
 			Minecraft.getMinecraft().displayGuiScreen(null);
-		}
 		super.keyTyped(typedChar, keyCode);
+	}
+	
+	@Override
+	protected void actionPerformed(GuiButton button) throws IOException 
+	{
+		if(button.id == 0 && this.inventorySlots.getSlot(38).getHasStack())
+		{
+			PacketInitiateCloakingRecipe.setOutputNBT((ContainerBasicCloakingMachine) this.inventorySlots);
+			CloakNetwork.sendToServer(new PacketInitiateCloakingRecipe());
+		}
+		super.actionPerformed(button);
 	}
 }
