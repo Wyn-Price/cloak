@@ -2,8 +2,8 @@
     "parent": "block/block",
     "__comment": "Model generated using MrCrayfish's Model Creator (http://mrcrayfish.com/modelcreator/)",
     "textures": {
-        "-1": "cloak:blocks/cloak_block",
-        "particle": "cloak:blocks/cloak_block"
+        "-1": "cloak:blocks/cloaking_machine",
+        "particle": "cloak:blocks/cloaking_machine"
     },
     "elements": [
         {
