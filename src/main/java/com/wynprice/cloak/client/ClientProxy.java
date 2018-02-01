@@ -26,6 +26,7 @@ import net.minecraft.client.renderer.color.IItemColor;
 import net.minecraft.client.renderer.color.ItemColors;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTUtil;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
@@ -106,11 +107,38 @@ public class ClientProxy extends CommonProxy
 			@Override
 			public int colorMultiplier(ItemStack stack, int tintIndex) 
 			{
+				int blockColor = -1;
+				try
+				{
+					blockColor = Minecraft.getMinecraft().getBlockColors().colorMultiplier(NBTUtil.readBlockState(stack.getOrCreateSubCompound("capture_info")), Minecraft.getMinecraft().world, Minecraft.getMinecraft().player.getPosition(), tintIndex - 1);
+				}
+				catch (Throwable e) 
+				{
+					;
+				}
 				ItemStackHandler handler = new ItemStackHandler(1);
 				handler.deserializeNBT(stack.getOrCreateSubCompound("capture_info").getCompoundTag("item"));
-				return tintIndex == 0 ? -1 : handler.getStackInSlot(0).isEmpty() ? -1 : Minecraft.getMinecraft().getItemColors().colorMultiplier(handler.getStackInSlot(0), tintIndex - 1);
+				return tintIndex == 0 ? -1 : handler.getStackInSlot(0).isEmpty() ? -1 : blockColor == -1 ? Minecraft.getMinecraft().getItemColors().colorMultiplier(handler.getStackInSlot(0), tintIndex - 1) : blockColor;
 			}
 		}, CloakItems.BLOCKSTATE_CARD);
+		
+		ic.registerItemColorHandler(new IItemColor() {
+			
+			@Override
+			public int colorMultiplier(ItemStack stack, int tintIndex) 
+			{
+				int liquidColor = -1;
+				try
+				{
+					liquidColor = Minecraft.getMinecraft().getBlockColors().colorMultiplier(NBTUtil.readBlockState(stack.getOrCreateSubCompound("capture_info")), Minecraft.getMinecraft().world, Minecraft.getMinecraft().player.getPosition(), tintIndex - 1);
+				}
+				catch (Throwable e) 
+				{
+					;
+				}
+				return tintIndex == 0 ? 0x2163A5 : liquidColor;
+			}
+		}, CloakItems.LIQUDSTATE_CARD);
 		
 		ic.registerItemColorHandler(new IItemColor() {
 			

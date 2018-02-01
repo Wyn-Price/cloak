@@ -55,7 +55,7 @@ public class CloakBlock extends Block implements ITileEntityProvider
 	
 	@Override
 	public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos) {
-		return getModelState(source, pos).getBoundingBox(source, pos);
+		return getModelState(source, pos).getBoundingBox(new CloakBlockAccess(source), pos);
 	}
 	
 	@Override

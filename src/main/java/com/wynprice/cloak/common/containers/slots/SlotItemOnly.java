@@ -1,6 +1,8 @@
 package com.wynprice.cloak.common.containers.slots;
 
-import com.wynprice.cloak.common.registries.CloakItems;
+import java.util.ArrayList;
+
+import com.google.common.collect.Lists;
 
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -10,19 +12,19 @@ import net.minecraftforge.items.SlotItemHandler;
 public class SlotItemOnly extends SlotItemHandler
 {
 	
-	private final Item item;
+	private final ArrayList<Item> items;
 	private final int slotLimit;
 	
-	public SlotItemOnly(ItemStackHandler itemHandler, Item item, int slotLimit, int index, int xPosition, int yPosition) 
+	public SlotItemOnly(ItemStackHandler itemHandler, int slotLimit, int index, int xPosition, int yPosition, Item... items) 
 	{
 		super(itemHandler, index, xPosition, yPosition);
-		this.item = item;
+		this.items = Lists.newArrayList(items);
 		this.slotLimit = slotLimit;
 	}
 	
 	@Override
 	public boolean isItemValid(ItemStack stack) {
-		return super.isItemValid(stack) && stack.getItem() == item && this.enabled;
+		return super.isItemValid(stack) && items.contains(stack.getItem()) && this.enabled;
 	}
 	
 	private boolean enabled = false;

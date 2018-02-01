@@ -24,7 +24,7 @@ public class SlotCaptureBlockOnlyAdvanced extends SlotItemOnly
 
 	public SlotCaptureBlockOnlyAdvanced(ContainerBasicCloakingMachine container, ItemStackHandler itemHandler, int index, int xPosition, int yPosition) 
 	{
-		super(itemHandler, CloakItems.BLOCKSTATE_CARD ,1,  index, xPosition, yPosition);
+		super(itemHandler, 1,  index, xPosition, yPosition, CloakItems.BLOCKSTATE_CARD, CloakItems.LIQUDSTATE_CARD);
 		this.container = container;
 	}
 	

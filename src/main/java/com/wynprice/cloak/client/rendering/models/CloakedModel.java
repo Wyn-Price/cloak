@@ -29,6 +29,7 @@ import net.minecraft.world.World;
 
 public class CloakedModel implements IBakedModel
 {
+		
 	protected final IBakedModel oldModel_model;
 	protected final IBakedModel oldModel_texure;
 	
@@ -89,11 +90,12 @@ public class CloakedModel implements IBakedModel
 				System.arraycopy(modelQuad.getVertexData(), 0, modelVertex, 0, modelVertex.length);
 				BlockFaceUV faceUV = UVTransformer.getUV(modelQuad.getVertexData());
 				if(renderQuad.getFace() == EnumFacing.UP) faceUV = new BlockFaceUV(faceUV.uvs, 1); //Who knows why this has to be here. It just does
+				TextureAtlasSprite sprite = blocklistPair.getKey() == getMissingModel() ? Minecraft.getMinecraft().getBlockRendererDispatcher().getBlockModelShapes().getTexture(blocklistPair.getValue()) : renderQuad.getSprite();
 				for(int j = 0; j < 4; j++)
 				{
 					int i = (modelVertex.length / 4) * j;
-					modelVertex[i + 4] = Float.floatToRawIntBits(renderQuad.getSprite().getInterpolatedU((double)faceUV.getVertexU(j) * .999 + faceUV.getVertexU((j + 2) % 4) * .001));
-					modelVertex[i + 4 + 1] = Float.floatToRawIntBits(renderQuad.getSprite().getInterpolatedV((double)faceUV.getVertexV(j) * .999 + faceUV.getVertexV((j + 2) % 4) * .001));
+					modelVertex[i + 4] = Float.floatToRawIntBits(sprite.getInterpolatedU((double)faceUV.getVertexU(j) * .999 + faceUV.getVertexU((j + 2) % 4) * .001));
+					modelVertex[i + 4 + 1] = Float.floatToRawIntBits(sprite.getInterpolatedV((double)faceUV.getVertexV(j) * .999 + faceUV.getVertexV((j + 2) % 4) * .001));
 				}
 				BakedQuad newQuad = new BakedQuad(modelVertex, renderQuad.getTintIndex(), renderQuad.getFace(), renderQuad.getSprite(), renderQuad.shouldApplyDiffuseLighting(), renderQuad.getFormat());
 				parentQuadMap.put(newQuad, modelQuad);
@@ -187,5 +189,10 @@ public class CloakedModel implements IBakedModel
 	public Pair<? extends IBakedModel, Matrix4f> handlePerspective(TransformType cameraTransformType) 
 	{
 		return Pair.of(this, oldModel_model.handlePerspective(cameraTransformType).getRight());
+	}
+	
+	public static IBakedModel getMissingModel()
+	{
+		return Minecraft.getMinecraft().getBlockRendererDispatcher().getBlockModelShapes().getModelManager().getMissingModel();
 	}
 }
