@@ -4,6 +4,7 @@ import org.lwjgl.opengl.GL11;
 
 import com.wynprice.cloak.client.rendering.models.CloakedModel;
 import com.wynprice.cloak.common.tileentity.TileEntityCloakBlock;
+import com.wynprice.cloak.common.world.CloakBlockAccess;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockStairs;
@@ -30,7 +31,7 @@ public class TileEntityCloakBlockRenderer extends TileEntityCloakingMachineRende
 			@Override
 			public CloakedModel createModel(World world, BlockPos pos, IBlockState modelState, IBlockState renderState) 
 			{
-				return new CloakedModel(modelState.getActualState(world, pos), renderState);
+				return new CloakedModel(modelState.getActualState(new CloakBlockAccess(world), pos), renderState);
 			}
 		});
 	}

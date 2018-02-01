@@ -5,6 +5,7 @@ import java.util.HashMap;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraftforge.items.ItemStackHandler;
 
 public class BasicCloakedModelTileEntity extends BasicTileEntity 
@@ -81,5 +82,10 @@ public class BasicCloakedModelTileEntity extends BasicTileEntity
 			compound.setTag("itemstack_" + String.valueOf(i), map.get(i).serializeNBT());
 		
 		return compound;
+	}
+	
+	@Override
+	public AxisAlignedBB getRenderBoundingBox() {
+		return INFINITE_EXTENT_AABB;
 	}
 }

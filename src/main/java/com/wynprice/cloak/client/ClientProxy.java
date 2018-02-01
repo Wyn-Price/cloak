@@ -1,12 +1,17 @@
 package com.wynprice.cloak.client;
 
+import java.lang.reflect.Field;
 import java.util.HashMap;
 
 import com.wynprice.cloak.client.handlers.ModelBakeHandler;
 import com.wynprice.cloak.client.handlers.ParticleHandler;
 import com.wynprice.cloak.client.handlers.TextureStitchHandler;
+import com.wynprice.cloak.client.rendering.CloakedRenderingFactory;
 import com.wynprice.cloak.client.rendering.TileEntityCloakBlockRenderer;
 import com.wynprice.cloak.client.rendering.TileEntityCloakingMachineRenderer;
+import com.wynprice.cloak.client.rendering.models.BasicCloakingMachineModel;
+import com.wynprice.cloak.client.rendering.models.CloakedModel;
+import com.wynprice.cloak.client.rendering.world.CloakedRenderChunkFactory;
 import com.wynprice.cloak.common.CommonProxy;
 import com.wynprice.cloak.common.registries.CloakBlocks;
 import com.wynprice.cloak.common.registries.CloakItems;
@@ -15,12 +20,14 @@ import com.wynprice.cloak.common.tileentity.TileEntityCloakingMachine;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.RenderGlobal;
+import net.minecraft.client.renderer.chunk.IRenderChunkFactory;
 import net.minecraft.client.renderer.color.IItemColor;
 import net.minecraft.client.renderer.color.ItemColors;
-import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTUtil;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
@@ -45,17 +52,37 @@ public class ClientProxy extends CommonProxy
 	{
 		super.init(event);
 		registerItemColors();
+		setupChunkRenderFactory();
 	}
 	
-	
-	
-	
-	
+	private void setupChunkRenderFactory()
+	{
+		try
+		{
+			for(Field field : RenderGlobal.class.getDeclaredFields())
+				if(field.getType() == IRenderChunkFactory.class)
+				{
+					field.setAccessible(true);
+					field.set(Minecraft.getMinecraft().renderGlobal, new CloakedRenderChunkFactory((IRenderChunkFactory) field.get(Minecraft.getMinecraft().renderGlobal)));
+					field.setAccessible(false);
+				}
+		}
+		catch (Throwable e) {
+			e.printStackTrace();
+		}
+	}
 	
 	private void registerTileEntityDispatchers()
 	{
 		ClientRegistry.bindTileEntitySpecialRenderer(TileEntityCloakBlock.class, new TileEntityCloakBlockRenderer());
-		ClientRegistry.bindTileEntitySpecialRenderer(TileEntityCloakingMachine.class, new TileEntityCloakingMachineRenderer(TileEntityCloakingMachine.FACTORY));
+		ClientRegistry.bindTileEntitySpecialRenderer(TileEntityCloakingMachine.class, new TileEntityCloakingMachineRenderer(new CloakedRenderingFactory() {
+			
+			@Override
+			public CloakedModel createModel(World world, BlockPos pos, IBlockState modelState, IBlockState renderState) 
+			{
+				return new BasicCloakingMachineModel(modelState, renderState);
+			}
+		}));
 	}
 	
 	private void registerHandlers()

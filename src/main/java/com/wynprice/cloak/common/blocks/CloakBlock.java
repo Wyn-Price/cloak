@@ -5,6 +5,7 @@ import java.util.Random;
 
 import com.wynprice.cloak.client.handlers.ParticleHandler;
 import com.wynprice.cloak.common.tileentity.TileEntityCloakBlock;
+import com.wynprice.cloak.common.world.CloakBlockAccess;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.ITileEntityProvider;
@@ -81,7 +82,7 @@ public class CloakBlock extends Block implements ITileEntityProvider
 	public void addCollisionBoxToList(IBlockState state, World worldIn, BlockPos pos, AxisAlignedBB entityBox,
 			List<AxisAlignedBB> collidingBoxes, Entity entityIn, boolean isActualState) 
 	{
-		getModelState(worldIn, pos).addCollisionBoxToList(worldIn, pos, entityBox, collidingBoxes, entityIn, isActualState);
+		getModelState(worldIn, pos).addCollisionBoxToList(worldIn, pos, entityBox, collidingBoxes, entityIn, true);
 	}
 	
 	@Override
@@ -167,12 +168,12 @@ public class CloakBlock extends Block implements ITileEntityProvider
     private IBlockState getModelState(IBlockAccess access, BlockPos pos)
     {
     	TileEntityCloakBlock tileEntity = (TileEntityCloakBlock)access.getTileEntity(pos);
-    	return tileEntity == null || tileEntity.getModelState().getBlock() == this ? Blocks.STONE.getDefaultState() : tileEntity.getModelState();
+    	return tileEntity == null || tileEntity.getModelState().getBlock() == this ? Blocks.STONE.getDefaultState() : tileEntity.getModelState().getActualState(new CloakBlockAccess(access), pos);
     }
     
     private IBlockState getRenderState(IBlockAccess access, BlockPos pos)
     {
     	TileEntityCloakBlock tileEntity = (TileEntityCloakBlock)access.getTileEntity(pos);
-    	return tileEntity == null || tileEntity.getModelState().getBlock() == this ? Blocks.STONE.getDefaultState() : tileEntity.getRenderState();
+    	return tileEntity == null || tileEntity.getModelState().getBlock() == this ? Blocks.STONE.getDefaultState() : tileEntity.getRenderState().getActualState(new CloakBlockAccess(access), pos);
     }
 }

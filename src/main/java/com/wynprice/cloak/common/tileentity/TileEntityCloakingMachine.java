@@ -45,14 +45,4 @@ public class TileEntityCloakingMachine extends BasicCloakedModelTileEntity
 		this.isAdvanced = compound.getBoolean("isAdvanced");		
 		super.readFromNBT(compound);
 	}
-	
-	@SideOnly(Side.CLIENT)
-	public static final CloakedRenderingFactory FACTORY = new CloakedRenderingFactory() {
-		
-		@Override
-		public CloakedModel createModel(World world, BlockPos pos, IBlockState modelState, IBlockState renderState) 
-		{
-			return new BasicCloakingMachineModel(modelState, renderState);
-		}
-	};
 }

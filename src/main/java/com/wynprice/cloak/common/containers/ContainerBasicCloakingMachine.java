@@ -33,7 +33,6 @@ public class ContainerBasicCloakingMachine extends Container
 	
 	private final TileEntityCloakingMachine tileEntity;
 		
-	@SideOnly(Side.CLIENT)
 	public ContainerBasicCloakingMachine(EntityPlayer player, TileEntityCloakingMachine machine)
 	{
 		this.tileEntity = machine;

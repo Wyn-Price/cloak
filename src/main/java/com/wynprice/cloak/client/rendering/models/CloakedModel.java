@@ -88,7 +88,7 @@ public class CloakedModel implements IBakedModel
 				int[] modelVertex = new int[modelQuad.getVertexData().length];
 				System.arraycopy(modelQuad.getVertexData(), 0, modelVertex, 0, modelVertex.length);
 				BlockFaceUV faceUV = UVTransformer.getUV(modelQuad.getVertexData());
-				if(side == EnumFacing.UP) faceUV = new BlockFaceUV(faceUV.uvs, 1); //Who knows why this has to be here. It just does
+				if(renderQuad.getFace() == EnumFacing.UP) faceUV = new BlockFaceUV(faceUV.uvs, 1); //Who knows why this has to be here. It just does
 				for(int j = 0; j < 4; j++)
 				{
 					int i = (modelVertex.length / 4) * j;

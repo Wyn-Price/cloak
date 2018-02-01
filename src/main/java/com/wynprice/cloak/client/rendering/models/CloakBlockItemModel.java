@@ -65,7 +65,7 @@ public class CloakBlockItemModel extends BaseModelProxy
 			NBTTagCompound nbt = stack.getOrCreateSubCompound("rendering_info");
 			ItemStackHandler handler = new ItemStackHandler(nbt.getCompoundTag("ItemHandler").getInteger("Size"));
 			handler.deserializeNBT(nbt.getCompoundTag("ItemHandler"));
-			if(handler.getSlots() == nbt.getCompoundTag("ItemHandler").getInteger("Size") && !handler.getStackInSlot(0).isEmpty() && !handler.getStackInSlot(1).isEmpty())
+			if(handler.getSlots() > 0 && handler.getSlots() == nbt.getCompoundTag("ItemHandler").getInteger("Size") && !handler.getStackInSlot(0).isEmpty() && !handler.getStackInSlot(1).isEmpty())
 			{
 				IBlockState renderState = NBTUtil.readBlockState(handler.getStackInSlot(0).getOrCreateSubCompound("capture_info"));
 		    	IBlockState modelState = NBTUtil.readBlockState(handler.getStackInSlot(1).getOrCreateSubCompound("capture_info"));
