@@ -14,6 +14,7 @@ import org.lwjgl.BufferUtils;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.util.vector.Vector3f;
 
+import com.wynprice.cloak.CloakMod;
 import com.wynprice.cloak.client.handlers.TextureStitchHandler;
 import com.wynprice.cloak.client.rendering.models.CloakedModel;
 import com.wynprice.cloak.common.containers.ContainerBasicCloakingMachine;
@@ -70,14 +71,28 @@ public class BasicGui extends GuiContainer
 	public void drawScreen(int mouseX, int mouseY, float partialTicks) 
 	{
 		super.drawScreen(mouseX, mouseY, partialTicks);
-    	
+    			
+		Minecraft.getMinecraft().getRenderManager().renderEngine.bindTexture(new ResourceLocation(CloakMod.MODID, "textures/gui/widgits/model-selection.png"));
+		this.drawModalRectWithCustomSizedTexture(this.guiLeft + 10, this.guiTop - 15, 0, 0, 11, 12, 11, 12);
+		
+		Minecraft.getMinecraft().getRenderManager().renderEngine.bindTexture(new ResourceLocation(CloakMod.MODID, "textures/gui/widgits/face-selection.png"));
+		this.drawModalRectWithCustomSizedTexture(this.guiLeft + 154, this.guiTop - 15, 0, 0, 11, 12, 11, 12);
+		
+		if(this.inventorySlots.getSlot(40).isEnabled())
+		{
+			Minecraft.getMinecraft().getRenderManager().renderEngine.bindTexture(new ResourceLocation(CloakMod.MODID, "textures/gui/widgits/one-face-selection.png"));
+			this.drawModalRectWithCustomSizedTexture(this.guiLeft + 172, this.guiTop - 15, 0, 0, 11, 12, 11, 12);
+		}
+		
+		
 		renderCenterBlock(mouseX, mouseY);
+
 	}	
 	
 	@Override
 	public void initGui() 
 	{
-		addButton(new GuiButton(0, 320, 130, 50, 20, "ting"));
+		addButton(new GuiButton(0, this.guiLeft + 294, this.guiTop + 160, 79, 20, "ting"));
 		super.initGui();
 	}
 	
@@ -184,6 +199,7 @@ public class BasicGui extends GuiContainer
         
         clickedLastTick = false;
         GlStateManager.disableAlpha();
+        GlStateManager.disableRescaleNormal();
         RenderHelper.disableStandardItemLighting();
         GlStateManager.disableRescaleNormal();
         GlStateManager.disableLighting();

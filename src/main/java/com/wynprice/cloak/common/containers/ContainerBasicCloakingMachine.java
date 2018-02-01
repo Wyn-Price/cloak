@@ -64,7 +64,7 @@ public class ContainerBasicCloakingMachine extends Container
 		this.addSlotToContainer(new SlotItemOnly(handler, 1, 0, 152, 0, CloakItems.BLOCKSTATE_CARD, CloakItems.LIQUDSTATE_CARD).setEnabled(true)); //37
 		
 		this.addSlotToContainer(new SlotItemOnly(handler, 64, 3, 170, 100, Item.getItemFromBlock(CloakBlocks.CLOAK_BLOCK)).setEnabled(true)); //38
-		this.addSlotToContainer(new SlotItemHandlerOutput(handler, 4, 170, 110)); //39
+		this.addSlotToContainer(new SlotItemHandlerOutput(handler, 4, 230, 100)); //39
 		
 		if(advanced)
 			this.addSlotToContainer(new SlotCaptureBlockOnlyAdvanced(this, handler, 2, 170, 0)); //40
