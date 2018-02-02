@@ -1,0 +1,13 @@
+#items
+item.block_capture.name=Block Capture Card
+item.liquid_capture.name=Liquid Capture Card
+
+#blocks
+tile.cloak_block.name=Cloak Block
+tile.cloaking_machine.name=Cloaking Machine
+
+#creative tab
+itemGroup.cloak=Cloak
+
+#gui
+gui.cloak.advance=Go
