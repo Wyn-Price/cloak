@@ -8,9 +8,8 @@ import org.lwjgl.opengl.GL11;
 
 import com.wynprice.cloak.client.rendering.models.CloakedModel;
 import com.wynprice.cloak.client.rendering.models.SingleQuadModel;
-import com.wynprice.cloak.common.containers.ContainerBasicCloakingMachine;
 import com.wynprice.cloak.common.tileentity.BasicCloakedModelTileEntity;
-import com.wynprice.cloak.common.tileentity.TileEntityCloakingMachine;
+import com.wynprice.cloak.common.world.CloakLightAccess;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
@@ -19,17 +18,12 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.block.model.BakedQuad;
-import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Blocks;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTUtil;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 public class TileEntityCloakingMachineRenderer<T extends BasicCloakedModelTileEntity> extends TileEntitySpecialRenderer<T>
@@ -49,19 +43,18 @@ public class TileEntityCloakingMachineRenderer<T extends BasicCloakedModelTileEn
 	{
 		if(te.getHandler().getStackInSlot(0).isEmpty() || te.getHandler().getStackInSlot(1).isEmpty()) return;
 		GlStateManager.pushMatrix();
-		GlStateManager.enableCull();
 	    GlStateManager.enableRescaleNormal();
 	    RenderHelper.disableStandardItemLighting();
 	    GlStateManager.enableTexture2D();
 	    GlStateManager.enableAlpha();
-		GlStateManager.enableBlend();
+        GlStateManager.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
+        GlStateManager.enableBlend();
         GlStateManager.shadeModel(Minecraft.isAmbientOcclusionEnabled() ? 7425 : 7424);
-	    GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
         EntityPlayer entityplayer = Minecraft.getMinecraft().player;
         double d0 = (entityplayer.lastTickPosX + (entityplayer.posX - entityplayer.lastTickPosX) * (double)partialTicks);
         double d1 = (entityplayer.lastTickPosY + (entityplayer.posY - entityplayer.lastTickPosY) * (double)partialTicks);
         double d2 = (entityplayer.lastTickPosZ + (entityplayer.posZ - entityplayer.lastTickPosZ) * (double)partialTicks);
-        Tessellator.getInstance().getBuffer().setTranslation(-d0, -d1 - (checkSidesForLight() ? 0 : 500), -d2);
+        Tessellator.getInstance().getBuffer().setTranslation(-d0, -d1, -d2);
         this.bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);;
         World world = getWorld();
         Tessellator tessellator = Tessellator.getInstance();
@@ -86,7 +79,7 @@ public class TileEntityCloakingMachineRenderer<T extends BasicCloakedModelTileEn
     		for(BakedQuad quad : model.getQuads(renderState, face, 0L))
 	    	{
 	    		IBlockState blockstate = model.getStateFromQuad(quad);
-	    		Minecraft.getMinecraft().getBlockRendererDispatcher().getBlockModelRenderer().renderModel(world, new SingleQuadModel(model, quad, face), blockstate, te.getPos().up(checkSidesForLight() ? 0 : 500), tessellator.getBuffer(), false);
+	    		Minecraft.getMinecraft().getBlockRendererDispatcher().getBlockModelRenderer().renderModel(new CloakLightAccess(world, te.getPos()), new SingleQuadModel(model, quad, face), blockstate, te.getPos(), tessellator.getBuffer(), false);
 	    	}
         tessellator.draw();
         Tessellator.getInstance().getBuffer().setTranslation(0, 0, 0);
@@ -96,12 +89,6 @@ public class TileEntityCloakingMachineRenderer<T extends BasicCloakedModelTileEn
 		GlStateManager.popMatrix();
 		super.render(te, x, y, z, partialTicks, destroyStage, alpha);
 	}
-	
-	protected boolean checkSidesForLight()
-	{
-		return false;
-	}
-	
 	@Override
 	public boolean isGlobalRenderer(BasicCloakedModelTileEntity te) 
 	{

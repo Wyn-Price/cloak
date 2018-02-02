@@ -27,9 +27,9 @@ public class CloakGUIHandler implements IGuiHandler
 			return new ContainerBasicCloakingMachine(player, (TileEntityCloakingMachine)world.getTileEntity(position));
 		}
 		
-		else if(ID == ADVANCED_CLOAKING_MACHINE && world.getTileEntity(position) instanceof TileEntityCloakingMachine)
+		else if(ID == ADVANCED_CLOAKING_MACHINE && world.getTileEntity(position) instanceof TileEntityCloakingMachine) {
 			return new ContainerBasicCloakingMachine(player, (TileEntityCloakingMachine)world.getTileEntity(position));
-		
+		}
 		return null;
 	}
 

@@ -28,7 +28,7 @@ public class CloakBlocks
 	public static void preInit()
 	{
 		regBlock(CLOAK_BLOCK);
-		regBlock(CLOAKING_MACHINE);
+		regBlock(CLOAKING_MACHINE, 64, BasicCloakingMachine.POWERED);
 	}
 	
 	private final static ArrayList<Block> BLOCKS_WITH_ITEMS = new ArrayList<Block>();

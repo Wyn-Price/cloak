@@ -1,5 +1,6 @@
 package com.wynprice.cloak.client.rendering.world;
 
+import com.wynprice.cloak.common.blocks.CloakBlock;
 import com.wynprice.cloak.common.registries.CloakBlocks;
 import com.wynprice.cloak.common.tileentity.BasicCloakedModelTileEntity;
 
@@ -51,7 +52,8 @@ public class CloakChunkCache extends ChunkCache
 	@Override
 	public IBlockState getBlockState(BlockPos pos) 
 	{
-		if(super.getBlockState(pos).getBlock() == CloakBlocks.CLOAK_BLOCK && this.getTileEntity(pos) instanceof BasicCloakedModelTileEntity && 
+		
+		if(super.getBlockState(pos).getBlock() == CloakBlocks.CLOAK_BLOCK && this.getTileEntity(pos) instanceof BasicCloakedModelTileEntity &&
 				!(Thread.currentThread().getStackTrace()[2].getClassName().equals(RenderChunk.class.getName())
 						|| Thread.currentThread().getStackTrace()[2].getMethodName().equals("func_176225_a") || Thread.currentThread().getStackTrace()[2].getMethodName().equals("shouldSideBeRendered")))
 		{
@@ -63,6 +65,7 @@ public class CloakChunkCache extends ChunkCache
 	@Override
 	public int getCombinedLight(BlockPos pos, int lightValue) 
 	{
+
 		return this.oldCache.getCombinedLight(pos, lightValue);
 	}
 

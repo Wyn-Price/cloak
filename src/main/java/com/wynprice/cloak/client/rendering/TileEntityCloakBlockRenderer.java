@@ -35,9 +35,4 @@ public class TileEntityCloakBlockRenderer extends TileEntityCloakingMachineRende
 			}
 		});
 	}
-	
-	@Override
-	protected boolean checkSidesForLight() {
-		return true;
-	}
 }

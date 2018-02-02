@@ -51,23 +51,23 @@ public class ContainerBasicCloakingMachine extends Container
         {
             for (int j1 = 0; j1 < 9; ++j1)
             {
-                this.addSlotToContainer(new Slot(player.inventory, j1 + l * 9 + 9, 8 + j1 * 18, 103 + l * 18 + 20));
+                this.addSlotToContainer(new Slot(player.inventory, j1 + l * 9 + 9, 8 + j1 * 18 + 76, 103 + l * 18 + 35));
             }
         }
 
         for (int i1 = 0; i1 < 9; ++i1)
         {
-            this.addSlotToContainer(new Slot(player.inventory, i1, 8 + i1 * 18, 161 + 20));
+            this.addSlotToContainer(new Slot(player.inventory, i1, 8 + i1 * 18 + 76, 161 + 35));
         }
 				
-		this.addSlotToContainer(new SlotItemOnly(handler, 1, 1, 8, 0, CloakItems.BLOCKSTATE_CARD).setEnabled(true)); //36
-		this.addSlotToContainer(new SlotItemOnly(handler, 1, 0, 152, 0, CloakItems.BLOCKSTATE_CARD, CloakItems.LIQUDSTATE_CARD).setEnabled(true)); //37
+		this.addSlotToContainer(new SlotItemOnly(handler, 1, 1, 84, 30, CloakItems.BLOCKSTATE_CARD).setEnabled(true)); //36
+		this.addSlotToContainer(new SlotItemOnly(handler, 1, 0, 228, 30, CloakItems.BLOCKSTATE_CARD, CloakItems.LIQUDSTATE_CARD).setEnabled(true)); //37
 		
-		this.addSlotToContainer(new SlotItemOnly(handler, 64, 3, 170, 100, Item.getItemFromBlock(CloakBlocks.CLOAK_BLOCK)).setEnabled(true)); //38
-		this.addSlotToContainer(new SlotItemHandlerOutput(handler, 4, 230, 100)); //39
+		this.addSlotToContainer(new SlotItemOnly(tileEntity.getInputHandler(), 64, 0, 245, 90, Item.getItemFromBlock(CloakBlocks.CLOAK_BLOCK)).setEnabled(true)); //38
+		this.addSlotToContainer(new SlotItemHandlerOutput(tileEntity.getOutputHandler(), 0, 306, 90)); //39
 		
 		if(advanced)
-			this.addSlotToContainer(new SlotCaptureBlockOnlyAdvanced(this, handler, 2, 170, 0)); //40
+			this.addSlotToContainer(new SlotCaptureBlockOnlyAdvanced(this, handler, 2, 248, 30)); //40
 	}
 		
 	public static final HashMap<EntityPlayer, ContainerBasicCloakingMachine> OPENMAP = new HashMap<>();

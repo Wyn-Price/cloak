@@ -10,4 +10,4 @@ tile.cloaking_machine.name=Cloaking Machine
 itemGroup.cloak=Cloak
 
 #gui
-gui.cloak.advance=Go
+gui.cloak.advance=Cloak

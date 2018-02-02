@@ -7,10 +7,13 @@ import com.wynprice.cloak.common.tileentity.TileEntityCloakingMachine;
 import net.minecraft.block.Block;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.material.Material;
+import net.minecraft.block.properties.PropertyBool;
+import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.InventoryHelper;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
@@ -21,6 +24,8 @@ import net.minecraft.world.World;
 
 public class BasicCloakingMachine extends Block implements ITileEntityProvider
 {
+
+    public static final PropertyBool POWERED = PropertyBool.create("powered");
 
 	public BasicCloakingMachine() 
 	{
@@ -67,6 +72,39 @@ public class BasicCloakingMachine extends Block implements ITileEntityProvider
 	}
 	
 	@Override
+	public void neighborChanged(IBlockState state, World worldIn, BlockPos pos, Block blockIn, BlockPos fromPos) 
+	{
+		if(worldIn.isBlockPowered(pos) != state.getValue(POWERED))
+		{
+			if(worldIn.isBlockPowered(pos))//TODO
+			{
+				TileEntityCloakingMachine tileEntity = (TileEntityCloakingMachine) worldIn.getTileEntity(pos);
+				ItemStack stack = tileEntity.getInputHandler().getStackInSlot(0);
+				if(!stack.hasTagCompound()) stack.setTagCompound(new NBTTagCompound());
+				stack.getTagCompound().setTag("rendering_info", tileEntity.writeRenderData(new NBTTagCompound()));
+				if(ItemStack.areItemStacksEqualUsingNBTShareTag(stack, tileEntity.getOutputHandler().getStackInSlot(0)))
+				{
+					ItemStack leftOver = ItemStack.EMPTY;
+					if(tileEntity.getOutputHandler().getStackInSlot(0).getCount() + stack.getCount() > 64)
+					{
+						leftOver = stack.copy();
+						leftOver.setCount(64 - tileEntity.getOutputHandler().getStackInSlot(0).getCount());
+					}
+					System.out.println(leftOver);
+					tileEntity.getInputHandler().setStackInSlot(0, leftOver);
+					ItemStack output = stack.copy();
+					output.setCount(stack.getCount() - leftOver.getCount());
+					tileEntity.getOutputHandler().setStackInSlot(0, output);
+				}
+			}
+			NBTTagCompound tagcompound = worldIn.getTileEntity(pos).writeToNBT(new NBTTagCompound());
+			worldIn.setBlockState(pos, state.withProperty(POWERED, worldIn.isBlockPowered(pos)));
+			worldIn.getTileEntity(pos).readFromNBT(tagcompound);
+		}
+		super.neighborChanged(state, worldIn, pos, blockIn, fromPos);
+	}
+	
+	@Override
 	public int getLightOpacity(IBlockState state, IBlockAccess world, BlockPos pos) {
 		return 0;
 	}
@@ -80,6 +118,23 @@ public class BasicCloakingMachine extends Block implements ITileEntityProvider
 	public boolean isFullBlock(IBlockState state) 
 	{
 		return false;
+	}
+	
+	@Override
+	public int getMetaFromState(IBlockState state) {
+		return state.getValue(POWERED) ? 1 : 0;
+	}
+	
+	@Override
+	public IBlockState getStateFromMeta(int meta) 
+	{
+		return this.getDefaultState().withProperty(POWERED, meta == 1);
+	}
+	
+	@Override
+	protected BlockStateContainer createBlockState() 
+	{
+		return new BlockStateContainer(this, POWERED);
 	}
 
 }

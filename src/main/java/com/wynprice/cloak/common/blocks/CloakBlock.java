@@ -170,7 +170,12 @@ public class CloakBlock extends Block implements ITileEntityProvider
 	@Override
 	public int getLightOpacity(IBlockState state, IBlockAccess world, BlockPos pos) 
 	{
-		return getRenderStateWithList(world, pos).getLightOpacity(world, pos);
+		IBlockState modelState = getModelStateWithList(world, pos);
+		IBlockState renderState = getRenderStateWithList(world, pos);
+		if(modelState.getLightOpacity(world, pos) != 255)
+			return modelState.getLightOpacity(world, pos);
+		
+		return renderState.getLightOpacity(world, pos);
 	}
 	
 	@Override
@@ -195,6 +200,21 @@ public class CloakBlock extends Block implements ITileEntityProvider
     {
     	TileEntityCloakBlock tileEntity = (TileEntityCloakBlock)access.getTileEntity(pos);
     	return tileEntity == null || tileEntity.getModelState().getBlock() == this ? Blocks.STONE.getDefaultState() : tileEntity.getRenderState().getActualState(new CloakBlockAccess(access), pos);
+    }
+    
+    private IBlockState getModelStateWithList(IBlockAccess access, BlockPos pos)
+    {
+    	IBlockState overState = Blocks.STONE.getDefaultState();
+    	if(CloakBlockItemBlock.PRESETTING_LIST.containsKey(pos))
+    	{
+    		ItemStackHandler handler = new ItemStackHandler();
+        	handler.deserializeNBT(CloakBlockItemBlock.PRESETTING_LIST.get(pos).getCompoundTag("ItemHandler"));
+        	overState = NBTUtil.readBlockState(handler.getStackInSlot(1).getOrCreateSubCompound("capture_info"));
+    	}
+    	TileEntityCloakBlock tileEntity = (TileEntityCloakBlock)access.getTileEntity(pos);
+    	IBlockState ret =  tileEntity == null || tileEntity.getModelState().getBlock() == this || overState.getBlock() != Blocks.STONE? overState : tileEntity.getRenderState().getActualState(new CloakBlockAccess(access), pos);
+
+    	return ret;
     }
     
     private IBlockState getRenderStateWithList(IBlockAccess access, BlockPos pos)

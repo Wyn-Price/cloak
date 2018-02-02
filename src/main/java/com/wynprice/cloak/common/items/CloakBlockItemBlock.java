@@ -50,7 +50,7 @@ public class CloakBlockItemBlock extends ItemBlock
 	        if(worldIn.getTileEntity(pos) instanceof TileEntityCloakBlock)
 	        {
 				int i = this.getMetadata(player.getHeldItem(hand).getMetadata());
-		        IBlockState iblockstate1 = NBTUtil.readBlockState(((TileEntityCloakBlock)worldIn.getTileEntity(pos)).getHandler().getStackInSlot(1).getTagCompound().getCompoundTag("capture_info").copy());
+		        IBlockState iblockstate1 = NBTUtil.readBlockState(((TileEntityCloakBlock)worldIn.getTileEntity(pos)).getHandler().getStackInSlot(1).getTagCompound().getCompoundTag("capture_info"));
 		        NBTUtil.writeBlockState(((TileEntityCloakBlock)worldIn.getTileEntity(pos)).getHandler().getStackInSlot(1).getTagCompound().getCompoundTag("capture_info"), iblockstate1.getBlock().getStateForPlacement(worldIn, pos, facing, hitX, hitY, hitZ, i, player, hand));
 
 	        }
@@ -65,7 +65,7 @@ public class CloakBlockItemBlock extends ItemBlock
 	public boolean placeBlockAt(ItemStack stack, EntityPlayer player, World world, BlockPos pos, EnumFacing side,
 			float hitX, float hitY, float hitZ, IBlockState newState) 
 	{
-		NBTTagCompound compound = stack.getOrCreateSubCompound("rendering_info").copy();
+		NBTTagCompound compound = stack.getOrCreateSubCompound("rendering_info");
 		PRESETTING_LIST.put(pos,  compound);
 		if (!world.setBlockState(pos, newState, 11)) return false;
 		
