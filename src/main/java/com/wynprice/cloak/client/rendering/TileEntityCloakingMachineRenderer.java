@@ -52,7 +52,6 @@ public class TileEntityCloakingMachineRenderer<T extends BasicCloakedModelTileEn
 		GlStateManager.enableCull();
 	    GlStateManager.enableRescaleNormal();
 	    RenderHelper.disableStandardItemLighting();
-	    Minecraft.getMinecraft().entityRenderer.disableLightmap();
 	    GlStateManager.enableTexture2D();
 	    GlStateManager.enableAlpha();
 		GlStateManager.enableBlend();
@@ -62,7 +61,7 @@ public class TileEntityCloakingMachineRenderer<T extends BasicCloakedModelTileEn
         double d0 = (entityplayer.lastTickPosX + (entityplayer.posX - entityplayer.lastTickPosX) * (double)partialTicks);
         double d1 = (entityplayer.lastTickPosY + (entityplayer.posY - entityplayer.lastTickPosY) * (double)partialTicks);
         double d2 = (entityplayer.lastTickPosZ + (entityplayer.posZ - entityplayer.lastTickPosZ) * (double)partialTicks);
-        Tessellator.getInstance().getBuffer().setTranslation(-d0, -d1, -d2);
+        Tessellator.getInstance().getBuffer().setTranslation(-d0, -d1 - (checkSidesForLight() ? 0 : 500), -d2);
         this.bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);;
         World world = getWorld();
         Tessellator tessellator = Tessellator.getInstance();
@@ -87,7 +86,7 @@ public class TileEntityCloakingMachineRenderer<T extends BasicCloakedModelTileEn
     		for(BakedQuad quad : model.getQuads(renderState, face, 0L))
 	    	{
 	    		IBlockState blockstate = model.getStateFromQuad(quad);
-	    		Minecraft.getMinecraft().getBlockRendererDispatcher().getBlockModelRenderer().renderModel(world, new SingleQuadModel(model, quad, face), blockstate, te.getPos(), tessellator.getBuffer(), false);
+	    		Minecraft.getMinecraft().getBlockRendererDispatcher().getBlockModelRenderer().renderModel(world, new SingleQuadModel(model, quad, face), blockstate, te.getPos().up(checkSidesForLight() ? 0 : 500), tessellator.getBuffer(), false);
 	    	}
         tessellator.draw();
         Tessellator.getInstance().getBuffer().setTranslation(0, 0, 0);
@@ -96,6 +95,11 @@ public class TileEntityCloakingMachineRenderer<T extends BasicCloakedModelTileEn
         RenderHelper.enableStandardItemLighting();
 		GlStateManager.popMatrix();
 		super.render(te, x, y, z, partialTicks, destroyStage, alpha);
+	}
+	
+	protected boolean checkSidesForLight()
+	{
+		return false;
 	}
 	
 	@Override

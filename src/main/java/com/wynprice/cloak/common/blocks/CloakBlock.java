@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Random;
 
 import com.wynprice.cloak.client.handlers.ParticleHandler;
+import com.wynprice.cloak.common.items.CloakBlockItemBlock;
 import com.wynprice.cloak.common.tileentity.TileEntityCloakBlock;
 import com.wynprice.cloak.common.world.CloakBlockAccess;
 
@@ -18,8 +19,8 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving.SpawnPlacementType;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
+import net.minecraft.nbt.NBTUtil;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumBlockRenderType;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
@@ -28,6 +29,7 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraftforge.items.ItemStackHandler;
 
 public class CloakBlock extends Block implements ITileEntityProvider
 {
@@ -95,6 +97,17 @@ public class CloakBlock extends Block implements ITileEntityProvider
     {
         return false;
     }
+	
+	@Override
+	public boolean isFullBlock(IBlockState state) 
+	{
+		return false;
+	}
+	
+	public boolean isOpaqueCube(IBlockState state)
+    {
+        return false;
+    }
 		
     @SideOnly(Side.CLIENT)
 	@Override
@@ -154,10 +167,17 @@ public class CloakBlock extends Block implements ITileEntityProvider
 		return false;
 	}
 
-    public boolean isOpaqueCube(IBlockState state)
-    {
-        return false;
-    }
+	@Override
+	public int getLightOpacity(IBlockState state, IBlockAccess world, BlockPos pos) 
+	{
+		return getRenderStateWithList(world, pos).getLightOpacity(world, pos);
+	}
+	
+	@Override
+	public int getLightValue(IBlockState state, IBlockAccess world, BlockPos pos) 
+	{
+		return getRenderStateWithList(world, pos).getLightValue(world, pos);
+	}
 
     @SideOnly(Side.CLIENT)
     public float getAmbientOcclusionLightValue(IBlockState state)
@@ -175,5 +195,20 @@ public class CloakBlock extends Block implements ITileEntityProvider
     {
     	TileEntityCloakBlock tileEntity = (TileEntityCloakBlock)access.getTileEntity(pos);
     	return tileEntity == null || tileEntity.getModelState().getBlock() == this ? Blocks.STONE.getDefaultState() : tileEntity.getRenderState().getActualState(new CloakBlockAccess(access), pos);
+    }
+    
+    private IBlockState getRenderStateWithList(IBlockAccess access, BlockPos pos)
+    {
+    	IBlockState overState = Blocks.STONE.getDefaultState();
+    	if(CloakBlockItemBlock.PRESETTING_LIST.containsKey(pos))
+    	{
+    		ItemStackHandler handler = new ItemStackHandler();
+        	handler.deserializeNBT(CloakBlockItemBlock.PRESETTING_LIST.get(pos).getCompoundTag("ItemHandler"));
+        	overState = NBTUtil.readBlockState(handler.getStackInSlot(0).getOrCreateSubCompound("capture_info"));
+    	}
+    	TileEntityCloakBlock tileEntity = (TileEntityCloakBlock)access.getTileEntity(pos);
+    	IBlockState ret =  tileEntity == null || tileEntity.getModelState().getBlock() == this || overState.getBlock() != Blocks.STONE? overState : tileEntity.getRenderState().getActualState(new CloakBlockAccess(access), pos);
+
+    	return ret;
     }
 }

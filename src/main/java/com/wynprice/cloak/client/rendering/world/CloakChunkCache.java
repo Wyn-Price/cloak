@@ -3,6 +3,7 @@ package com.wynprice.cloak.client.rendering.world;
 import com.wynprice.cloak.common.registries.CloakBlocks;
 import com.wynprice.cloak.common.tileentity.BasicCloakedModelTileEntity;
 
+import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.chunk.RenderChunk;
 import net.minecraft.nbt.NBTUtil;
@@ -51,7 +52,8 @@ public class CloakChunkCache extends ChunkCache
 	public IBlockState getBlockState(BlockPos pos) 
 	{
 		if(super.getBlockState(pos).getBlock() == CloakBlocks.CLOAK_BLOCK && this.getTileEntity(pos) instanceof BasicCloakedModelTileEntity && 
-				!Thread.currentThread().getStackTrace()[2].getClassName().equals(RenderChunk.class.getName()))
+				!(Thread.currentThread().getStackTrace()[2].getClassName().equals(RenderChunk.class.getName())
+						|| Thread.currentThread().getStackTrace()[2].getMethodName().equals("func_176225_a") || Thread.currentThread().getStackTrace()[2].getMethodName().equals("shouldSideBeRendered")))
 		{
 			return NBTUtil.readBlockState(((BasicCloakedModelTileEntity)this.getTileEntity(pos)).getHandler().getStackInSlot(1).getOrCreateSubCompound("capture_info"));
 		}

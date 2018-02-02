@@ -3,13 +3,11 @@ package com.wynprice.cloak.client.rendering.gui;
 import java.awt.Point;
 import java.io.IOException;
 import java.nio.IntBuffer;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
 import javax.vecmath.Matrix4f;
 
-import org.apache.commons.lang3.tuple.Pair;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.util.vector.Vector3f;
@@ -20,10 +18,8 @@ import com.wynprice.cloak.client.rendering.models.CloakedModel;
 import com.wynprice.cloak.common.containers.ContainerBasicCloakingMachine;
 import com.wynprice.cloak.common.network.CloakNetwork;
 import com.wynprice.cloak.common.network.packets.PacketInitiateCloakingRecipe;
-import com.wynprice.cloak.common.network.packets.PacketRemoveModificationList;
 import com.wynprice.cloak.common.tileentity.TileEntityCloakingMachine;
 
-import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
@@ -31,23 +27,22 @@ import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.EntityRenderer;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.BlockFaceUV;
-import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
 import net.minecraft.client.renderer.block.model.ItemTransformVec3f;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.texture.TextureUtil;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
+import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTUtil;
-import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.ForgeHooksClient;
 import net.minecraftforge.items.ItemStackHandler;
@@ -92,7 +87,8 @@ public class BasicGui extends GuiContainer
 	@Override
 	public void initGui() 
 	{
-		addButton(new GuiButton(0, this.guiLeft + 294, this.guiTop + 160, 79, 20, "ting"));
+
+		addButton(new GuiButton(0, this.width / 2 + 80, this.height / 2 - 10, 79, 20, I18n.format("gui.cloak.advance")));
 		super.initGui();
 	}
 	
@@ -136,6 +132,7 @@ public class BasicGui extends GuiContainer
         GlStateManager.translate(this.width / 2f, this.height / 2f, 100.0F + this.zLevel);
         GlStateManager.scale(1.0F, -1.0F, 1.0F);
         GlStateManager.scale(160F, 160F, 160F);
+        GlStateManager.translate(0, 0.1F, 0);
         ForgeHooksClient.multiplyCurrentGlMatrix(new Matrix4f(-0.44194168f, 0.0f, 0.44194168f, 0.0f, 0.22097087f, 0.5412659f, 0.22097084f, 0.0f, -0.38273275f, 0.31249997f, -0.38273272f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f));
         ItemCameraTransforms.applyTransformSide(new ItemTransformVec3f(new Vector3f(0, 45, 0), new Vector3f(0f, 0f, 0f), new Vector3f(0.7f, 0.7f, 0.7f)), false);
         ItemCameraTransforms.applyTransformSide(new ItemTransformVec3f(new Vector3f(30, 0, 0), new Vector3f(0f, 0f, 0f), new Vector3f(currentZoom, currentZoom, currentZoom)), false);
@@ -226,8 +223,13 @@ public class BasicGui extends GuiContainer
 	}
 	
 	@Override
-	protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
+	protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) 
+	{
 		this.drawDefaultBackground();
+		Minecraft.getMinecraft().getRenderManager().renderEngine.bindTexture(new ResourceLocation(CloakMod.MODID, "textures/gui/widgits/slot_background.png"));
+		for(Slot slot : this.inventorySlots.inventorySlots)
+			if(slot.isEnabled())
+				this.drawModalRectWithCustomSizedTexture(this.guiLeft + slot.xPos - 1, this.guiTop + slot.yPos - 1, 0, 0, 18, 18, 18, 18);
 	}
 	
 	private void renderQuad(BufferBuilder renderer, BakedQuad bakedquad, ItemStack stack)

@@ -1,5 +1,7 @@
 package com.wynprice.cloak.common.items;
 
+import java.util.HashMap;
+
 import com.wynprice.cloak.common.registries.CloakBlocks;
 import com.wynprice.cloak.common.tileentity.TileEntityCloakBlock;
 
@@ -54,22 +56,24 @@ public class CloakBlockItemBlock extends ItemBlock
 	        }
 	        
 		}
-        
-        
         return result;
 	}
+	
+	public static final HashMap<BlockPos, NBTTagCompound> PRESETTING_LIST = new HashMap<>();
 	
 	@Override
 	public boolean placeBlockAt(ItemStack stack, EntityPlayer player, World world, BlockPos pos, EnumFacing side,
 			float hitX, float hitY, float hitZ, IBlockState newState) 
 	{
+		NBTTagCompound compound = stack.getOrCreateSubCompound("rendering_info").copy();
+		PRESETTING_LIST.put(pos,  compound);
 		if (!world.setBlockState(pos, newState, 11)) return false;
 		
         IBlockState state = world.getBlockState(pos);
         if (state.getBlock() == this.block)
         {
         	TileEntityCloakBlock te = (TileEntityCloakBlock) world.getTileEntity(pos);
-        	te.readRenderData(stack.getOrCreateSubCompound("rendering_info").copy());
+        	te.readRenderData(compound);
             this.block.onBlockPlacedBy(world, pos, state, player, stack);
 
             if (player instanceof EntityPlayerMP)

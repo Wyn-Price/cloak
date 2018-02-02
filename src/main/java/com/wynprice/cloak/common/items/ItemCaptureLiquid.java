@@ -96,7 +96,7 @@ public class ItemCaptureLiquid extends Item
 
                     if (l == i && i1 == j && j1 == k)
                     {
-                        return false ? raytraceresult2 : null;
+                        return null;
                     }
 
                     boolean flag2 = true;
