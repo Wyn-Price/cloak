@@ -301,7 +301,7 @@ public class BasicGui extends GuiContainer
 	{
 		if(button.id == 0 && this.inventorySlots.getSlot(38).getHasStack())
 		{
-			PacketInitiateCloakingRecipe.setOutputNBT((ContainerBasicCloakingMachine) this.inventorySlots);
+			PacketInitiateCloakingRecipe.doRecipe(((ContainerBasicCloakingMachine) this.inventorySlots).getTileEntity());
 			CloakNetwork.sendToServer(new PacketInitiateCloakingRecipe());
 		}
 		super.actionPerformed(button);

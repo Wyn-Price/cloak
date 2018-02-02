@@ -77,8 +77,7 @@ public class TileEntityCloakingMachine extends BasicCloakedModelTileEntity
 	public boolean hasCapability(Capability<?> capability, EnumFacing facing) 
 	{
 		if(capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY)
-			if(facing == EnumFacing.UP || facing == EnumFacing.DOWN)
-				return true;
+			return true;
 		return super.hasCapability(capability, facing);
 	}
 	
@@ -86,10 +85,10 @@ public class TileEntityCloakingMachine extends BasicCloakedModelTileEntity
 	public <T> T getCapability(Capability<T> capability, EnumFacing facing)
 	{
 		if(capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY)
-			if(facing == EnumFacing.UP)
-				return (T) this.inputHandler;
-			else if(facing == EnumFacing.DOWN)
+			if(facing == EnumFacing.DOWN)
 				return (T) this.outputHandler;
+			else
+				return (T) this.inputHandler;
 		return super.getCapability(capability, facing);
 	}
 }

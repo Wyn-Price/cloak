@@ -2,6 +2,7 @@ package com.wynprice.cloak.common.blocks;
 
 import com.wynprice.cloak.CloakMod;
 import com.wynprice.cloak.common.handlers.CloakGUIHandler;
+import com.wynprice.cloak.common.network.packets.PacketInitiateCloakingRecipe;
 import com.wynprice.cloak.common.tileentity.TileEntityCloakingMachine;
 
 import net.minecraft.block.Block;
@@ -21,6 +22,8 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import net.minecraftforge.items.ItemStackHandler;
+import scala.tools.cmd.gen.AnyValReps.AnyValNum.Op;
 
 public class BasicCloakingMachine extends Block implements ITileEntityProvider
 {
@@ -76,27 +79,9 @@ public class BasicCloakingMachine extends Block implements ITileEntityProvider
 	{
 		if(worldIn.isBlockPowered(pos) != state.getValue(POWERED))
 		{
-			if(worldIn.isBlockPowered(pos))//TODO
-			{
-				TileEntityCloakingMachine tileEntity = (TileEntityCloakingMachine) worldIn.getTileEntity(pos);
-				ItemStack stack = tileEntity.getInputHandler().getStackInSlot(0);
-				if(!stack.hasTagCompound()) stack.setTagCompound(new NBTTagCompound());
-				stack.getTagCompound().setTag("rendering_info", tileEntity.writeRenderData(new NBTTagCompound()));
-				if(ItemStack.areItemStacksEqualUsingNBTShareTag(stack, tileEntity.getOutputHandler().getStackInSlot(0)))
-				{
-					ItemStack leftOver = ItemStack.EMPTY;
-					if(tileEntity.getOutputHandler().getStackInSlot(0).getCount() + stack.getCount() > 64)
-					{
-						leftOver = stack.copy();
-						leftOver.setCount(64 - tileEntity.getOutputHandler().getStackInSlot(0).getCount());
-					}
-					System.out.println(leftOver);
-					tileEntity.getInputHandler().setStackInSlot(0, leftOver);
-					ItemStack output = stack.copy();
-					output.setCount(stack.getCount() - leftOver.getCount());
-					tileEntity.getOutputHandler().setStackInSlot(0, output);
-				}
-			}
+			if(worldIn.isBlockPowered(pos))
+				PacketInitiateCloakingRecipe.doRecipe((TileEntityCloakingMachine) worldIn.getTileEntity(pos));
+
 			NBTTagCompound tagcompound = worldIn.getTileEntity(pos).writeToNBT(new NBTTagCompound());
 			worldIn.setBlockState(pos, state.withProperty(POWERED, worldIn.isBlockPowered(pos)));
 			worldIn.getTileEntity(pos).readFromNBT(tagcompound);

@@ -1,10 +1,12 @@
 package com.wynprice.cloak.common.network.packets;
 
 import com.wynprice.cloak.common.containers.ContainerBasicCloakingMachine;
+import com.wynprice.cloak.common.tileentity.TileEntityCloakingMachine;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraftforge.items.ItemStackHandler;
 
 public class PacketInitiateCloakingRecipe extends BasicMessagePacket<PacketInitiateCloakingRecipe>
 {
@@ -14,16 +16,39 @@ public class PacketInitiateCloakingRecipe extends BasicMessagePacket<PacketIniti
 	{
 		ContainerBasicCloakingMachine container = ContainerBasicCloakingMachine.OPENMAP.get(player);
 		if(container != null)
-			setOutputNBT(container);
+			doRecipe(container.getTileEntity());
 	}
 	
-	public static void setOutputNBT(ContainerBasicCloakingMachine container)
+	public static void doRecipe(TileEntityCloakingMachine te)
 	{
-		ItemStack stack = container.getSlot(38).getStack();
-		container.getSlot(38).putStack(ItemStack.EMPTY);
+		ItemStackHandler input = te.getInputHandler();
+		ItemStackHandler output = te.getOutputHandler();
+		
+		ItemStack stack = input.getStackInSlot(0);
 		if(!stack.hasTagCompound()) stack.setTagCompound(new NBTTagCompound());
-		stack.getTagCompound().setTag("rendering_info", container.getTileEntity().writeRenderData(new NBTTagCompound()));
-		container.getSlot(39).putStack(stack);
+		NBTTagCompound data = te.writeRenderData(new NBTTagCompound());
+		
+		ItemStackHandler handler = new ItemStackHandler();
+		ItemStackHandler handler2 = new ItemStackHandler(5);
+		handler.deserializeNBT(data.getCompoundTag("ItemHandler"));
+		handler2.setStackInSlot(0, handler.getStackInSlot(0));
+		handler2.setStackInSlot(1, handler.getStackInSlot(1));
+		handler2.setStackInSlot(2, handler.getStackInSlot(2));
+		data.setTag("ItemHandler", handler2.serializeNBT());
+		
+		ItemStack testStack = stack.copy();
+		testStack.getTagCompound().setTag("rendering_info", data.copy());
+		
+		ItemStack leftOverStack = output.insertItem(0, testStack, true);
+		int leftOverAmount = leftOverStack.isEmpty() ? 0 : leftOverStack.getCount();
+		
+		ItemStack inputSlotStack = stack.copy();
+		inputSlotStack.setCount(leftOverAmount);
+		input.setStackInSlot(0, inputSlotStack);
+		
+		ItemStack outputSlotStack = stack.copy();
+		outputSlotStack.setTagInfo("rendering_info", data.copy());
+		output.insertItem(0, outputSlotStack, false);
 	}
 
 }
