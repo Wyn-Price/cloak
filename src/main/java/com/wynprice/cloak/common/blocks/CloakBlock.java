@@ -197,21 +197,6 @@ public class CloakBlock extends Block implements ITileEntityProvider
     	return tileEntity == null || tileEntity.getModelState().getBlock() == this ? Blocks.STONE.getDefaultState() : tileEntity.getRenderState().getActualState(new CloakBlockAccess(access), pos);
     }
     
-    private IBlockState getModelStateWithList(IBlockAccess access, BlockPos pos)
-    {
-    	IBlockState overState = Blocks.STONE.getDefaultState();
-    	if(CloakBlockItemBlock.PRESETTING_LIST.containsKey(pos))
-    	{
-    		ItemStackHandler handler = new ItemStackHandler();
-        	handler.deserializeNBT(CloakBlockItemBlock.PRESETTING_LIST.get(pos).getCompoundTag("ItemHandler"));
-        	overState = NBTUtil.readBlockState(handler.getStackInSlot(1).getOrCreateSubCompound("capture_info"));
-    	}
-    	TileEntityCloakBlock tileEntity = (TileEntityCloakBlock)access.getTileEntity(pos);
-    	IBlockState ret =  tileEntity == null || tileEntity.getModelState().getBlock() == this || overState.getBlock() != Blocks.STONE? overState : tileEntity.getRenderState().getActualState(new CloakBlockAccess(access), pos);
-
-    	return ret;
-    }
-    
     private IBlockState getRenderStateWithList(IBlockAccess access, BlockPos pos)
     {
     	IBlockState overState = Blocks.STONE.getDefaultState();
@@ -219,7 +204,8 @@ public class CloakBlock extends Block implements ITileEntityProvider
     	{
     		ItemStackHandler handler = new ItemStackHandler();
         	handler.deserializeNBT(CloakBlockItemBlock.PRESETTING_LIST.get(pos).getCompoundTag("ItemHandler"));
-        	overState = NBTUtil.readBlockState(handler.getStackInSlot(0).getOrCreateSubCompound("capture_info"));
+        	if(handler.getSlots() == 1)
+        		overState = NBTUtil.readBlockState(handler.getStackInSlot(0).getOrCreateSubCompound("capture_info"));
     	}
     	TileEntityCloakBlock tileEntity = (TileEntityCloakBlock)access.getTileEntity(pos);
     	IBlockState ret =  tileEntity == null || tileEntity.getModelState().getBlock() == this || overState.getBlock() != Blocks.STONE? overState : tileEntity.getRenderState().getActualState(new CloakBlockAccess(access), pos);
