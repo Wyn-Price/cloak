@@ -1,0 +1,20 @@
+{
+  "type": "forge:ore_shaped",
+  "group": "cloak_blocks",
+  "pattern": [
+    "WDW",
+    "WWW"
+  ],
+  "key": {
+    "D": {
+      "type": "forge:ore_dict",
+      "ore": "gemDiamond"
+    },
+    "W": {
+      "item": "cloak:cloak_block"
+    }
+  },
+  "result": {
+    "item": "cloak:cloaking_machine"
+  }
+}

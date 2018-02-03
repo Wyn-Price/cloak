@@ -1,0 +1,15 @@
+{
+  "type": "forge:ore_shapeless",
+  "group": "cloak_items",
+  "ingredients": [
+    {
+     "item": "cloak:block_capture"
+    },
+    {
+      "item": "minecraft:redstone"
+    }
+  ],
+  "result": {
+    "item": "cloak:external_capture"
+  }
+}
