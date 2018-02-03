@@ -4,6 +4,7 @@ import com.wynprice.cloak.CloakMod;
 import com.wynprice.cloak.common.network.packets.PacketFaceSelectionAdvancedGUI;
 import com.wynprice.cloak.common.network.packets.PacketInitiateCloakingRecipe;
 import com.wynprice.cloak.common.network.packets.PacketRemoveModificationList;
+import com.wynprice.cloak.common.network.packets.PacketUpdateExternalCard;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -22,6 +23,7 @@ public class CloakNetwork
 		registerMessage(PacketRemoveModificationList.class, Side.SERVER);
 		registerMessage(PacketFaceSelectionAdvancedGUI.class, Side.SERVER);
 		registerMessage(PacketInitiateCloakingRecipe.class, Side.SERVER);
+		registerMessage(PacketUpdateExternalCard.class, Side.SERVER);
 	}
 	
 	private static int idCount = 0;

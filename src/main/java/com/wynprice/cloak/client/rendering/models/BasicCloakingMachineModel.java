@@ -7,6 +7,7 @@ import java.util.List;
 import org.lwjgl.util.vector.Vector3f;
 
 import com.google.common.collect.Lists;
+import com.wynprice.cloak.client.rendering.models.quads.ExternalBakedQuad;
 import com.wynprice.cloak.common.registries.CloakBlocks;
 
 import net.minecraft.block.state.IBlockState;
@@ -54,6 +55,9 @@ public class BasicCloakingMachineModel extends CloakedModel
 			}
 			
 			BakedQuad newQuad = new BakedQuad(vertexData, quad.getTintIndex(), quad.getFace(), quad.getSprite(), quad.shouldApplyDiffuseLighting(), quad.getFormat());
+			if(quad instanceof ExternalBakedQuad)
+				newQuad = new ExternalBakedQuad(((ExternalBakedQuad)quad).getLocation(), newQuad);
+			
 			localParentMap.put(newQuad, currentRenderingMap.get(quad));
 			list.add(newQuad);
 		}

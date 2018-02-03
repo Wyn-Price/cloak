@@ -2,6 +2,9 @@ package com.wynprice.cloak.common.containers;
 
 import java.util.HashMap;
 
+import org.apache.commons.lang3.tuple.Pair;
+
+import com.wynprice.cloak.client.handlers.ExternalImageHandler;
 import com.wynprice.cloak.common.containers.slots.SlotCaptureBlockOnlyAdvanced;
 import com.wynprice.cloak.common.containers.slots.SlotItemHandlerOutput;
 import com.wynprice.cloak.common.containers.slots.SlotItemOnly;
@@ -16,6 +19,7 @@ import net.minecraft.inventory.Slot;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTUtil;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.items.ItemStackHandler;
 
 public class ContainerBasicCloakingMachine extends Container
@@ -57,7 +61,7 @@ public class ContainerBasicCloakingMachine extends Container
         }
 				
 		this.addSlotToContainer(new SlotItemOnly(handler, 1, 1, 84, 30, CloakItems.BLOCKSTATE_CARD).setEnabled(true)); //36
-		this.addSlotToContainer(new SlotItemOnly(handler, 1, 0, 228, 30, CloakItems.BLOCKSTATE_CARD, CloakItems.LIQUDSTATE_CARD).setEnabled(true)); //37
+		this.addSlotToContainer(new SlotItemOnly(handler, 1, 0, 228, 30, CloakItems.BLOCKSTATE_CARD, CloakItems.LIQUDSTATE_CARD, CloakItems.EXTERNAL_CARD).setEnabled(true)); //37
 		
 		this.addSlotToContainer(new SlotItemOnly(tileEntity.getHandler(), 64, 3, 245, 90, Item.getItemFromBlock(CloakBlocks.CLOAK_BLOCK)).setEnabled(true)); //38
 		this.addSlotToContainer(new SlotItemHandlerOutput(this, tileEntity.getHandler(), 4, 306, 90)); //39
@@ -116,13 +120,19 @@ public class ContainerBasicCloakingMachine extends Container
 		return true;
 	}
 	
-	public HashMap<Integer, IBlockState> getBlockStateMap()
+	public Pair<HashMap<Integer, IBlockState>, HashMap<Integer, ResourceLocation>> getBlockStateMap()
 	{
 		HashMap<Integer, IBlockState> overrideList = new HashMap<>();
+		HashMap<Integer, ResourceLocation> externalOverrideList = new HashMap<>();
+		
 		for(int i : this.modification_list.keySet())
 			if(this.modification_list.get(i) != null && !this.modification_list.get(i).isEmpty())
-				overrideList.put(i, NBTUtil.readBlockState(this.modification_list.get(i).getSubCompound("capture_info")));
-		return overrideList;
+				if(this.modification_list.get(i).getItem() != CloakItems.EXTERNAL_CARD)
+					overrideList.put(i, NBTUtil.readBlockState(this.modification_list.get(i).getSubCompound("capture_info")));
+				else if(ExternalImageHandler.RESOURCE_MAP.containsKey(this.modification_list.get(i).getSubCompound("capture_info").getString("external_image")))
+					externalOverrideList.put(i, ExternalImageHandler.RESOURCE_MAP.get(this.modification_list.get(i).getSubCompound("capture_info").getString("external_image")));
+		
+		return Pair.of(overrideList, externalOverrideList);
 	}
 
 }

@@ -8,6 +8,9 @@ import java.util.List;
 
 import org.lwjgl.input.Mouse;
 
+import com.wynprice.cloak.client.handlers.ExternalImageHandler;
+import com.wynprice.cloak.client.rendering.models.quads.ExternalBakedQuad;
+import com.wynprice.cloak.common.registries.CloakItems;
 import com.wynprice.cloak.common.tileentity.TileEntityCloakingMachine;
 
 import net.minecraft.block.state.IBlockState;
@@ -35,6 +38,7 @@ public class CloakBlockItemModel extends BaseModelProxy
 
 	public static final Method SLOTMETHOD = getSlotMethod();
 	
+	public static CloakBlockItemModel instance;
 	
 	@Override
 	public List<BakedQuad> getQuads(IBlockState state, EnumFacing side, long rand) 
@@ -60,6 +64,8 @@ public class CloakBlockItemModel extends BaseModelProxy
 			if(!isUnderMouse)
 				isUnderMouse = Minecraft.getMinecraft().player.inventory.getItemStack() == stack;
 		}
+		
+		
 		if(stack.hasTagCompound() && !isUnderMouse)
 		{
 			NBTTagCompound nbt = stack.getOrCreateSubCompound("rendering_info");
@@ -75,18 +81,29 @@ public class CloakBlockItemModel extends BaseModelProxy
 		    	HashMap<Integer, ItemStack> currentModMap = TileEntityCloakingMachine.readFromNBTTag(nbt.getCompoundTag("mod_list"));
 		    	
 		    	HashMap<Integer, IBlockState> overrideList = new HashMap<>();
-				for(int i : currentModMap.keySet())
+		    	HashMap<Integer, ResourceLocation> externalOverrideList = new HashMap<>();
+
+		    	
+		    	for(int i : currentModMap.keySet())
 					if(currentModMap.get(i) != null && !currentModMap.get(i).isEmpty())
-						overrideList.put(i, NBTUtil.readBlockState(currentModMap.get(i).getSubCompound("capture_info")));
+						if(currentModMap.get(i).getItem() != CloakItems.EXTERNAL_CARD)
+							overrideList.put(i, NBTUtil.readBlockState(currentModMap.get(i).getSubCompound("capture_info")));
+						else if(ExternalImageHandler.RESOURCE_MAP.containsKey(currentModMap.get(i).getSubCompound("capture_info").getString("external_image")))
+							externalOverrideList.put(i, ExternalImageHandler.RESOURCE_MAP.get(currentModMap.get(i).getSubCompound("capture_info").getString("external_image")));
 	
 				
 				model.getOverrideList().putAll(overrideList);
+				model.setExternalOverrideList(externalOverrideList);
+				model.setBaseTextureExternal(ExternalImageHandler.RESOURCE_MAP.get(handler.getStackInSlot(0).getOrCreateSubCompound("capture_info").getString("external_image")));
 				
 				ArrayList<BakedQuad> quadList = new ArrayList<>();
+				
 				
 				for(BakedQuad quad : model.getQuads(modelState, side, rand))
 				{
 					BakedQuad newQuad = new BakedQuad(quad.getVertexData(), quad.getTintIndex() + (quad.getTintIndex() > -1 ? model.getParentID(quad) * 1000 : 0), quad.getFace(), quad.getSprite(), quad.shouldApplyDiffuseLighting(), quad.getFormat());
+					if(quad instanceof ExternalBakedQuad)
+						newQuad = new ExternalBakedQuad(((ExternalBakedQuad)quad).getLocation(), quad);
 					quadList.add(newQuad);
 				}
 				
@@ -111,6 +128,17 @@ public class CloakBlockItemModel extends BaseModelProxy
 						return super.applyOverride(stack, worldIn, entityIn);
 					}
 				};
+	}
+	
+	@Override
+	public boolean isBuiltInRenderer() 
+	{
+		this.instance = this;
+		return true;
+	}
+	
+	public ItemStack getStack() {
+		return stack;
 	}
 	
 	private static Method getSlotMethod()

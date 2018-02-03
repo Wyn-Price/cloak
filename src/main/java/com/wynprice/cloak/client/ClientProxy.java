@@ -3,16 +3,20 @@ package com.wynprice.cloak.client;
 import java.lang.reflect.Field;
 import java.util.HashMap;
 
+import com.wynprice.cloak.client.handlers.ExternalImageHandler;
 import com.wynprice.cloak.client.handlers.ModelBakeHandler;
 import com.wynprice.cloak.client.handlers.ParticleHandler;
 import com.wynprice.cloak.client.handlers.TextureStitchHandler;
 import com.wynprice.cloak.client.rendering.CloakedRenderingFactory;
+import com.wynprice.cloak.client.rendering.ExternalCaptureCardRenderer;
+import com.wynprice.cloak.client.rendering.ItemBlockCloakBlockRenderer;
 import com.wynprice.cloak.client.rendering.TileEntityCloakBlockRenderer;
 import com.wynprice.cloak.client.rendering.TileEntityCloakingMachineRenderer;
 import com.wynprice.cloak.client.rendering.models.BasicCloakingMachineModel;
 import com.wynprice.cloak.client.rendering.models.CloakedModel;
 import com.wynprice.cloak.client.rendering.world.CloakedRenderChunkFactory;
 import com.wynprice.cloak.common.CommonProxy;
+import com.wynprice.cloak.common.blocks.CloakBlock;
 import com.wynprice.cloak.common.registries.CloakBlocks;
 import com.wynprice.cloak.common.registries.CloakItems;
 import com.wynprice.cloak.common.tileentity.TileEntityCloakBlock;
@@ -24,11 +28,14 @@ import net.minecraft.client.renderer.RenderGlobal;
 import net.minecraft.client.renderer.chunk.IRenderChunkFactory;
 import net.minecraft.client.renderer.color.IItemColor;
 import net.minecraft.client.renderer.color.ItemColors;
+import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTUtil;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraftforge.client.ForgeHooksClient;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
@@ -46,6 +53,10 @@ public class ClientProxy extends CommonProxy
 		
 		registerHandlers();
 		registerTileEntityDispatchers();
+		
+		ForgeHooksClient.registerTESRItemStack(CloakItems.EXTERNAL_CARD, 0, ExternalCaptureCardRenderer.FakeTileEntity.class);
+		ForgeHooksClient.registerTESRItemStack(Item.getItemFromBlock(CloakBlocks.CLOAK_BLOCK), 0, ItemBlockCloakBlockRenderer.FakeTileEntity.class);
+		
 	}
 	
 	@Override
@@ -54,6 +65,8 @@ public class ClientProxy extends CommonProxy
 		super.init(event);
 		registerItemColors();
 		setupChunkRenderFactory();
+		
+		ExternalImageHandler.init();
 	}
 	
 	private void setupChunkRenderFactory()
@@ -77,13 +90,17 @@ public class ClientProxy extends CommonProxy
 	{
 		ClientRegistry.bindTileEntitySpecialRenderer(TileEntityCloakBlock.class, new TileEntityCloakBlockRenderer());
 		ClientRegistry.bindTileEntitySpecialRenderer(TileEntityCloakingMachine.class, new TileEntityCloakingMachineRenderer(new CloakedRenderingFactory() {
-			
+		
 			@Override
 			public CloakedModel createModel(World world, BlockPos pos, IBlockState modelState, IBlockState renderState) 
 			{
 				return new BasicCloakingMachineModel(modelState, renderState);
 			}
 		}));
+		
+		ClientRegistry.bindTileEntitySpecialRenderer(ExternalCaptureCardRenderer.FakeTileEntity.class, new ExternalCaptureCardRenderer());
+		ClientRegistry.bindTileEntitySpecialRenderer(ItemBlockCloakBlockRenderer.FakeTileEntity.class, new ItemBlockCloakBlockRenderer());
+
 	}
 	
 	private void registerHandlers()
@@ -139,6 +156,14 @@ public class ClientProxy extends CommonProxy
 				return tintIndex == 0 ? 0x2163A5 : liquidColor;
 			}
 		}, CloakItems.LIQUDSTATE_CARD);
+		
+		ic.registerItemColorHandler(new IItemColor() {
+			
+			@Override
+			public int colorMultiplier(ItemStack stack, int tintIndex) {
+				return tintIndex == 0 ? 0xA841A4 : -1;
+			}
+		}, CloakItems.EXTERNAL_CARD);
 		
 		ic.registerItemColorHandler(new IItemColor() {
 			

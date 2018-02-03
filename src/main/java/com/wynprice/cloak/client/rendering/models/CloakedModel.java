@@ -9,6 +9,7 @@ import javax.vecmath.Matrix4f;
 import org.apache.commons.lang3.tuple.Pair;
 
 import com.google.common.collect.Lists;
+import com.wynprice.cloak.client.rendering.models.quads.ExternalBakedQuad;
 import com.wynprice.cloak.common.core.UVTransformer;
 
 import net.minecraft.block.state.IBlockState;
@@ -40,6 +41,9 @@ public class CloakedModel implements IBakedModel
 	
 	protected final HashMap<Integer, IBlockState> overrideList;
 	
+	protected ResourceLocation baseTextureExternal;
+	protected HashMap<Integer, ResourceLocation> externalOverrideList = new HashMap<>();
+	
 	public CloakedModel(IBlockState modelState, IBlockState renderState) 
 	{
 		this(modelState, renderState, new HashMap());
@@ -54,7 +58,14 @@ public class CloakedModel implements IBakedModel
 	public HashMap<Integer, IBlockState> getOverrideList() {
 		return overrideList;
 	}
-
+	
+	public void setBaseTextureExternal(ResourceLocation baseTextureExternal) {
+		this.baseTextureExternal = baseTextureExternal;
+	}
+	
+	public void setExternalOverrideList(HashMap<Integer, ResourceLocation> externalOverrideList) {
+		this.externalOverrideList = externalOverrideList;
+	}
 	
 	public CloakedModel(IBlockState modelState, IBlockState renderState, HashMap<Integer, IBlockState> overrideList) 
 	{
@@ -73,6 +84,9 @@ public class CloakedModel implements IBakedModel
 	
 	protected HashMap<BakedQuad, IBlockState> currentRenderingMap = new HashMap<>();
 	
+	
+	protected HashMap<BakedQuad, ResourceLocation> externalMap = new HashMap<>();
+	
 	private List<BakedQuad> getQuadsInternal(IBlockState state, EnumFacing side, long rand) 
 	{
 		rand = 0L;
@@ -80,28 +94,50 @@ public class CloakedModel implements IBakedModel
 		for(BakedQuad modelQuad : oldModel_model.getQuads(modelState, side, rand))
 		{
 			int l = getIndentifierList().indexOf(modelQuad);
-			Pair<IBakedModel, IBlockState> blocklistPair = overrideList.containsKey(l) ? Pair.of(Minecraft.getMinecraft().getBlockRendererDispatcher().getModelForState(overrideList.get(l)), overrideList.get(l)) : Pair.of(oldModel_texure, renderState);
-			List<BakedQuad> textureQuads = blocklistPair.getKey().getQuads(blocklistPair.getRight(), modelQuad.getFace(), rand);
-			if(textureQuads.isEmpty())
-				textureQuads = blocklistPair.getKey().getQuads(blocklistPair.getRight(), null, rand);
-			for(BakedQuad renderQuad : textureQuads)
+			BakedQuad newQuad = null;
+			if((!overrideList.containsKey(l) && !externalOverrideList.containsKey(l) && baseTextureExternal != null || externalOverrideList.containsKey(l)))
 			{
-				int[] modelVertex = new int[modelQuad.getVertexData().length];
-				System.arraycopy(modelQuad.getVertexData(), 0, modelVertex, 0, modelVertex.length);
+				int[] vertexData = new int[modelQuad.getVertexData().length];
+				System.arraycopy(modelQuad.getVertexData(), 0, vertexData, 0, vertexData.length);
 				BlockFaceUV faceUV = UVTransformer.getUV(modelQuad.getVertexData());
-				if(renderQuad.getFace() == EnumFacing.UP) faceUV = new BlockFaceUV(faceUV.uvs, 1); //Who knows why this has to be here. It just does
-				TextureAtlasSprite sprite = blocklistPair.getKey() == getMissingModel() ? Minecraft.getMinecraft().getBlockRendererDispatcher().getBlockModelShapes().getTexture(blocklistPair.getValue()) : renderQuad.getSprite();
+				if(modelQuad.getFace() == EnumFacing.UP) faceUV = new BlockFaceUV(faceUV.uvs, 1); //Who knows why this has to be here. It just does
 				for(int j = 0; j < 4; j++)
 				{
-					int i = (modelVertex.length / 4) * j;
-					modelVertex[i + 4] = Float.floatToRawIntBits(sprite.getInterpolatedU((double)faceUV.getVertexU(j) * .999 + faceUV.getVertexU((j + 2) % 4) * .001));
-					modelVertex[i + 4 + 1] = Float.floatToRawIntBits(sprite.getInterpolatedV((double)faceUV.getVertexV(j) * .999 + faceUV.getVertexV((j + 2) % 4) * .001));
+					int i = (vertexData.length / 4) * j;
+					vertexData[i + 4] = Float.floatToRawIntBits(Lists.newArrayList(faceUV.uvs[1], faceUV.uvs[3], faceUV.uvs[3], faceUV.uvs[1]).get(j) / 16f);
+					vertexData[i + 5] = Float.floatToRawIntBits(Lists.newArrayList(faceUV.uvs[0], faceUV.uvs[0], faceUV.uvs[2], faceUV.uvs[2]).get(j) / 16f);
 				}
-				BakedQuad newQuad = new BakedQuad(modelVertex, renderQuad.getTintIndex(), renderQuad.getFace(), renderQuad.getSprite(), renderQuad.shouldApplyDiffuseLighting(), renderQuad.getFormat());
+				newQuad = new ExternalBakedQuad(externalOverrideList.containsKey(l) ? externalOverrideList.get(l) : baseTextureExternal, vertexData, 0, modelQuad.getFace(), modelQuad.getSprite(), modelQuad.shouldApplyDiffuseLighting(), modelQuad.getFormat());
+			}
+			else
+			{
+				Pair<IBakedModel, IBlockState> blocklistPair = overrideList.containsKey(l) ? Pair.of(Minecraft.getMinecraft().getBlockRendererDispatcher().getModelForState(overrideList.get(l)), overrideList.get(l)) : Pair.of(oldModel_texure, renderState);
+				List<BakedQuad> textureQuads = blocklistPair.getKey().getQuads(blocklistPair.getRight(), modelQuad.getFace(), rand);
+				if(textureQuads.isEmpty())
+					textureQuads = blocklistPair.getKey().getQuads(blocklistPair.getRight(), null, rand);
+				for(BakedQuad renderQuad : textureQuads)
+				{
+					int[] modelVertex = new int[modelQuad.getVertexData().length];
+					System.arraycopy(modelQuad.getVertexData(), 0, modelVertex, 0, modelVertex.length);
+					BlockFaceUV faceUV = UVTransformer.getUV(modelQuad.getVertexData());
+					if(renderQuad.getFace() == EnumFacing.UP) faceUV = new BlockFaceUV(faceUV.uvs, 1); //Who knows why this has to be here. It just does
+					TextureAtlasSprite sprite = blocklistPair.getKey() == getMissingModel() ? Minecraft.getMinecraft().getBlockRendererDispatcher().getBlockModelShapes().getTexture(blocklistPair.getValue()) : renderQuad.getSprite();
+					for(int j = 0; j < 4; j++)
+					{
+						int i = (modelVertex.length / 4) * j;
+						modelVertex[i + 4] = Float.floatToRawIntBits(sprite.getInterpolatedU((double)faceUV.getVertexU(j) * .999 + faceUV.getVertexU((j + 2) % 4) * .001));
+						modelVertex[i + 4 + 1] = Float.floatToRawIntBits(sprite.getInterpolatedV((double)faceUV.getVertexV(j) * .999 + faceUV.getVertexV((j + 2) % 4) * .001));
+					}
+					newQuad = new BakedQuad(modelVertex, renderQuad.getTintIndex(), renderQuad.getFace(), renderQuad.getSprite(), renderQuad.shouldApplyDiffuseLighting(), renderQuad.getFormat());
+					currentRenderingMap.put(newQuad, overrideList.containsKey(l) ? overrideList.get(l) : renderState);
+				}
+			}
+			if(newQuad != null)
+			{
 				parentQuadMap.put(newQuad, modelQuad);
-				currentRenderingMap.put(newQuad, overrideList.containsKey(l) ? overrideList.get(l) : renderState);
 				list.add(newQuad);
 			}
+
 		}
 		return list;
 	}
@@ -112,7 +148,11 @@ public class CloakedModel implements IBakedModel
 		if(state == null) state = Blocks.STONE.getDefaultState();
 		return state;
 	}
-
+	
+	public ResourceLocation getExternalLocation(BakedQuad quad)
+	{
+		return externalMap.get(quad);
+	}
 	
 	public boolean isParentSelected(BakedQuad currentQuad, int selected)
 	{ 

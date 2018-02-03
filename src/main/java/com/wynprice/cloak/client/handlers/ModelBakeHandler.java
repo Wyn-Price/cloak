@@ -4,6 +4,7 @@ import com.wynprice.cloak.CloakMod;
 import com.wynprice.cloak.client.rendering.models.BasicCloakingMachineModel;
 import com.wynprice.cloak.client.rendering.models.BlockCaptureModel;
 import com.wynprice.cloak.client.rendering.models.CloakBlockItemModel;
+import com.wynprice.cloak.client.rendering.models.ExternalCaptureModel;
 import com.wynprice.cloak.client.rendering.models.LiquidCaptureModel;
 import com.wynprice.cloak.common.blocks.BasicCloakingMachine;
 
@@ -27,6 +28,8 @@ public class ModelBakeHandler
 					event.getModelRegistry().putObject(location, new LiquidCaptureModel(event.getModelRegistry().getObject(location)));
 				if(loc.equals("cloak_block"))
 					event.getModelRegistry().putObject(location, new CloakBlockItemModel(event.getModelRegistry().getObject(location)));
+				if(loc.equals("external_capture"))
+					event.getModelRegistry().putObject(location, new ExternalCaptureModel(event.getModelRegistry().getObject(location)));
 			}
 
 	}

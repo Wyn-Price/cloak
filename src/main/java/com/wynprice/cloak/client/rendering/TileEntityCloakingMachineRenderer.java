@@ -6,8 +6,11 @@ import java.util.List;
 
 import org.lwjgl.opengl.GL11;
 
+import com.wynprice.cloak.client.handlers.ExternalImageHandler;
 import com.wynprice.cloak.client.rendering.models.CloakedModel;
 import com.wynprice.cloak.client.rendering.models.SingleQuadModel;
+import com.wynprice.cloak.client.rendering.models.quads.ExternalBakedQuad;
+import com.wynprice.cloak.common.registries.CloakItems;
 import com.wynprice.cloak.common.tileentity.BasicCloakedModelTileEntity;
 import com.wynprice.cloak.common.world.CloakLightAccess;
 
@@ -24,7 +27,9 @@ import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTUtil;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
+import scala.collection.parallel.ParIterableLike.Min;
 
 public class TileEntityCloakingMachineRenderer<T extends BasicCloakedModelTileEntity> extends TileEntitySpecialRenderer<T>
 {
@@ -59,29 +64,41 @@ public class TileEntityCloakingMachineRenderer<T extends BasicCloakedModelTileEn
         World world = getWorld();
         Tessellator tessellator = Tessellator.getInstance();
         Block block = te.getWorld().getBlockState(te.getPos()).getBlock();
-        tessellator.getBuffer().begin(GL11.GL_QUADS, DefaultVertexFormats.BLOCK);
     	IBlockState renderState = NBTUtil.readBlockState(te.getHandler().getStackInSlot(0).getOrCreateSubCompound("capture_info"));
     	IBlockState modelState = NBTUtil.readBlockState(te.getHandler().getStackInSlot(1).getOrCreateSubCompound("capture_info"));
     	
     	CloakedModel model = factory.createModel(world, te.getPos(), modelState, renderState);
     	
     	HashMap<Integer, IBlockState> overrideList = new HashMap<>();
+    	HashMap<Integer, ResourceLocation> externalOverrideList = new HashMap<>();
+    	
 		for(int i : te.getCurrentModificationList().keySet())
 			if(te.getCurrentModificationList().get(i) != null && !te.getCurrentModificationList().get(i).isEmpty())
-				overrideList.put(i, NBTUtil.readBlockState(te.getCurrentModificationList().get(i).getSubCompound("capture_info")));
+				if(te.getCurrentModificationList().get(i).getItem() != CloakItems.EXTERNAL_CARD)
+					overrideList.put(i, NBTUtil.readBlockState(te.getCurrentModificationList().get(i).getSubCompound("capture_info")));
+				else if(ExternalImageHandler.RESOURCE_MAP.containsKey(te.getCurrentModificationList().get(i).getSubCompound("capture_info").getString("external_image")))
+					externalOverrideList.put(i, ExternalImageHandler.RESOURCE_MAP.get(te.getCurrentModificationList().get(i).getSubCompound("capture_info").getString("external_image")));
 
 		model.getOverrideList().putAll(overrideList);
-
+		model.setExternalOverrideList(externalOverrideList);
+		model.setBaseTextureExternal(ExternalImageHandler.RESOURCE_MAP.get(te.getHandler().getStackInSlot(0).getOrCreateSubCompound("capture_info").getString("external_image")));
+		
     	List<EnumFacing> facingList = new ArrayList<>();
+    	ArrayList<BakedQuad> quadList = new ArrayList<>();
     	facingList.add(null);
         for (EnumFacing enumfacing : EnumFacing.values()) facingList.add(enumfacing);
     	for(EnumFacing face : facingList)
     		for(BakedQuad quad : model.getQuads(renderState, face, 0L))
+    			quadList.add(quad);
+    	for(BakedQuad quad : quadList)
 	    	{
+            	tessellator.getBuffer().begin(GL11.GL_QUADS, DefaultVertexFormats.BLOCK);
+    			Minecraft.getMinecraft().renderEngine.bindTexture(quad instanceof ExternalBakedQuad ? ((ExternalBakedQuad)quad).getLocation() : TextureMap.LOCATION_BLOCKS_TEXTURE);
 	    		IBlockState blockstate = model.getStateFromQuad(quad);
-	    		Minecraft.getMinecraft().getBlockRendererDispatcher().getBlockModelRenderer().renderModel(new CloakLightAccess(world, te.getPos()), new SingleQuadModel(model, quad, face), blockstate, te.getPos(), tessellator.getBuffer(), false);
+	    		Minecraft.getMinecraft().getBlockRendererDispatcher().getBlockModelRenderer().renderModel(new CloakLightAccess(world, te.getPos()), new SingleQuadModel(model, quad, quad.getFace()), blockstate, te.getPos(), tessellator.getBuffer(), false);
+	            tessellator.draw();
+
 	    	}
-        tessellator.draw();
         Tessellator.getInstance().getBuffer().setTranslation(0, 0, 0);
     	GlStateManager.disableBlend();
         GlStateManager.shadeModel(7424);

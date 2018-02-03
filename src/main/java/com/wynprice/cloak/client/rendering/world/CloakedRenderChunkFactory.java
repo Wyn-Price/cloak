@@ -18,6 +18,6 @@ public class CloakedRenderChunkFactory implements IRenderChunkFactory
 	
 	@Override
 	public RenderChunk create(World worldIn, RenderGlobal renderGlobalIn, int index) {
-		return new CloakRenderChunk(worldIn, renderGlobalIn, index, base.create(worldIn, renderGlobalIn, index));
+		return OpenGlHelper.useVbo() ? new CloakRenderChunk(worldIn, renderGlobalIn, index, base.create(worldIn, renderGlobalIn, index)) : new CloakRenderChunkListed(worldIn, renderGlobalIn, index, base.create(worldIn, renderGlobalIn, index));
 	}
 }

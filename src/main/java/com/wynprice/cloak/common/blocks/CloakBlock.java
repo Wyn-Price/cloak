@@ -5,6 +5,7 @@ import java.util.Random;
 
 import com.wynprice.cloak.client.handlers.ParticleHandler;
 import com.wynprice.cloak.common.items.CloakBlockItemBlock;
+import com.wynprice.cloak.common.registries.CloakBlocks;
 import com.wynprice.cloak.common.tileentity.TileEntityCloakBlock;
 import com.wynprice.cloak.common.world.CloakBlockAccess;
 
@@ -50,7 +51,7 @@ public class CloakBlock extends Block implements ITileEntityProvider
 	public boolean shouldSideBeRendered(IBlockState blockState, IBlockAccess blockAccess, BlockPos pos,
 			EnumFacing side) 
 	{
-		if(blockAccess.getTileEntity(pos) instanceof TileEntityCloakBlock && !(((TileEntityCloakBlock)blockAccess.getTileEntity(pos)).getRenderState().getBlock() == Blocks.AIR || ((TileEntityCloakBlock)blockAccess.getTileEntity(pos)).getModelState().getBlock() == Blocks.AIR))
+		if(blockAccess.getTileEntity(pos) instanceof TileEntityCloakBlock && !(((TileEntityCloakBlock)blockAccess.getTileEntity(pos)).getModelState().getBlock() == Blocks.AIR))
 			return false;
 		return super.shouldSideBeRendered(blockState, blockAccess, pos, side);
 	}
@@ -130,9 +131,9 @@ public class CloakBlock extends Block implements ITileEntityProvider
                 if (target.sideHit == EnumFacing.SOUTH) d2 = (double)k + axisalignedbb.maxZ + 0.10000000149011612D;
                 if (target.sideHit == EnumFacing.WEST) d0 = (double)i + axisalignedbb.minX - 0.10000000149011612D;
                 if (target.sideHit == EnumFacing.EAST) d0 = (double)i + axisalignedbb.maxX + 0.10000000149011612D;
+                IBlockState renderState = ((TileEntityCloakBlock)worldObj.getTileEntity(target.getBlockPos())).getRenderState();
                 manager.addEffect(((net.minecraft.client.particle.ParticleDigging)new net.minecraft.client.particle.ParticleDigging.Factory()
-                		.createParticle(0, worldObj, d0, d1, d2, 0, 0, 0, 
-                				Block.getStateId(((TileEntityCloakBlock)worldObj.getTileEntity(target.getBlockPos())).getRenderState())))
+                		.createParticle(0, worldObj, d0, d1, d2, 0, 0, 0, Block.getStateId(renderState.getBlock() == Blocks.AIR ? CloakBlocks.CLOAKING_MACHINE.getDefaultState() : renderState)))
                 		.setBlockPos(target.getBlockPos()).multiplyVelocity(0.2F).multipleParticleScaleBy(0.6F));
                 return true;
             }
@@ -159,7 +160,7 @@ public class CloakBlock extends Block implements ITileEntityProvider
 	                    double d2 = ((double)l + 0.5D) / 4.0D;
 	                    manager.addEffect(((net.minecraft.client.particle.ParticleDigging)new net.minecraft.client.particle.ParticleDigging.Factory()
 	                    		.createParticle(0, world, (double)pos.getX() + d0, (double)pos.getY() + d1, (double)pos.getZ() + d2,
-	                    				d0 - 0.5D, d1 - 0.5D, d2 - 0.5D, Block.getStateId(state))).setBlockPos(pos));
+	                    				d0 - 0.5D, d1 - 0.5D, d2 - 0.5D, Block.getStateId(state.getBlock() == Blocks.AIR ? CloakBlocks.CLOAKING_MACHINE.getDefaultState() : state))).setBlockPos(pos));
 	                }
 	            }
 	        }

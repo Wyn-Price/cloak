@@ -13,8 +13,10 @@ import org.lwjgl.input.Mouse;
 import org.lwjgl.util.vector.Vector3f;
 
 import com.wynprice.cloak.CloakMod;
+import com.wynprice.cloak.client.handlers.ExternalImageHandler;
 import com.wynprice.cloak.client.handlers.TextureStitchHandler;
 import com.wynprice.cloak.client.rendering.models.CloakedModel;
+import com.wynprice.cloak.client.rendering.models.quads.ExternalBakedQuad;
 import com.wynprice.cloak.common.containers.ContainerBasicCloakingMachine;
 import com.wynprice.cloak.common.network.CloakNetwork;
 import com.wynprice.cloak.common.network.packets.PacketInitiateCloakingRecipe;
@@ -120,6 +122,8 @@ public class BasicGui extends GuiContainer
 		localHandler.deserializeNBT(stack37NBT.getCompoundTag("item"));
 		ItemStack stack = localHandler.getStackInSlot(0);
 		CloakedModel bakedmodel = createModel(modelState, renderState);
+		bakedmodel.setBaseTextureExternal(ExternalImageHandler.RESOURCE_MAP.get(this.inventorySlots.getSlot(37).getStack().getOrCreateSubCompound("capture_info").getString("external_image")));
+
 		HashMap<Integer, ItemStack> inventoryColors = getInventoryColors(bakedmodel, stack);
 		
     	GlStateManager.pushMatrix();
@@ -168,9 +172,8 @@ public class BasicGui extends GuiContainer
         		vertexData[l + 5] = Float.floatToRawIntBits(TextureStitchHandler.blockrender_overlay.getInterpolatedV((double)faceUV.getVertexV(j) * .999 + faceUV.getVertexV((j + 2) % 4) * .001));
         	}
         	BakedQuad colorlessQuad = new BakedQuad(vertexData, quad.getTintIndex(), quad.getFace(), quad.getSprite(), quad.shouldApplyDiffuseLighting(), quad.getFormat());
-            renderQuad(bufferbuilder, colorlessQuad, new ItemStack(Blocks.STONE));
-        	Minecraft.getMinecraft().getTextureManager().bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
-            
+			Minecraft.getMinecraft().renderEngine.bindTexture(quad instanceof ExternalBakedQuad ? ((ExternalBakedQuad)quad).getLocation() : TextureMap.LOCATION_BLOCKS_TEXTURE);
+
             if(bakedmodel.isParentSelected(quad, this.selectedQuad) && advanced)
             {
                 RenderHelper.disableStandardItemLighting();
@@ -179,7 +182,10 @@ public class BasicGui extends GuiContainer
             }
             
             tessellator.draw();
-            
+			Minecraft.getMinecraft().renderEngine.bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
+            bufferbuilder.begin(7, DefaultVertexFormats.ITEM);
+            renderQuad(bufferbuilder, colorlessQuad, new ItemStack(Blocks.STONE));
+            tessellator.draw();
             if(clickedLastTick)
         	{
 	        	int mouseColor = getColorUnderMouse();

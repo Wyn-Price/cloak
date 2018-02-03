@@ -3,6 +3,7 @@ package com.wynprice.cloak.common.registries;
 import java.util.ArrayList;
 
 import com.wynprice.cloak.CloakMod;
+import com.wynprice.cloak.common.items.ExternalCaptureCard;
 import com.wynprice.cloak.common.items.ItemCaptureBlock;
 import com.wynprice.cloak.common.items.ItemCaptureLiquid;
 
@@ -17,12 +18,13 @@ public class CloakItems
 	
 	public static final Item BLOCKSTATE_CARD = new ItemCaptureBlock();
 	public static final Item LIQUDSTATE_CARD = new ItemCaptureLiquid();
-
+	public static final Item EXTERNAL_CARD = new ExternalCaptureCard();
 	
 	public static void preInit()
 	{
 		regItem(BLOCKSTATE_CARD);
 		regItem(LIQUDSTATE_CARD);
+		regItem(EXTERNAL_CARD);
 	}
 	
 	public static void regRenders()

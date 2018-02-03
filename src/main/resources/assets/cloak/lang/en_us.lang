@@ -1,6 +1,7 @@
 #items
 item.block_capture.name=Block Capture Card
 item.liquid_capture.name=Liquid Capture Card
+item.external_capture.name=External Capture Card
 
 #blocks
 tile.cloak_block.name=Cloak Block

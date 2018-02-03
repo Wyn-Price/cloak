@@ -1,9 +1,9 @@
 package com.wynprice.cloak.client.rendering.gui;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 
-import com.google.common.collect.Lists;
+import org.apache.commons.lang3.tuple.Pair;
+
 import com.wynprice.cloak.client.rendering.models.CloakedModel;
 import com.wynprice.cloak.common.containers.ContainerBasicCloakingMachine;
 import com.wynprice.cloak.common.network.CloakNetwork;
@@ -13,12 +13,9 @@ import com.wynprice.cloak.common.tileentity.TileEntityCloakingMachine;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTUtil;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.items.ItemStackHandler;
 
 public class AdvancedGui extends BasicGui
@@ -54,7 +51,10 @@ public class AdvancedGui extends BasicGui
 	@Override
 	protected CloakedModel createModel(IBlockState modelState, IBlockState basicRenderState) 
 	{
-		return new CloakedModel(modelState, basicRenderState, ((ContainerBasicCloakingMachine)this.inventorySlots).getBlockStateMap());
+		Pair<HashMap<Integer, IBlockState>, HashMap<Integer, ResourceLocation>> pair = ((ContainerBasicCloakingMachine)this.inventorySlots).getBlockStateMap();
+		CloakedModel model = new CloakedModel(modelState, basicRenderState, pair.getLeft());
+		model.setExternalOverrideList(pair.getRight());
+		return model;
 	}
 	
 	@Override
