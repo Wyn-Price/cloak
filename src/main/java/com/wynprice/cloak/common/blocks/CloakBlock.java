@@ -168,14 +168,9 @@ public class CloakBlock extends Block implements ITileEntityProvider
 	}
 
 	@Override
-	public int getLightOpacity(IBlockState state, IBlockAccess world, BlockPos pos) 
+	public int getLightOpacity(IBlockState state, IBlockAccess world, BlockPos pos) //Changing this would cause more issues that it would fix
 	{
-		IBlockState modelState = getModelStateWithList(world, pos);
-		IBlockState renderState = getRenderStateWithList(world, pos);
-		if(modelState.getLightOpacity(world, pos) != 255)
-			return modelState.getLightOpacity(world, pos);
-		
-		return renderState.getLightOpacity(world, pos);
+		return 0; 
 	}
 	
 	@Override

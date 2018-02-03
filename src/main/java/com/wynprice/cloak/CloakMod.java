@@ -20,7 +20,7 @@ public class CloakMod
 {
     public static final String MODID = "cloak";
     public static final String NAME = "Cloak";
-    public static final String VERSION = "1.0";
+    public static final String VERSION = "0.0.1";
 
     public static final Logger LOGGER = LogManager.getLogger(MODID);
 

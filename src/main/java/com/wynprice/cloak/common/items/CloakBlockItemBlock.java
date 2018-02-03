@@ -52,9 +52,7 @@ public class CloakBlockItemBlock extends ItemBlock
 				int i = this.getMetadata(player.getHeldItem(hand).getMetadata());
 		        IBlockState iblockstate1 = NBTUtil.readBlockState(((TileEntityCloakBlock)worldIn.getTileEntity(pos)).getHandler().getStackInSlot(1).getTagCompound().getCompoundTag("capture_info").copy());
 		        NBTUtil.writeBlockState(((TileEntityCloakBlock)worldIn.getTileEntity(pos)).getHandler().getStackInSlot(1).getTagCompound().getCompoundTag("capture_info"), iblockstate1.getBlock().getStateForPlacement(worldIn, pos, facing, hitX, hitY, hitZ, i, player, hand));
-
 	        }
-	        
 		}
         return result;
 	}
@@ -66,7 +64,7 @@ public class CloakBlockItemBlock extends ItemBlock
 			float hitX, float hitY, float hitZ, IBlockState newState) 
 	{
 		NBTTagCompound compound = stack.getOrCreateSubCompound("rendering_info").copy();
-		PRESETTING_LIST.put(pos,  compound);
+		PRESETTING_LIST.put(pos, compound);
 		if (!world.setBlockState(pos, newState, 11)) return false;
 		
         IBlockState state = world.getBlockState(pos);

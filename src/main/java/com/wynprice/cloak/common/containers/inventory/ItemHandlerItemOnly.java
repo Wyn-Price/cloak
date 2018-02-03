@@ -3,6 +3,7 @@ package com.wynprice.cloak.common.containers.inventory;
 import java.util.ArrayList;
 
 import com.google.common.collect.Lists;
+import com.wynprice.cloak.common.registries.CloakBlocks;
 
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -13,7 +14,7 @@ public class ItemHandlerItemOnly extends ItemStackHandler
 {
 		
 	private final ArrayList<Item> accepted_items;
-	
+		
 	public ItemHandlerItemOnly() 
 	{
 		this.accepted_items = Lists.newArrayList();
