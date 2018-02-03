@@ -32,14 +32,6 @@ public class CloakBlockItemBlock extends ItemBlock
 	public EnumActionResult onItemUse(EntityPlayer player, World worldIn, BlockPos pos, EnumHand hand,
 			EnumFacing facing, float hitX, float hitY, float hitZ) 
 	{
-        if(worldIn.getBlockState(pos).getBlock() == CloakBlocks.CLOAK_BLOCK && worldIn.getTileEntity(pos) instanceof TileEntityCloakBlock && player.isSneaking())
-        {
-        	ItemStack stack = player.getHeldItem(hand);
-        	if(!stack.hasTagCompound()) stack.setTagCompound(new NBTTagCompound());
-        	stack.getTagCompound().setTag("rendering_info", ((TileEntityCloakBlock) worldIn.getTileEntity(pos)).writeRenderData(new NBTTagCompound()));
-        	return EnumActionResult.SUCCESS;
-        }
-
 		EnumActionResult result =  super.onItemUse(player, worldIn, pos, hand, facing, hitX, hitY, hitZ);
 		if(result == EnumActionResult.SUCCESS)
 		{
@@ -47,7 +39,7 @@ public class CloakBlockItemBlock extends ItemBlock
 	        Block block = iblockstate.getBlock();
 	        if (!block.isReplaceable(worldIn, pos))
 	            pos = pos.offset(facing);
-	        if(worldIn.getTileEntity(pos) instanceof TileEntityCloakBlock)
+	        if(worldIn.getTileEntity(pos) instanceof TileEntityCloakBlock && !player.isSneaking())
 	        {
 				int i = this.getMetadata(player.getHeldItem(hand).getMetadata());
 		        IBlockState iblockstate1 = NBTUtil.readBlockState(((TileEntityCloakBlock)worldIn.getTileEntity(pos)).getHandler().getStackInSlot(1).getTagCompound().getCompoundTag("capture_info").copy());

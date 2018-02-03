@@ -4,10 +4,10 @@ import java.util.HashMap;
 
 import org.apache.commons.lang3.tuple.Pair;
 
-import com.wynprice.cloak.client.handlers.ExternalImageHandler;
 import com.wynprice.cloak.common.containers.slots.SlotCaptureBlockOnlyAdvanced;
 import com.wynprice.cloak.common.containers.slots.SlotItemHandlerOutput;
 import com.wynprice.cloak.common.containers.slots.SlotItemOnly;
+import com.wynprice.cloak.common.handlers.ExternalImageHandler;
 import com.wynprice.cloak.common.registries.CloakBlocks;
 import com.wynprice.cloak.common.registries.CloakItems;
 import com.wynprice.cloak.common.tileentity.TileEntityCloakingMachine;

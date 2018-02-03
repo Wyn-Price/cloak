@@ -13,11 +13,11 @@ import org.lwjgl.input.Mouse;
 import org.lwjgl.util.vector.Vector3f;
 
 import com.wynprice.cloak.CloakMod;
-import com.wynprice.cloak.client.handlers.ExternalImageHandler;
 import com.wynprice.cloak.client.handlers.TextureStitchHandler;
 import com.wynprice.cloak.client.rendering.models.CloakedModel;
 import com.wynprice.cloak.client.rendering.models.quads.ExternalBakedQuad;
 import com.wynprice.cloak.common.containers.ContainerBasicCloakingMachine;
+import com.wynprice.cloak.common.handlers.ExternalImageHandler;
 import com.wynprice.cloak.common.network.CloakNetwork;
 import com.wynprice.cloak.common.network.packets.PacketInitiateCloakingRecipe;
 import com.wynprice.cloak.common.tileentity.TileEntityCloakingMachine;

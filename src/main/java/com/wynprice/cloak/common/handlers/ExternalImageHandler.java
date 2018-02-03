@@ -1,12 +1,12 @@
-package com.wynprice.cloak.client.handlers;
+package com.wynprice.cloak.common.handlers;
 
-import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.HashMap;
 
 import javax.imageio.ImageIO;
 
+import com.google.common.collect.Lists;
 import com.wynprice.cloak.CloakMod;
 
 import net.minecraft.client.Minecraft;
@@ -28,6 +28,8 @@ public class ExternalImageHandler
 				if(RESOURCE_MAP.containsKey(file.getName()))
 					continue;
 				BufferedImage image = ImageIO.read(file);
+				if(image.getWidth() != image.getHeight() || !Lists.newArrayList(16,32).contains(image.getWidth()))
+					throw new Exception("Image must be 16x16, or 32x32");
 				RESOURCE_MAP.put(file.getName(), Minecraft.getMinecraft().getTextureManager().getDynamicTextureLocation(file.getName(), new DynamicTexture(image)));
 			}
 			catch (Throwable e)

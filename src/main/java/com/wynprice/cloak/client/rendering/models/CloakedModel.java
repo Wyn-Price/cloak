@@ -104,8 +104,8 @@ public class CloakedModel implements IBakedModel
 				for(int j = 0; j < 4; j++)
 				{
 					int i = (vertexData.length / 4) * j;
-					vertexData[i + 4] = Float.floatToRawIntBits(Lists.newArrayList(faceUV.uvs[1], faceUV.uvs[3], faceUV.uvs[3], faceUV.uvs[1]).get(j) / 16f);
-					vertexData[i + 5] = Float.floatToRawIntBits(Lists.newArrayList(faceUV.uvs[0], faceUV.uvs[0], faceUV.uvs[2], faceUV.uvs[2]).get(j) / 16f);
+					vertexData[i + 4] = Float.floatToRawIntBits(Lists.newArrayList(faceUV.uvs[0], faceUV.uvs[0], faceUV.uvs[2], faceUV.uvs[2]).get(j) / 16f);
+					vertexData[i + 5] = Float.floatToRawIntBits(Lists.newArrayList(faceUV.uvs[1], faceUV.uvs[3], faceUV.uvs[3], faceUV.uvs[1]).get(j) / 16f);
 				}
 				newQuad = new ExternalBakedQuad(externalOverrideList.containsKey(l) ? externalOverrideList.get(l) : baseTextureExternal, vertexData, 0, modelQuad.getFace(), modelQuad.getSprite(), modelQuad.shouldApplyDiffuseLighting(), modelQuad.getFormat());
 			}

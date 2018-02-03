@@ -1,6 +1,7 @@
 package com.wynprice.cloak.common.core;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import org.lwjgl.util.vector.Vector3f;
 import org.objectweb.asm.ClassReader;
@@ -22,12 +23,14 @@ import net.minecraft.client.renderer.block.model.BlockFaceUV;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.launchwrapper.IClassTransformer;
 import net.minecraftforge.fml.common.FMLLog;
+import net.minecraftforge.fml.common.Loader;
+import net.minecraftforge.fml.relauncher.CoreModManager;
 
 public class UVTransformer implements IClassTransformer
 {
 	
 	public UVTransformer() {
-        FMLLog.info("[UVTransformer] Initialized.");
+        FMLLog.info("[Cloak UVTransformer] Initialized.");
     }
 
 	@Override
@@ -35,7 +38,15 @@ public class UVTransformer implements IClassTransformer
 	{
 		if(!transformedName.equals("net.minecraft.client.renderer.block.model.FaceBakery"))
             return basicClass;
-		String methodStoreVertexName = CloakCore.isDebofEnabled ? "func_178404_a" : "storeVertexData";
+		
+		for(List<String> stringlist : CoreModManager.getTransformers().values()) //Loader.isModLoaded is not callable. check to see if the SRM core is enabled
+			if(stringlist.contains("com.wynprice.secretroomsmod.core.UVTransformer"))
+	    	{
+	            FMLLog.info("[Cloak-Core] SecretRoomsMod found. Using their transformer.");
+	    		return basicClass;
+	    	}
+		
+		String methodStoreVertexName = CloakCore.isDebofEnabled ? "func_178348_a" : "storeVertexData";
         String methodStoreVertexDesc = "([IIILorg/lwjgl/util/vector/Vector3f;ILnet/minecraft/client/renderer/texture/TextureAtlasSprite;Lnet/minecraft/client/renderer/block/model/BlockFaceUV;)V";
 		
 		
@@ -103,7 +114,18 @@ public class UVTransformer implements IClassTransformer
 	
 	public static BlockFaceUV getUV(int[] list)
 	{
-		return BLOCKUV_DATA.containsKey(list) ? BLOCKUV_DATA.get(list) : null;
+		if(Loader.isModLoaded("secretroomsmod"))
+		{
+			try
+			{
+				return (BlockFaceUV) Class.forName("com.wynprice.secretroomsmod.core.UVTransformer").getMethod("getUV", int[].class, int.class).invoke(null, list, 0);
+			}
+			catch (Throwable t) 
+			{
+				;
+			}
+		}
+		return BLOCKUV_DATA.containsKey(list) ? BLOCKUV_DATA.get(list) : new BlockFaceUV(new float[]{0f, 0f, 16f, 16f}, 0);
 	}
 	
 	

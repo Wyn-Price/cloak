@@ -1,7 +1,7 @@
 package com.wynprice.cloak.common.items;
 
-import com.wynprice.cloak.client.handlers.ExternalImageHandler;
 import com.wynprice.cloak.client.rendering.gui.ExternalImageGui;
+import com.wynprice.cloak.common.handlers.ExternalImageHandler;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;

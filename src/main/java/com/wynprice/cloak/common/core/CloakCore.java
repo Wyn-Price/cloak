@@ -3,6 +3,7 @@ package com.wynprice.cloak.common.core;
 import java.util.Map;
 
 import net.minecraftforge.fml.common.FMLLog;
+import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.relauncher.IFMLLoadingPlugin;
 
 @IFMLLoadingPlugin.Name(value = "Cloak-Core")
@@ -19,10 +20,12 @@ public class CloakCore implements IFMLLoadingPlugin {
 
     @Override
     public String[] getASMTransformerClass() {//ADD compat with secretroomsmod
-        return new String[] 
+    	String[] stringList = new String[] 
         		{
         				"com.wynprice.cloak.common.core.UVTransformer"
         		};
+    	
+    	return stringList;
     }
 
     @Override

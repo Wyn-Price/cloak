@@ -3,7 +3,6 @@ package com.wynprice.cloak.client;
 import java.lang.reflect.Field;
 import java.util.HashMap;
 
-import com.wynprice.cloak.client.handlers.ExternalImageHandler;
 import com.wynprice.cloak.client.handlers.ModelBakeHandler;
 import com.wynprice.cloak.client.handlers.ParticleHandler;
 import com.wynprice.cloak.client.handlers.TextureStitchHandler;
@@ -16,7 +15,6 @@ import com.wynprice.cloak.client.rendering.models.BasicCloakingMachineModel;
 import com.wynprice.cloak.client.rendering.models.CloakedModel;
 import com.wynprice.cloak.client.rendering.world.CloakedRenderChunkFactory;
 import com.wynprice.cloak.common.CommonProxy;
-import com.wynprice.cloak.common.blocks.CloakBlock;
 import com.wynprice.cloak.common.registries.CloakBlocks;
 import com.wynprice.cloak.common.registries.CloakItems;
 import com.wynprice.cloak.common.tileentity.TileEntityCloakBlock;
@@ -28,7 +26,6 @@ import net.minecraft.client.renderer.RenderGlobal;
 import net.minecraft.client.renderer.chunk.IRenderChunkFactory;
 import net.minecraft.client.renderer.color.IItemColor;
 import net.minecraft.client.renderer.color.ItemColors;
-import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -64,9 +61,7 @@ public class ClientProxy extends CommonProxy
 	{
 		super.init(event);
 		registerItemColors();
-		setupChunkRenderFactory();
-		
-		ExternalImageHandler.init();
+		setupChunkRenderFactory();	
 	}
 	
 	private void setupChunkRenderFactory()

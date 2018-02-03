@@ -5,6 +5,7 @@ import com.wynprice.cloak.client.handlers.ModelBakeHandler;
 import com.wynprice.cloak.client.handlers.ParticleHandler;
 import com.wynprice.cloak.client.handlers.TextureStitchHandler;
 import com.wynprice.cloak.common.handlers.CloakGUIHandler;
+import com.wynprice.cloak.common.handlers.ExternalImageHandler;
 import com.wynprice.cloak.common.handlers.UpdateHandler;
 import com.wynprice.cloak.common.network.CloakNetwork;
 import com.wynprice.cloak.common.registries.CloakBlocks;
@@ -34,6 +35,7 @@ public class CommonProxy
 	public void init(FMLInitializationEvent event)
 	{
 		NetworkRegistry.INSTANCE.registerGuiHandler(CloakMod.instance, new CloakGUIHandler());
+		ExternalImageHandler.init();
 	}
 	
 	public void postInit(FMLPostInitializationEvent event)

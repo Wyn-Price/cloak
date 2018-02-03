@@ -6,8 +6,8 @@ import java.util.List;
 import org.lwjgl.util.vector.Vector3f;
 
 import com.google.common.collect.Lists;
-import com.wynprice.cloak.client.handlers.ExternalImageHandler;
 import com.wynprice.cloak.common.core.UVTransformer;
+import com.wynprice.cloak.common.handlers.ExternalImageHandler;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;

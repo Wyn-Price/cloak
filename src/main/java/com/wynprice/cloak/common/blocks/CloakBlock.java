@@ -195,7 +195,7 @@ public class CloakBlock extends Block implements ITileEntityProvider
     private IBlockState getRenderState(IBlockAccess access, BlockPos pos)
     {
     	TileEntityCloakBlock tileEntity = (TileEntityCloakBlock)access.getTileEntity(pos);
-    	return tileEntity == null || tileEntity.getModelState().getBlock() == this ? Blocks.STONE.getDefaultState() : tileEntity.getRenderState().getActualState(new CloakBlockAccess(access), pos);
+    	return tileEntity == null || tileEntity.getModelState().getBlock() == this || tileEntity.getRenderState().getBlock() == Blocks.AIR ? getModelState(access, pos) : tileEntity.getRenderState().getActualState(new CloakBlockAccess(access), pos);
     }
     
     private IBlockState getRenderStateWithList(IBlockAccess access, BlockPos pos)

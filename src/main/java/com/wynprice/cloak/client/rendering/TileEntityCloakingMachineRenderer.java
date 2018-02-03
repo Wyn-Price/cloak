@@ -6,10 +6,10 @@ import java.util.List;
 
 import org.lwjgl.opengl.GL11;
 
-import com.wynprice.cloak.client.handlers.ExternalImageHandler;
 import com.wynprice.cloak.client.rendering.models.CloakedModel;
 import com.wynprice.cloak.client.rendering.models.SingleQuadModel;
 import com.wynprice.cloak.client.rendering.models.quads.ExternalBakedQuad;
+import com.wynprice.cloak.common.handlers.ExternalImageHandler;
 import com.wynprice.cloak.common.registries.CloakItems;
 import com.wynprice.cloak.common.tileentity.BasicCloakedModelTileEntity;
 import com.wynprice.cloak.common.world.CloakLightAccess;
