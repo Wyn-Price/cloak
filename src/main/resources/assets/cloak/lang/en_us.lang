@@ -12,3 +12,7 @@ itemGroup.cloak=Cloak
 
 #gui
 gui.cloak.advance=Cloak
+
+#update Checker
+update.version=[%s] The Mod is out of date. Your version %s, target version: %s. Click here to go to page
+update.hover=Click To go to %s

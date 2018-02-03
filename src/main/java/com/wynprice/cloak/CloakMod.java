@@ -26,6 +26,8 @@ public class CloakMod
 
     public static final CreativeTabs TAB = new CloakCreativeTab();
     
+    public static final String UPDATE_URL = "http://www.wynprice.com/update_jsons/cloak.json";
+    
     @Instance(MODID)
     public static CloakMod instance;
     
