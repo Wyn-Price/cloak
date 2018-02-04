@@ -40,7 +40,12 @@ public class ItemCaptureLiquid extends Item
         Vec3d endPos = startPos.add(new Vec3d(playerIn.getLookVec().x * 4f, playerIn.getLookVec().y * 4f, playerIn.getLookVec().z * 4f));
 		RayTraceResult raytrace = rayTrace(worldIn, playerIn);
 		if(raytrace == null || raytrace.typeOfHit != RayTraceResult.Type.BLOCK) 
+		{
+			if(!playerIn.getHeldItem(handIn).hasTagCompound()) playerIn.getHeldItem(handIn).setTagCompound(new NBTTagCompound());
+			if(playerIn.isSneaking())
+				playerIn.getHeldItem(handIn).getTagCompound().setTag("capture_info", new NBTTagCompound());
 			return super.onItemRightClick(worldIn, playerIn, handIn);
+		}
 		IBlockState state = worldIn.getBlockState(raytrace.getBlockPos());
 		if(!(state.getBlock() instanceof BlockFluidBase) && !(state.getBlock() instanceof BlockLiquid) && !(state.getBlock() instanceof IFluidBlock))
 			return super.onItemRightClick(worldIn, playerIn, handIn);

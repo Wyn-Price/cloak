@@ -7,6 +7,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTUtil;
+import net.minecraft.util.ActionResult;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
@@ -22,6 +23,15 @@ public class ItemCaptureBlock extends Item
 	{
 		setRegistryName("block_capture");
 		setUnlocalizedName("block_capture");
+	}
+	
+	@Override
+	public ActionResult<ItemStack> onItemRightClick(World worldIn, EntityPlayer playerIn, EnumHand handIn) 
+	{
+		if(!playerIn.getHeldItem(handIn).hasTagCompound()) playerIn.getHeldItem(handIn).setTagCompound(new NBTTagCompound());
+		if(playerIn.isSneaking())
+			playerIn.getHeldItem(handIn).getTagCompound().setTag("capture_info", new NBTTagCompound());
+		return super.onItemRightClick(worldIn, playerIn, handIn);
 	}
 	
 	@Override
