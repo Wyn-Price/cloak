@@ -86,13 +86,14 @@ public class BasicGui extends GuiContainer
 
 		
 		renderCenterBlock(mouseX, mouseY);
+		
+		this.renderHoveredToolTip(mouseX, mouseY);
 
 	}	
 	
 	@Override
 	public void initGui() 
 	{
-
 		addButton(new GuiButton(0, this.width / 2 + 81, this.height / 2 - 45, 79, 20, I18n.format("gui.cloak.advance")));
 		super.initGui();
 	}
