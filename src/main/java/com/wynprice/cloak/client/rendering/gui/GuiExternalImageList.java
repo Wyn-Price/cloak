@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
+import com.google.common.collect.Lists;
 import com.wynprice.cloak.common.handlers.ExternalImageHandler;
 
 import net.minecraft.client.Minecraft;
@@ -43,19 +44,26 @@ public class GuiExternalImageList extends GuiListExtended
 	public void drawScreen(int mouseXIn, int mouseYIn, float partialTicks) 
 	{
 		searchEntiries.clear();
+		ArrayList<GuiExternalImageEntry> guiList = new ArrayList<>();
+		HashMap<String, GuiExternalImageEntry> stringMap = new HashMap<>();
+		for(GuiExternalImageEntry entry : this.entries)
+			stringMap.put(entry.fileName, entry);
+		
 		if(parent.name.getText().isEmpty() || parent.name.getText().startsWith(" "))
-			searchEntiries.addAll(entries);
+			guiList.addAll(entries);
 		else
-		{
-			HashMap<String, GuiExternalImageEntry> stringMap = new HashMap<>();
-			for(GuiExternalImageEntry entry : this.entries)
-				stringMap.put(entry.fileName, entry);
-			List<String> compleations = CommandBase.getListOfStringsMatchingLastWord(new String[]{parent.name.getText()}, stringMap.keySet());
-			Collections.sort(compleations);
-			Collections.reverse(compleations);
-			for(String string : compleations)
-				searchEntiries.add(stringMap.get(string));
-		}
+			for(String string : CommandBase.getListOfStringsMatchingLastWord(new String[]{parent.name.getText()}, stringMap.keySet()))
+				guiList.add(stringMap.get(string));
+		
+		
+		HashMap<String, GuiExternalImageEntry> guiMap = new HashMap<>();
+		for(GuiExternalImageEntry geie : guiList)
+			guiMap.put(geie.fileName, geie);
+		ArrayList<String> stringList = new ArrayList<>(stringMap.keySet());
+		Collections.sort(stringList);
+		for(String string : stringList)
+			searchEntiries.add(stringMap.get(string));
+		
 		if (this.visible)
         {
             this.mouseX = mouseXIn;
