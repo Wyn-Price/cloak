@@ -1,6 +1,6 @@
 package com.wynprice.cloak.client.rendering.gui;
 
-import com.wynprice.cloak.common.handlers.ExternalImageHandler;
+import com.wynprice.cloak.client.handlers.ExternalImageHandler;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiListExtended.IGuiListEntry;
@@ -17,7 +17,7 @@ public class GuiExternalImageEntry implements IGuiListEntry
 	{
 		this.fileName = fileName;
 		this.parent = parent;
-		this.location = ExternalImageHandler.RESOURCE_MAP.get(fileName);
+		this.location = parent.display_map.get(fileName);
 	}
 	
 	@Override

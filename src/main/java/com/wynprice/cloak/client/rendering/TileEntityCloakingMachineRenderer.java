@@ -6,10 +6,10 @@ import java.util.List;
 
 import org.lwjgl.opengl.GL11;
 
+import com.wynprice.cloak.client.handlers.ExternalImageHandler;
 import com.wynprice.cloak.client.rendering.models.CloakedModel;
 import com.wynprice.cloak.client.rendering.models.SingleQuadModel;
 import com.wynprice.cloak.client.rendering.models.quads.ExternalBakedQuad;
-import com.wynprice.cloak.common.handlers.ExternalImageHandler;
 import com.wynprice.cloak.common.registries.CloakItems;
 import com.wynprice.cloak.common.tileentity.BasicCloakedModelTileEntity;
 import com.wynprice.cloak.common.world.CloakLightAccess;
@@ -48,6 +48,15 @@ public class TileEntityCloakingMachineRenderer<T extends BasicCloakedModelTileEn
 			float alpha) 
 	{
 		if(te.getHandler().getStackInSlot(0).isEmpty() || te.getHandler().getStackInSlot(1).isEmpty()) return;
+		if (destroyStage >= 0) //TODO make workl
+		{
+			this.bindTexture(DESTROY_STAGES[destroyStage]);
+	        GlStateManager.matrixMode(5890);
+	        GlStateManager.pushMatrix();
+	        GlStateManager.scale(4.0F, 4.0F, 1.0F);
+	        GlStateManager.translate(0.0625F, 0.0625F, 0.0625F);
+	        GlStateManager.matrixMode(5888);
+		}
 		GlStateManager.pushMatrix();
 	    GlStateManager.enableRescaleNormal();
 	    RenderHelper.disableStandardItemLighting();
@@ -77,12 +86,12 @@ public class TileEntityCloakingMachineRenderer<T extends BasicCloakedModelTileEn
 			if(te.getCurrentModificationList().get(i) != null && !te.getCurrentModificationList().get(i).isEmpty())
 				if(te.getCurrentModificationList().get(i).getItem() != CloakItems.EXTERNAL_CARD)
 					overrideList.put(i, NBTUtil.readBlockState(te.getCurrentModificationList().get(i).getSubCompound("capture_info")));
-				else if(ExternalImageHandler.RESOURCE_MAP.containsKey(te.getCurrentModificationList().get(i).getSubCompound("capture_info").getString("external_image")))
-					externalOverrideList.put(i, ExternalImageHandler.RESOURCE_MAP.get(te.getCurrentModificationList().get(i).getSubCompound("capture_info").getString("external_image")));
+				else if(ExternalImageHandler.SYNCED_RESOURCE_MAP.containsKey(te.getCurrentModificationList().get(i).getSubCompound("capture_info").getString("external_image")))
+					externalOverrideList.put(i, ExternalImageHandler.SYNCED_RESOURCE_MAP.get(te.getCurrentModificationList().get(i).getSubCompound("capture_info").getString("external_image")));
 
 		model.getOverrideList().putAll(overrideList);
 		model.setExternalOverrideList(externalOverrideList);
-		model.setBaseTextureExternal(ExternalImageHandler.RESOURCE_MAP.get(te.getHandler().getStackInSlot(0).getOrCreateSubCompound("capture_info").getString("external_image")));
+		model.setBaseTextureExternal(ExternalImageHandler.SYNCED_RESOURCE_MAP.get(te.getHandler().getStackInSlot(0).getOrCreateSubCompound("capture_info").getString("external_image")));
 		
     	List<EnumFacing> facingList = new ArrayList<>();
     	ArrayList<BakedQuad> quadList = new ArrayList<>();

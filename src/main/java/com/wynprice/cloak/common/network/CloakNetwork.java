@@ -1,6 +1,8 @@
 package com.wynprice.cloak.common.network;
 
 import com.wynprice.cloak.CloakMod;
+import com.wynprice.cloak.common.network.packets.PacketClientRecieveImage;
+import com.wynprice.cloak.common.network.packets.PacketServerRecieveImage;
 import com.wynprice.cloak.common.network.packets.PacketFaceSelectionAdvancedGUI;
 import com.wynprice.cloak.common.network.packets.PacketInitiateCloakingRecipe;
 import com.wynprice.cloak.common.network.packets.PacketRemoveModificationList;
@@ -24,6 +26,8 @@ public class CloakNetwork
 		registerMessage(PacketFaceSelectionAdvancedGUI.class, Side.SERVER);
 		registerMessage(PacketInitiateCloakingRecipe.class, Side.SERVER);
 		registerMessage(PacketUpdateExternalCard.class, Side.SERVER);
+		registerMessage(PacketServerRecieveImage.class, Side.SERVER);
+		registerMessage(PacketClientRecieveImage.class, Side.CLIENT);
 	}
 	
 	private static int idCount = 0;

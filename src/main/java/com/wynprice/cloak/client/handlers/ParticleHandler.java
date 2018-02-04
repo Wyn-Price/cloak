@@ -6,12 +6,14 @@ import com.wynprice.cloak.common.tileentity.TileEntityCloakBlock;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.Minecraft;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.event.entity.living.LivingEvent.LivingUpdateEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.gameevent.TickEvent.ClientTickEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.WorldTickEvent;
 
 public class ParticleHandler 
@@ -40,10 +42,11 @@ public class ParticleHandler
 	}
 	
 	@SubscribeEvent
-	public void onWorldTick(WorldTickEvent event)
+	public void onWorldTick(ClientTickEvent event)
 	{
-		for(TileEntity te : event.world.loadedTileEntityList)
-			if(te instanceof TileEntityCloakBlock)
-				BLOCKBRAKERENDERMAP.put(te.getPos(), ((TileEntityCloakBlock) te).getRenderState());
+		if(Minecraft.getMinecraft().world != null)
+			for(TileEntity te : Minecraft.getMinecraft().world.loadedTileEntityList)
+				if(te instanceof TileEntityCloakBlock)
+					BLOCKBRAKERENDERMAP.put(te.getPos(), ((TileEntityCloakBlock) te).getRenderState());
 	}
 }

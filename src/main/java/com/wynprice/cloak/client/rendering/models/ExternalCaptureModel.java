@@ -6,8 +6,8 @@ import java.util.List;
 import org.lwjgl.util.vector.Vector3f;
 
 import com.google.common.collect.Lists;
+import com.wynprice.cloak.client.handlers.ExternalImageHandler;
 import com.wynprice.cloak.common.core.UVTransformer;
-import com.wynprice.cloak.common.handlers.ExternalImageHandler;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
@@ -47,7 +47,7 @@ public class ExternalCaptureModel extends BaseModelProxy
 		if(stack.isEmpty())
 			return Lists.newArrayList();
 		
-		ResourceLocation location  = ExternalImageHandler.RESOURCE_MAP.get(stack.getOrCreateSubCompound("capture_info").getString("external_image"));
+		ResourceLocation location  = ExternalImageHandler.SYNCED_RESOURCE_MAP.get(stack.getOrCreateSubCompound("capture_info").getString("external_image"));
 		if(location != null && rand == 1 && side == null)
 		{
 			ArrayList<BakedQuad> newList = new ArrayList<>();

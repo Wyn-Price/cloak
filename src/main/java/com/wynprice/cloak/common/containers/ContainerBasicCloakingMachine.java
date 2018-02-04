@@ -4,10 +4,10 @@ import java.util.HashMap;
 
 import org.apache.commons.lang3.tuple.Pair;
 
+import com.wynprice.cloak.client.handlers.ExternalImageHandler;
 import com.wynprice.cloak.common.containers.slots.SlotCaptureBlockOnlyAdvanced;
 import com.wynprice.cloak.common.containers.slots.SlotItemHandlerOutput;
 import com.wynprice.cloak.common.containers.slots.SlotItemOnly;
-import com.wynprice.cloak.common.handlers.ExternalImageHandler;
 import com.wynprice.cloak.common.registries.CloakBlocks;
 import com.wynprice.cloak.common.registries.CloakItems;
 import com.wynprice.cloak.common.tileentity.TileEntityCloakingMachine;
@@ -129,8 +129,8 @@ public class ContainerBasicCloakingMachine extends Container
 			if(this.modification_list.get(i) != null && !this.modification_list.get(i).isEmpty())
 				if(this.modification_list.get(i).getItem() != CloakItems.EXTERNAL_CARD)
 					overrideList.put(i, NBTUtil.readBlockState(this.modification_list.get(i).getSubCompound("capture_info")));
-				else if(ExternalImageHandler.RESOURCE_MAP.containsKey(this.modification_list.get(i).getSubCompound("capture_info").getString("external_image")))
-					externalOverrideList.put(i, ExternalImageHandler.RESOURCE_MAP.get(this.modification_list.get(i).getSubCompound("capture_info").getString("external_image")));
+				else if(ExternalImageHandler.SYNCED_RESOURCE_MAP.containsKey(this.modification_list.get(i).getSubCompound("capture_info").getString("external_image")))
+					externalOverrideList.put(i, ExternalImageHandler.SYNCED_RESOURCE_MAP.get(this.modification_list.get(i).getSubCompound("capture_info").getString("external_image")));
 		
 		return Pair.of(overrideList, externalOverrideList);
 	}

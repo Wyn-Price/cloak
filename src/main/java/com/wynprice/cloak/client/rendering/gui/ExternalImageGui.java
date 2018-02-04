@@ -1,8 +1,9 @@
 package com.wynprice.cloak.client.rendering.gui;
 
 import java.io.IOException;
+import java.util.HashMap;
 
-import com.wynprice.cloak.common.handlers.ExternalImageHandler;
+import com.wynprice.cloak.client.handlers.ExternalImageHandler;
 import com.wynprice.cloak.common.network.CloakNetwork;
 import com.wynprice.cloak.common.network.packets.PacketUpdateExternalCard;
 
@@ -20,18 +21,23 @@ public class ExternalImageGui extends GuiScreen
 {
 	public GuiTextField name;
 	
-	private GuiExternalImageList imageList;
+	protected GuiExternalImageList imageList;
 	
 	@Override
 	public void initGui() 
 	{
 		super.initGui();
-		imageList = new GuiExternalImageList(this.mc, this, this.width, this.height, 32, this.height - 64, 20);
+		imageList = new GuiExternalImageList(this.mc, this, getMap(), this.width, this.height, 32, this.height - 64, 20);
 		name = new GuiTextField(0, fontRenderer, this.width / 2 - 100, this.height - 40, 200, 20);
 		name.setFocused(true);
 		name.setCanLoseFocus(false);
 		addButton(new GuiButton(0, this.width / 2 - 210, this.height - 40, 100, 20,  I18n.format("gui.cancel")));
 		addButton(new GuiButton(1, this.width / 2 + 110, this.height - 40, 100, 20,  I18n.format("gui.cloak.save")));
+	}
+	
+	protected HashMap<String, ResourceLocation> getMap()
+	{
+		return ExternalImageHandler.SYNCED_RESOURCE_MAP;
 	}
 	
 	@Override
@@ -60,7 +66,7 @@ public class ExternalImageGui extends GuiScreen
 		if(this.imageList.selectedPoint != -1)
 		{
 			String fileName = ((GuiExternalImageEntry)this.imageList.getListEntry(this.imageList.selectedPoint)).fileName;
-			ResourceLocation location = ExternalImageHandler.RESOURCE_MAP.get(fileName);
+			ResourceLocation location = ExternalImageHandler.SYNCED_RESOURCE_MAP.get(fileName);
 			if(location != null && save)
 			{
 				PacketUpdateExternalCard.setNBT(Minecraft.getMinecraft().player, fileName);

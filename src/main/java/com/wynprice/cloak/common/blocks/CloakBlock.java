@@ -20,9 +20,12 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving.SpawnPlacementType;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTUtil;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
@@ -45,6 +48,39 @@ public class CloakBlock extends Block implements ITileEntityProvider
 	public TileEntity createNewTileEntity(World worldIn, int meta) 
 	{
 		return new TileEntityCloakBlock();
+	}
+	
+	@Override
+	public void getDrops(NonNullList<ItemStack> drops, IBlockAccess world, BlockPos pos, IBlockState state,
+			int fortune) 
+	{
+		;
+	}
+	
+	@Override
+	public void breakBlock(World worldIn, BlockPos pos, IBlockState state) 
+	{
+		ItemStack baseStack = new ItemStack(this);
+		TileEntity te = worldIn.getTileEntity(pos);
+		if(te instanceof TileEntityCloakBlock)
+		{
+			NBTTagCompound data = ((TileEntityCloakBlock)te).writeRenderData(new NBTTagCompound());
+			
+			ItemStackHandler handler = new ItemStackHandler();
+			ItemStackHandler handler2 = new ItemStackHandler(5);
+			handler.deserializeNBT(data.getCompoundTag("ItemHandler"));
+			handler2.setStackInSlot(0, handler.getStackInSlot(0));
+			handler2.setStackInSlot(1, handler.getStackInSlot(1));
+			handler2.setStackInSlot(2, handler.getStackInSlot(2));
+			data.setTag("ItemHandler", handler2.serializeNBT());
+			
+			baseStack.setTagCompound(new NBTTagCompound());
+			baseStack.getTagCompound().setTag("rendering_info", data.copy());
+			
+		}
+		
+		spawnAsEntity(worldIn, pos, baseStack);
+		super.breakBlock(worldIn, pos, state);
 	}
 	
 	@Override

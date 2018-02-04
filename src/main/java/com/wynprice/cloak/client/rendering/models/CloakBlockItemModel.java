@@ -8,8 +8,8 @@ import java.util.List;
 
 import org.lwjgl.input.Mouse;
 
+import com.wynprice.cloak.client.handlers.ExternalImageHandler;
 import com.wynprice.cloak.client.rendering.models.quads.ExternalBakedQuad;
-import com.wynprice.cloak.common.handlers.ExternalImageHandler;
 import com.wynprice.cloak.common.registries.CloakItems;
 import com.wynprice.cloak.common.tileentity.TileEntityCloakingMachine;
 
@@ -88,13 +88,13 @@ public class CloakBlockItemModel extends BaseModelProxy
 					if(currentModMap.get(i) != null && !currentModMap.get(i).isEmpty())
 						if(currentModMap.get(i).getItem() != CloakItems.EXTERNAL_CARD)
 							overrideList.put(i, NBTUtil.readBlockState(currentModMap.get(i).getSubCompound("capture_info")));
-						else if(ExternalImageHandler.RESOURCE_MAP.containsKey(currentModMap.get(i).getSubCompound("capture_info").getString("external_image")))
-							externalOverrideList.put(i, ExternalImageHandler.RESOURCE_MAP.get(currentModMap.get(i).getSubCompound("capture_info").getString("external_image")));
+						else if(ExternalImageHandler.SYNCED_RESOURCE_MAP.containsKey(currentModMap.get(i).getSubCompound("capture_info").getString("external_image")))
+							externalOverrideList.put(i, ExternalImageHandler.SYNCED_RESOURCE_MAP.get(currentModMap.get(i).getSubCompound("capture_info").getString("external_image")));
 	
 				
 				model.getOverrideList().putAll(overrideList);
 				model.setExternalOverrideList(externalOverrideList);
-				model.setBaseTextureExternal(ExternalImageHandler.RESOURCE_MAP.get(handler.getStackInSlot(0).getOrCreateSubCompound("capture_info").getString("external_image")));
+				model.setBaseTextureExternal(ExternalImageHandler.SYNCED_RESOURCE_MAP.get(handler.getStackInSlot(0).getOrCreateSubCompound("capture_info").getString("external_image")));
 				
 				ArrayList<BakedQuad> quadList = new ArrayList<>();
 				

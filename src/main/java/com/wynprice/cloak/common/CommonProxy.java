@@ -3,17 +3,15 @@ package com.wynprice.cloak.common;
 import org.apache.logging.log4j.core.util.Loader;
 
 import com.wynprice.cloak.CloakMod;
-import com.wynprice.cloak.client.handlers.ModelBakeHandler;
 import com.wynprice.cloak.client.handlers.ParticleHandler;
-import com.wynprice.cloak.client.handlers.TextureStitchHandler;
 import com.wynprice.cloak.common.handlers.CloakGUIHandler;
-import com.wynprice.cloak.common.handlers.ExternalImageHandler;
 import com.wynprice.cloak.common.handlers.UpdateHandler;
 import com.wynprice.cloak.common.network.CloakNetwork;
 import com.wynprice.cloak.common.registries.CloakBlocks;
 import com.wynprice.cloak.common.registries.CloakItems;
 import com.wynprice.cloak.common.tileentity.TileEntityCloakBlock;
 import com.wynprice.cloak.common.tileentity.TileEntityCloakingMachine;
+import com.wynprice.cloak.server.handlers.ServerExternalImageHandler;
 
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
@@ -42,7 +40,6 @@ public class CommonProxy
 	public void init(FMLInitializationEvent event)
 	{
 		NetworkRegistry.INSTANCE.registerGuiHandler(CloakMod.instance, new CloakGUIHandler());
-		ExternalImageHandler.init();
 	}
 	
 	public void postInit(FMLPostInitializationEvent event)
@@ -54,7 +51,9 @@ public class CommonProxy
 	{
 		Object[] handlers = 
 			{
-				new UpdateHandler()
+				new UpdateHandler(),
+				new ServerExternalImageHandler()
+
 			};
 		
 		for(Object o : handlers)

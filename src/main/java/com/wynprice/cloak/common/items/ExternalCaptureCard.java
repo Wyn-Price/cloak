@@ -1,7 +1,8 @@
 package com.wynprice.cloak.common.items;
 
+import com.wynprice.cloak.client.handlers.ExternalImageHandler;
 import com.wynprice.cloak.client.rendering.gui.ExternalImageGui;
-import com.wynprice.cloak.common.handlers.ExternalImageHandler;
+import com.wynprice.cloak.server.handlers.ServerExternalImageHandler;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
@@ -31,6 +32,8 @@ public class ExternalCaptureCard extends Item
 			playerIn.getHeldItem(handIn).getTagCompound().setTag("capture_info", new NBTTagCompound());
 		else if(worldIn.isRemote)
 			openGui();
+		else if(!worldIn.isRemote)
+			ServerExternalImageHandler.init();
 		return new ActionResult<ItemStack>(EnumActionResult.SUCCESS, playerIn.getHeldItem(handIn));
 	}
 	

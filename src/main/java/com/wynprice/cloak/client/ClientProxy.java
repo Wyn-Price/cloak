@@ -3,6 +3,7 @@ package com.wynprice.cloak.client;
 import java.lang.reflect.Field;
 import java.util.HashMap;
 
+import com.wynprice.cloak.client.handlers.ExternalImageHandler;
 import com.wynprice.cloak.client.handlers.ModelBakeHandler;
 import com.wynprice.cloak.client.handlers.ParticleHandler;
 import com.wynprice.cloak.client.handlers.TextureStitchHandler;
@@ -60,6 +61,8 @@ public class ClientProxy extends CommonProxy
 	public void init(FMLInitializationEvent event) 
 	{
 		super.init(event);
+		ExternalImageHandler.init();		
+
 		registerItemColors();
 		setupChunkRenderFactory();	
 	}

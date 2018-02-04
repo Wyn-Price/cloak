@@ -3,10 +3,10 @@ package com.wynprice.cloak.client.rendering;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.wynprice.cloak.client.handlers.ExternalImageHandler;
 import com.wynprice.cloak.client.rendering.models.CloakBlockItemModel;
 import com.wynprice.cloak.client.rendering.models.ExternalCaptureModel;
 import com.wynprice.cloak.client.rendering.models.quads.ExternalBakedQuad;
-import com.wynprice.cloak.common.handlers.ExternalImageHandler;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;

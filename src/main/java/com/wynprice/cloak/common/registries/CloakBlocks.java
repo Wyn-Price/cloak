@@ -6,6 +6,7 @@ import java.util.HashMap;
 import com.wynprice.cloak.CloakMod;
 import com.wynprice.cloak.common.blocks.BasicCloakingMachine;
 import com.wynprice.cloak.common.blocks.CloakBlock;
+import com.wynprice.cloak.common.blocks.TextureMatrix;
 import com.wynprice.cloak.common.items.CloakBlockItemBlock;
 
 import net.minecraft.block.Block;
@@ -24,11 +25,13 @@ public class CloakBlocks
 	
 	public final static Block CLOAK_BLOCK = new CloakBlock();
 	public final static Block CLOAKING_MACHINE = new BasicCloakingMachine();
+	public final static Block TEXTURE_MATRIX = new TextureMatrix();
 	
 	public static void preInit()
 	{
 		regBlock(CLOAK_BLOCK);
 		regBlock(CLOAKING_MACHINE, 64, BasicCloakingMachine.POWERED);
+		regBlock(TEXTURE_MATRIX);
 	}
 	
 	private final static ArrayList<Block> BLOCKS_WITH_ITEMS = new ArrayList<Block>();

@@ -3,10 +3,8 @@ package com.wynprice.cloak.client.rendering.gui;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 
-import com.google.common.collect.Lists;
-import com.wynprice.cloak.common.handlers.ExternalImageHandler;
+import com.wynprice.cloak.client.handlers.ExternalImageHandler;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiListExtended;
@@ -16,6 +14,7 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.command.CommandBase;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
 
 public class GuiExternalImageList extends GuiListExtended
@@ -26,12 +25,14 @@ public class GuiExternalImageList extends GuiListExtended
 	public final ExternalImageGui parent;
 	public int selectedPoint = -1;
 	
-	public GuiExternalImageList(Minecraft mcIn, ExternalImageGui parent, int widthIn, int heightIn, int topIn, int bottomIn, int slotHeightIn) 
+	public final HashMap<String, ResourceLocation> display_map;
+	
+	public GuiExternalImageList(Minecraft mcIn, ExternalImageGui parent, HashMap<String, ResourceLocation> display_map, int widthIn, int heightIn, int topIn, int bottomIn, int slotHeightIn) 
 	{
 		super(mcIn, widthIn, heightIn, topIn, bottomIn, slotHeightIn);
-		for(String string : ExternalImageHandler.RESOURCE_MAP.keySet())
+		this.display_map = display_map;
+		for(String string : display_map.keySet())
 			entries.add(new GuiExternalImageEntry(string, this));
-		
 		this.parent = parent;
 	}
 
@@ -43,6 +44,12 @@ public class GuiExternalImageList extends GuiListExtended
 	@Override
 	public void drawScreen(int mouseXIn, int mouseYIn, float partialTicks) 
 	{
+		if(this.entries.size() != display_map.size())
+		{
+			this.entries.clear();
+			for(String string : display_map.keySet())
+				entries.add(new GuiExternalImageEntry(string, this));
+		}
 		searchEntiries.clear();
 		ArrayList<GuiExternalImageEntry> guiList = new ArrayList<>();
 		HashMap<String, GuiExternalImageEntry> stringMap = new HashMap<>();
