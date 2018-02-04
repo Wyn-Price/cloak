@@ -40,13 +40,15 @@ public class UVTransformer implements IClassTransformer
             return basicClass;
 		
 		for(List<String> stringlist : CoreModManager.getTransformers().values()) //Loader.isModLoaded is not callable. check to see if the SRM core is enabled
+		{
 			if(stringlist.contains("com.wynprice.secretroomsmod.core.UVTransformer"))
 	    	{
 	            FMLLog.info("[Cloak-Core] SecretRoomsMod found. Using their transformer.");
 	    		return basicClass;
 	    	}
+		}
 		
-		String methodStoreVertexName = CloakCore.isDebofEnabled ? "func_178348_a" : "storeVertexData";
+		String methodStoreVertexName = CloakCore.isDebofEnabled ? "func_178404_a" : "storeVertexData";
         String methodStoreVertexDesc = "([IIILorg/lwjgl/util/vector/Vector3f;ILnet/minecraft/client/renderer/texture/TextureAtlasSprite;Lnet/minecraft/client/renderer/block/model/BlockFaceUV;)V";
 		
 		
@@ -103,7 +105,7 @@ public class UVTransformer implements IClassTransformer
 	public static void storeVertexData(int[] faceData, int storeIndex, int vertexIndex, Vector3f position, int shadeColor, TextureAtlasSprite sprite, BlockFaceUV faceUV)
     {
 		int i = storeIndex * (faceData.length / 4);
-        faceData[i] = Float.floatToRawIntBits(position.x);
+        faceData[i + 0] = Float.floatToRawIntBits(position.x);
         faceData[i + 1] = Float.floatToRawIntBits(position.y);
         faceData[i + 2] = Float.floatToRawIntBits(position.z);
         faceData[i + 3] = shadeColor;

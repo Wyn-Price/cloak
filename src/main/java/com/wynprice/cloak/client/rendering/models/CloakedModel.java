@@ -94,7 +94,6 @@ public class CloakedModel implements IBakedModel
 		for(BakedQuad modelQuad : oldModel_model.getQuads(modelState, side, rand))
 		{
 			int l = getIndentifierList().indexOf(modelQuad);
-			BakedQuad newQuad = null;
 			if((!overrideList.containsKey(l) && !externalOverrideList.containsKey(l) && baseTextureExternal != null || externalOverrideList.containsKey(l)))
 			{
 				int[] vertexData = new int[modelQuad.getVertexData().length];
@@ -107,7 +106,9 @@ public class CloakedModel implements IBakedModel
 					vertexData[i + 4] = Float.floatToRawIntBits(Lists.newArrayList(faceUV.uvs[0], faceUV.uvs[0], faceUV.uvs[2], faceUV.uvs[2]).get(j) / 16f);
 					vertexData[i + 5] = Float.floatToRawIntBits(Lists.newArrayList(faceUV.uvs[1], faceUV.uvs[3], faceUV.uvs[3], faceUV.uvs[1]).get(j) / 16f);
 				}
-				newQuad = new ExternalBakedQuad(externalOverrideList.containsKey(l) ? externalOverrideList.get(l) : baseTextureExternal, vertexData, 0, modelQuad.getFace(), modelQuad.getSprite(), modelQuad.shouldApplyDiffuseLighting(), modelQuad.getFormat());
+				BakedQuad newQuad = new ExternalBakedQuad(externalOverrideList.containsKey(l) ? externalOverrideList.get(l) : baseTextureExternal, vertexData, 0, modelQuad.getFace(), modelQuad.getSprite(), modelQuad.shouldApplyDiffuseLighting(), modelQuad.getFormat());
+				parentQuadMap.put(newQuad, modelQuad);
+				list.add(newQuad);
 			}
 			else
 			{
@@ -128,14 +129,11 @@ public class CloakedModel implements IBakedModel
 						modelVertex[i + 4] = Float.floatToRawIntBits(sprite.getInterpolatedU((double)faceUV.getVertexU(j) * .999 + faceUV.getVertexU((j + 2) % 4) * .001));
 						modelVertex[i + 4 + 1] = Float.floatToRawIntBits(sprite.getInterpolatedV((double)faceUV.getVertexV(j) * .999 + faceUV.getVertexV((j + 2) % 4) * .001));
 					}
-					newQuad = new BakedQuad(modelVertex, renderQuad.getTintIndex(), renderQuad.getFace(), renderQuad.getSprite(), renderQuad.shouldApplyDiffuseLighting(), renderQuad.getFormat());
+					BakedQuad newQuad = new BakedQuad(modelVertex, renderQuad.getTintIndex(), renderQuad.getFace(), renderQuad.getSprite(), renderQuad.shouldApplyDiffuseLighting(), renderQuad.getFormat());
+					parentQuadMap.put(newQuad, modelQuad);
 					currentRenderingMap.put(newQuad, overrideList.containsKey(l) ? overrideList.get(l) : renderState);
+					list.add(newQuad);
 				}
-			}
-			if(newQuad != null)
-			{
-				parentQuadMap.put(newQuad, modelQuad);
-				list.add(newQuad);
 			}
 
 		}

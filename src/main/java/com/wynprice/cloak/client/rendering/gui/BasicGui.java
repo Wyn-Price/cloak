@@ -254,8 +254,14 @@ public class BasicGui extends GuiContainer
 
         if (bakedquad.hasTintIndex())
         {
-            k = Minecraft.getMinecraft().getItemColors().colorMultiplier(stack, bakedquad.getTintIndex());
-
+        	try
+        	{
+        		k = Minecraft.getMinecraft().getItemColors().colorMultiplier(stack, bakedquad.getTintIndex());
+        	}
+        	catch (Throwable t) 
+        	{
+        		;
+			}
             if (EntityRenderer.anaglyphEnable)
             {
                 k = TextureUtil.anaglyphColor(k);

@@ -38,7 +38,6 @@ public class BasicCloakingMachineModel extends CloakedModel
 		IBakedModel renderModel = Minecraft.getMinecraft().getBlockRendererDispatcher().getModelForState(renderState);
 		double angle = (System.currentTimeMillis() / 500D) % 360;
 		HashMap<BakedQuad, IBlockState> localParentMap = new HashMap<>();
-		int reset = 0;
 		for(BakedQuad quad : super.getQuads(state, side, rand))
 		{
 			int[] vertexData = new int[quad.getVertexData().length];
@@ -57,11 +56,9 @@ public class BasicCloakingMachineModel extends CloakedModel
 			BakedQuad newQuad = new BakedQuad(vertexData, quad.getTintIndex(), quad.getFace(), quad.getSprite(), quad.shouldApplyDiffuseLighting(), quad.getFormat());
 			if(quad instanceof ExternalBakedQuad)
 				newQuad = new ExternalBakedQuad(((ExternalBakedQuad)quad).getLocation(), newQuad);
-			
 			localParentMap.put(newQuad, currentRenderingMap.get(quad));
 			list.add(newQuad);
 		}
-		currentRenderingMap.clear();
 		currentRenderingMap.putAll(localParentMap);
 		return list;
 	}
