@@ -1,5 +1,7 @@
 package com.wynprice.cloak.common;
 
+import org.apache.logging.log4j.core.util.Loader;
+
 import com.wynprice.cloak.CloakMod;
 import com.wynprice.cloak.client.handlers.ModelBakeHandler;
 import com.wynprice.cloak.client.handlers.ParticleHandler;
@@ -22,6 +24,9 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
 
 public class CommonProxy 
 {
+	
+	public static boolean isOptifine = false;
+	
 	public void preInit(FMLPreInitializationEvent event)
 	{
 		CloakItems.preInit();
@@ -30,6 +35,8 @@ public class CommonProxy
 		
 		registerTileEntities();
 		registerHandlers();
+		
+		isOptifine = Loader.isClassAvailable("ChunkCacheOF");
 	}
 	
 	public void init(FMLInitializationEvent event)

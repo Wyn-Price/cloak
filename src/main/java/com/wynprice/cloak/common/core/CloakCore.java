@@ -40,7 +40,7 @@ public class CloakCore implements IFMLLoadingPlugin {
 
     @Override
     public void injectData(Map<String, Object> data) {
-        isDebofEnabled = (boolean) data.get("runtimeDeobfuscationEnabled");
+//        isDebofEnabled = (boolean) data.get("runtimeDeobfuscationEnabled");
     }
 
     @Override

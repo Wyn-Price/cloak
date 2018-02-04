@@ -1,5 +1,8 @@
 package com.wynprice.cloak.client.rendering.world;
 
+import org.apache.logging.log4j.core.util.Loader;
+
+import com.wynprice.cloak.common.CommonProxy;
 import com.wynprice.cloak.common.blocks.CloakBlock;
 import com.wynprice.cloak.common.registries.CloakBlocks;
 import com.wynprice.cloak.common.tileentity.BasicCloakedModelTileEntity;
@@ -46,21 +49,44 @@ public class CloakChunkCache extends ChunkCache
 	{
 		return oldCache.getBiome(pos);
 	}
-			
-	public int prevInt = -1;
-	
+				
 	@Override
 	public IBlockState getBlockState(BlockPos pos) 
 	{
+	
+		if(CommonProxy.isOptifine) return oldCache.getBlockState(pos); //If optifine is here, dont even try to do anything, it'll just cause more issues
 		
-		if(super.getBlockState(pos).getBlock() == CloakBlocks.CLOAK_BLOCK && this.getTileEntity(pos) instanceof BasicCloakedModelTileEntity &&
-				!(Thread.currentThread().getStackTrace()[2].getClassName().equals(RenderChunk.class.getName())
-						|| Thread.currentThread().getStackTrace()[2].getMethodName().equals("func_176225_a") || Thread.currentThread().getStackTrace()[2].getMethodName().equals("shouldSideBeRendered")))
-		{
-			return NBTUtil.readBlockState(((BasicCloakedModelTileEntity)this.getTileEntity(pos)).getHandler().getStackInSlot(1).getOrCreateSubCompound("capture_info"));
-		}
+		if(super.getBlockState(pos).getBlock() == CloakBlocks.CLOAK_BLOCK && this.getTileEntity(pos) instanceof BasicCloakedModelTileEntity)
+			if(!isStackSecondMethod("rebuildChunk", "func_178581_b") && !isStackSecondMethod("shouldSideBeRendered", "func_176225_a"))
+				return NBTUtil.readBlockState(((BasicCloakedModelTileEntity)this.getTileEntity(pos)).getHandler().getStackInSlot(1).getOrCreateSubCompound("capture_info"));
+
 		return oldCache.getBlockState(pos);
 	}	
+	
+	private boolean isStackSecondMethod(String methodName, String deobMethodName)
+	{
+		for(int i = 0; i < Thread.currentThread().getStackTrace().length; i++)
+			if(i > 0)
+			{
+				try
+				{
+					if(ChunkCache.class.isAssignableFrom(Class.forName(Thread.currentThread().getStackTrace()[i].getClassName())))
+						continue;
+					else if(Thread.currentThread().getStackTrace()[i].getMethodName().equalsIgnoreCase(methodName) || Thread.currentThread().getStackTrace()[i].getMethodName().equalsIgnoreCase(deobMethodName))
+						return true;
+					else
+						return false;
+				}
+				catch (Exception e) 
+				{
+					;
+				}
+			}
+		
+		return false;
+			
+	}
+	
 	
 	@Override
 	public int getCombinedLight(BlockPos pos, int lightValue) 
