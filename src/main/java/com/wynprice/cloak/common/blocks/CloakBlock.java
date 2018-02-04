@@ -205,8 +205,9 @@ public class CloakBlock extends Block implements ITileEntityProvider
     	{
     		ItemStackHandler handler = new ItemStackHandler();
         	handler.deserializeNBT(CloakBlockItemBlock.PRESETTING_LIST.get(pos).getCompoundTag("ItemHandler"));
-        	if(handler.getSlots() == 1)
+        	if(handler.getSlots() > 0)
         		overState = NBTUtil.readBlockState(handler.getStackInSlot(0).getOrCreateSubCompound("capture_info"));
+
     	}
     	TileEntityCloakBlock tileEntity = (TileEntityCloakBlock)access.getTileEntity(pos);
     	IBlockState ret =  tileEntity == null || tileEntity.getModelState().getBlock() == this || overState.getBlock() != Blocks.STONE? overState : tileEntity.getRenderState().getActualState(new CloakBlockAccess(access), pos);
