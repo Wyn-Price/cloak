@@ -35,6 +35,7 @@ public class BasicCloakingMachine extends Block implements ITileEntityProvider
 		super(Material.IRON);
 		setRegistryName("cloaking_machine");
 		setUnlocalizedName("cloaking_machine");
+		setHardness(0.5f);
 	}
 
 	@Override

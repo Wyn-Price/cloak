@@ -51,6 +51,11 @@ public class CloakBlock extends Block implements ITileEntityProvider
 	}
 	
 	@Override
+	public boolean hasCustomBreakingProgress(IBlockState state) {
+		return true;
+	}
+	
+	@Override
 	public void getDrops(NonNullList<ItemStack> drops, IBlockAccess world, BlockPos pos, IBlockState state,
 			int fortune) 
 	{
@@ -62,18 +67,24 @@ public class CloakBlock extends Block implements ITileEntityProvider
 	{
 		ItemStack baseStack = new ItemStack(this);
 		TileEntity te = worldIn.getTileEntity(pos);
-		if(te instanceof TileEntityCloakBlock)
+		if(te instanceof TileEntityCloakBlock) //Change around NBT tag so itll stack with others of its kind
 		{
 			NBTTagCompound data = ((TileEntityCloakBlock)te).writeRenderData(new NBTTagCompound());
 			
 			ItemStackHandler handler = new ItemStackHandler();
 			ItemStackHandler handler2 = new ItemStackHandler(5);
+			ItemStackHandler handler3 = new ItemStackHandler();
+			
 			handler.deserializeNBT(data.getCompoundTag("ItemHandler"));
 			handler2.setStackInSlot(0, handler.getStackInSlot(0));
 			handler2.setStackInSlot(1, handler.getStackInSlot(1));
 			handler2.setStackInSlot(2, handler.getStackInSlot(2));
 			data.setTag("ItemHandler", handler2.serializeNBT());
 			
+			handler3.deserializeNBT(handler.getStackInSlot(1).getTagCompound().getCompoundTag("capture_info").getCompoundTag("item"));
+			handler2.getStackInSlot(1).getTagCompound().setTag("capture_info", handler2.getStackInSlot(1).getTagCompound().getTag("itemblock_info"));
+			handler2.getStackInSlot(1).getTagCompound().removeTag("itemblock_info");
+			handler2.getStackInSlot(1).getTagCompound().getCompoundTag("capture_info").setTag("item", handler3.serializeNBT());
 			baseStack.setTagCompound(new NBTTagCompound());
 			baseStack.getTagCompound().setTag("rendering_info", data.copy());
 			
@@ -89,7 +100,7 @@ public class CloakBlock extends Block implements ITileEntityProvider
 	{
 		if(blockAccess.getTileEntity(pos) instanceof TileEntityCloakBlock && !(((TileEntityCloakBlock)blockAccess.getTileEntity(pos)).getModelState().getBlock() == Blocks.AIR))
 			return false;
-		return super.shouldSideBeRendered(blockState, blockAccess, pos, side);
+		return getModelState(blockAccess, pos).shouldSideBeRendered(new CloakBlockAccess(blockAccess), pos, side);
 	}
 	
 	@Override

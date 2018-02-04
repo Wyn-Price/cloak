@@ -88,4 +88,11 @@ public class BasicCloakedModelTileEntity extends BasicTileEntity
 	public AxisAlignedBB getRenderBoundingBox() {
 		return INFINITE_EXTENT_AABB;
 	}
+	
+	@Override
+	public boolean canRenderBreaking() {
+		return true;
+	}
+	
+	
 }

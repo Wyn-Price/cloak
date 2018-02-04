@@ -36,7 +36,7 @@ public class PacketInitiateCloakingRecipe extends BasicMessagePacket<PacketIniti
 		handler2.setStackInSlot(1, handler.getStackInSlot(1));
 		handler2.setStackInSlot(2, handler.getStackInSlot(2));
 		data.setTag("ItemHandler", handler2.serializeNBT());
-		
+				
 		ItemStack testStack = stack.copy();
 		testStack.getTagCompound().setTag("rendering_info", data.copy());
 		

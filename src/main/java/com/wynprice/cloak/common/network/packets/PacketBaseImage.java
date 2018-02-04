@@ -34,6 +34,7 @@ public abstract class PacketBaseImage extends BasicMessagePacket<PacketBaseImage
 	public void toBytes(ByteBuf buf) {
 		NBTTagCompound nbt = new NBTTagCompound();
 		nbt.setString("name", fileName);
+		nbt.setInteger("type", image.getType());
 		nbt.setInteger("width", image.getWidth());
 		nbt.setInteger("height", image.getHeight());
 		nbt.setIntArray("colors", image.getRGB(0, 0, image.getWidth(), image.getHeight(), null, 0, image.getWidth()));
@@ -59,13 +60,11 @@ public abstract class PacketBaseImage extends BasicMessagePacket<PacketBaseImage
 		byte[] bytes = new byte[size];
 		for(int i = 0; i < size; i++)
 			bytes[i] = buf.readByte();
-		
-
 		try 
 		{
 			NBTTagCompound compound = CompressedStreamTools.readCompressed(new ByteArrayInputStream(bytes));
 			this.fileName = compound.getString("name");
-			image = new BufferedImage(compound.getInteger("width"), compound.getInteger("height"), 1);
+			image = new BufferedImage(compound.getInteger("width"), compound.getInteger("height"), compound.getInteger("type"));
 			image.setRGB(0, 0, image.getWidth(), image.getHeight(), compound.getIntArray("colors"), 0, image.getWidth());
 		} catch (IOException e) {
 			e.printStackTrace();

@@ -8,12 +8,14 @@ import com.wynprice.cloak.common.tileentity.TileEntityCloakBlock;
 import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTUtil;
+import net.minecraft.util.ActionResult;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
@@ -29,6 +31,15 @@ public class CloakBlockItemBlock extends ItemBlock
 	}
 	
 	@Override
+	public ActionResult<ItemStack> onItemRightClick(World worldIn, EntityPlayer playerIn, EnumHand handIn) 
+	{
+		System.out.println(playerIn.getHeldItem(handIn).getTagCompound());
+		if(GuiScreen.isCtrlKeyDown())
+			return new ActionResult<ItemStack>(EnumActionResult.SUCCESS, new ItemStack(this));
+		return super.onItemRightClick(worldIn, playerIn, handIn);
+	}
+	
+	@Override
 	public EnumActionResult onItemUse(EntityPlayer player, World worldIn, BlockPos pos, EnumHand hand,
 			EnumFacing facing, float hitX, float hitY, float hitZ) 
 	{
@@ -41,9 +52,9 @@ public class CloakBlockItemBlock extends ItemBlock
 	            pos = pos.offset(facing);
 	        if(worldIn.getTileEntity(pos) instanceof TileEntityCloakBlock && !player.isSneaking())
 	        {
-				int i = this.getMetadata(player.getHeldItem(hand).getMetadata());
 		        IBlockState iblockstate1 = NBTUtil.readBlockState(((TileEntityCloakBlock)worldIn.getTileEntity(pos)).getHandler().getStackInSlot(1).getTagCompound().getCompoundTag("capture_info").copy());
-		        NBTUtil.writeBlockState(((TileEntityCloakBlock)worldIn.getTileEntity(pos)).getHandler().getStackInSlot(1).getTagCompound().getCompoundTag("capture_info"), iblockstate1.getBlock().getStateForPlacement(worldIn, pos, facing, hitX, hitY, hitZ, i, player, hand));
+		        NBTTagCompound nbt1 = NBTUtil.writeBlockState(((TileEntityCloakBlock)worldIn.getTileEntity(pos)).getHandler().getStackInSlot(1).getOrCreateSubCompound("itemblock_info"), iblockstate1);
+		        NBTUtil.writeBlockState(((TileEntityCloakBlock)worldIn.getTileEntity(pos)).getHandler().getStackInSlot(1).getTagCompound().getCompoundTag("capture_info"), iblockstate1.getBlock().getStateForPlacement(worldIn, pos, facing, hitX, hitY, hitZ, 0, player, hand));
 	        }
 		}
         return result;
