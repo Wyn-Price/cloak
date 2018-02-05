@@ -11,13 +11,8 @@ import net.minecraftforge.items.ItemStackHandler;
 public class BasicCloakedModelTileEntity extends BasicTileEntity 
 {
 
-	protected final ItemStackHandler handler;
+	protected final ItemStackHandler handler = new ItemStackHandler(5);
 	protected HashMap<Integer, ItemStack> currentModificationList = new HashMap<>();
-
-	public BasicCloakedModelTileEntity() 
-	{
-		this.handler = new ItemStackHandler(5);
-	}
 	
 	@Override
 	public NBTTagCompound writeToNBT(NBTTagCompound compound) 

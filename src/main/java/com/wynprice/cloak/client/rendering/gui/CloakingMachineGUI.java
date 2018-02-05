@@ -8,6 +8,7 @@ import java.util.List;
 
 import javax.vecmath.Matrix4f;
 
+import org.apache.commons.lang3.tuple.Pair;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.util.vector.Vector3f;
@@ -19,7 +20,9 @@ import com.wynprice.cloak.client.rendering.models.CloakedModel;
 import com.wynprice.cloak.client.rendering.models.quads.ExternalBakedQuad;
 import com.wynprice.cloak.common.containers.ContainerBasicCloakingMachine;
 import com.wynprice.cloak.common.network.CloakNetwork;
+import com.wynprice.cloak.common.network.packets.PacketFaceSelectionAdvancedGUI;
 import com.wynprice.cloak.common.network.packets.PacketInitiateCloakingRecipe;
+import com.wynprice.cloak.common.network.packets.PacketRemoveModificationList;
 import com.wynprice.cloak.common.tileentity.TileEntityCloakingMachine;
 
 import net.minecraft.block.state.IBlockState;
@@ -49,19 +52,38 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.ForgeHooksClient;
 import net.minecraftforge.items.ItemStackHandler;
 
-public class BasicGui extends GuiContainer
+public class CloakingMachineGUI extends GuiContainer
 {
 	
-	public BasicGui(EntityPlayer player, TileEntityCloakingMachine tileEntity) 
+	private boolean previous36;
+	private boolean previous37;
+	private boolean hasOpened;
+	private EntityPlayer player;
+	
+	public CloakingMachineGUI(EntityPlayer player, TileEntityCloakingMachine tileEntity) 
 	{
 		super(new ContainerBasicCloakingMachine(player, tileEntity));
-		this.advanced = tileEntity.isAdvanced();
 		this.xSize = 327;
 		this.ySize = 219;
 	}
 	
-	private final boolean advanced;
-	
+	@Override
+	public void updateScreen() 
+	{
+		if(previous36 != this.inventorySlots.getSlot(36).getHasStack() || previous37 != this.inventorySlots.getSlot(37).getHasStack())
+		{
+			previous36 = this.inventorySlots.getSlot(36).getHasStack();
+			previous37 = this.inventorySlots.getSlot(37).getHasStack();
+			
+			if(hasOpened)
+			{
+				PacketRemoveModificationList.updateContainer((ContainerBasicCloakingMachine) this.inventorySlots, Minecraft.getMinecraft().player);
+				CloakNetwork.sendToServer(new PacketRemoveModificationList());
+			}
+		}
+		hasOpened = true;
+	}
+		
 	private boolean clickedLastTick = false;
 	
 	private int selectedQuad = -1;
@@ -100,7 +122,10 @@ public class BasicGui extends GuiContainer
 	
 	protected CloakedModel createModel(IBlockState modelState, IBlockState basicRenderState)
 	{
-		return new CloakedModel(modelState, basicRenderState);
+		Pair<HashMap<Integer, IBlockState>, HashMap<Integer, ResourceLocation>> pair = ((ContainerBasicCloakingMachine)this.inventorySlots).getBlockStateMap();
+		CloakedModel model = new CloakedModel(modelState, basicRenderState, pair.getLeft());
+		model.setExternalOverrideList(pair.getRight());
+		return model;
 	}
 	
 	protected HashMap<Integer, ItemStack> getInventoryColors(CloakedModel model, ItemStack defualt)
@@ -109,7 +134,16 @@ public class BasicGui extends GuiContainer
 		List<BakedQuad> quadList = model.getIndentifierList();
         for(int i = 0; i < quadList.size(); i++)
         	finalMap.put(i, defualt);
-		return finalMap;
+        HashMap<Integer, ItemStack> map = finalMap;
+		ContainerBasicCloakingMachine container = ((ContainerBasicCloakingMachine)this.inventorySlots);
+		for(int i : container.modification_list.keySet())
+			if(container.modification_list.get(i) != null && !container.modification_list.get(i).isEmpty())
+			{
+				ItemStackHandler handler = new ItemStackHandler(1);
+				handler.deserializeNBT(container.modification_list.get(i).getSubCompound("capture_info").getCompoundTag("item"));
+				map.put(i, handler.getStackInSlot(0));
+			}
+		return map;
 	}
 	
 	private void renderCenterBlock(int mouseX, int mouseY)
@@ -160,7 +194,7 @@ public class BasicGui extends GuiContainer
             RenderHelper.enableStandardItemLighting();
         	BakedQuad quad = quadList.get(i);
             bufferbuilder.begin(7, DefaultVertexFormats.ITEM);
-        	renderQuad(bufferbuilder, quad, bakedmodel.isParentSelected(quad, this.selectedQuad) && advanced ? new ItemStack(Blocks.STONE) : inventoryColors.get(bakedmodel.getParentID(quad)));
+        	renderQuad(bufferbuilder, quad, bakedmodel.isParentSelected(quad, this.selectedQuad) ? new ItemStack(Blocks.STONE) : inventoryColors.get(bakedmodel.getParentID(quad)));
         	
         	int[] vertexData = new int[quad.getVertexData().length];
         	System.arraycopy(quad.getVertexData(), 0, vertexData, 0, vertexData.length);
@@ -175,7 +209,7 @@ public class BasicGui extends GuiContainer
         	BakedQuad colorlessQuad = new BakedQuad(vertexData, quad.getTintIndex(), quad.getFace(), quad.getSprite(), quad.shouldApplyDiffuseLighting(), quad.getFormat());
 			Minecraft.getMinecraft().renderEngine.bindTexture(quad instanceof ExternalBakedQuad ? ((ExternalBakedQuad)quad).getLocation() : TextureMap.LOCATION_BLOCKS_TEXTURE);
 
-            if(bakedmodel.isParentSelected(quad, this.selectedQuad) && advanced)
+            if(bakedmodel.isParentSelected(quad, this.selectedQuad))
             {
                 RenderHelper.disableStandardItemLighting();
             	for(int l = 0; l < bufferbuilder.getVertexCount() + 1; l++)
@@ -219,12 +253,12 @@ public class BasicGui extends GuiContainer
 	
 	protected void onFaceSelected(int slotID, int OldSlotID)
 	{
-		
+		PacketFaceSelectionAdvancedGUI.setContainerFace((ContainerBasicCloakingMachine) this.inventorySlots, slotID, OldSlotID);
+		CloakNetwork.sendToServer(new PacketFaceSelectionAdvancedGUI(slotID, OldSlotID));
 	}
 	
 	private int getColorUnderMouse()
 	{
-		if(!advanced) return 0;
         IntBuffer intbuffer = BufferUtils.createIntBuffer(1);
         int[] ints = new int[1];
         GlStateManager.glReadPixels(Mouse.getX(), Mouse.getY(), 1, 1, 32993, 33639, intbuffer);
@@ -283,7 +317,7 @@ public class BasicGui extends GuiContainer
 	@Override
 	protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException 
 	{
-		if(mouseButton == 0 && advanced)
+		if(mouseButton == 0)
 			clickedLastTick = true;
 		if(mouseButton == 1)
 			this.lastMouseClicked = new Point(mouseX, mouseY);

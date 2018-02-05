@@ -38,11 +38,7 @@ public class ContainerBasicCloakingMachine extends Container
 		this.tileEntity = machine;
 		if(!player.world.isRemote)
 			OPENMAP.put(player, this);
-		boolean advanced = machine.isAdvanced();
-		if(!advanced)
-			modification_list = new HashMap<>();
-		else
-			this.modification_list = machine.getCurrentModificationList();
+		this.modification_list = machine.getCurrentModificationList();
 		this.handler = machine.getHandler();
 		
 		int id = 0;
@@ -66,8 +62,7 @@ public class ContainerBasicCloakingMachine extends Container
 		this.addSlotToContainer(new SlotItemOnly(tileEntity.getHandler(), 64, 3, 245, 90, Item.getItemFromBlock(CloakBlocks.CLOAK_BLOCK)).setEnabled(true)); //38
 		this.addSlotToContainer(new SlotItemHandlerOutput(this, tileEntity.getHandler(), 4, 306, 90)); //39
 		
-		if(advanced)
-			this.addSlotToContainer(new SlotCaptureBlockOnlyAdvanced(this, handler, 2, 248, 30)); //40
+		this.addSlotToContainer(new SlotCaptureBlockOnlyAdvanced(this, handler, 2, 248, 30)); //40
 	}
 		
 	public static final HashMap<EntityPlayer, ContainerBasicCloakingMachine> OPENMAP = new HashMap<>();
@@ -80,7 +75,7 @@ public class ContainerBasicCloakingMachine extends Container
 	        ItemStack current = slot.getStack();
 	        previous = current.copy();
 	        if (fromSlot < 36) {
-	            if (!this.mergeItemStack(current, 36, handler.getSlots() + 36 - (this.tileEntity.isAdvanced() ? 0 : 1), false))
+	            if (!this.mergeItemStack(current, 36, handler.getSlots() + 36, false))
 	                return ItemStack.EMPTY;
 	        } else {
 	            if (!this.mergeItemStack(current, 0, 36, false))

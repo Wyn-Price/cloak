@@ -40,7 +40,7 @@ public class BasicCloakingMachine extends Block implements ITileEntityProvider
 
 	@Override
 	public TileEntity createNewTileEntity(World worldIn, int meta) {
-		return new TileEntityCloakingMachine(true);
+		return new TileEntityCloakingMachine();
 	}
 	
 	@Override
@@ -48,7 +48,7 @@ public class BasicCloakingMachine extends Block implements ITileEntityProvider
 			EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) 
 	{
 		if(!worldIn.isRemote)
-			playerIn.openGui(CloakMod.instance, CloakGUIHandler.ADVANCED_CLOAKING_MACHINE, worldIn, pos.getX(), pos.getY(), pos.getZ());
+			playerIn.openGui(CloakMod.instance, CloakGUIHandler.CLOAKING_MACHINE, worldIn, pos.getX(), pos.getY(), pos.getZ());
 		return true;
 	}
 	

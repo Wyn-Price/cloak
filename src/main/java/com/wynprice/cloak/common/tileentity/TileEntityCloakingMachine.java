@@ -14,38 +14,11 @@ import net.minecraftforge.items.ItemStackHandler;
 
 public class TileEntityCloakingMachine extends BasicCloakedModelTileEntity
 {
+
 	public TileEntityCloakingMachine() 
 	{
-		this.handler.setSize(0);
-	}
-	
-	public TileEntityCloakingMachine(boolean isAdvanced) 
-	{
-		this.isAdvanced = isAdvanced;
 		this.handler.setSize(5);
 	}
-
-	private boolean isAdvanced;
-	
-	public boolean isAdvanced() 
-	{
-		return isAdvanced;
-	}
-		
-	@Override
-	public NBTTagCompound writeToNBT(NBTTagCompound compound) 
-	{
-		compound.setBoolean("isAdvanced", this.isAdvanced);
-		return super.writeToNBT(compound);
-	}
-	
-	@Override
-	public void readFromNBT(NBTTagCompound compound) 
-	{
-		this.isAdvanced = compound.getBoolean("isAdvanced");
-		super.readFromNBT(compound);
-	}
-	
 	
 	@Override
 	public boolean hasCapability(Capability<?> capability, EnumFacing facing) 

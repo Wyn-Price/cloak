@@ -20,8 +20,6 @@ public class PacketRemoveModificationList extends BasicMessagePacket<PacketRemov
 	
 	public static void updateContainer(ContainerBasicCloakingMachine container, EntityPlayer player)
 	{
-		if(!container.getTileEntity().isAdvanced())
-			return;
 		for(ItemStack stack : container.modification_list.values())
 			spawnItemStack(player, stack);		
 		container.modification_list.clear();
