@@ -25,12 +25,12 @@ import net.minecraft.world.World;
 import net.minecraftforge.items.ItemStackHandler;
 import scala.tools.cmd.gen.AnyValReps.AnyValNum.Op;
 
-public class BasicCloakingMachine extends Block implements ITileEntityProvider
+public class CloakingMachine extends Block implements ITileEntityProvider
 {
 
     public static final PropertyBool POWERED = PropertyBool.create("powered");
 
-	public BasicCloakingMachine() 
+	public CloakingMachine() 
 	{
 		super(Material.IRON);
 		setRegistryName("cloaking_machine");

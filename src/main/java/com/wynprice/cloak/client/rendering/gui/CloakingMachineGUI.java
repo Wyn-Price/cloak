@@ -1,5 +1,6 @@
 package com.wynprice.cloak.client.rendering.gui;
 
+import java.awt.Color;
 import java.awt.Point;
 import java.io.IOException;
 import java.nio.IntBuffer;
@@ -59,6 +60,10 @@ public class CloakingMachineGUI extends GuiContainer
 	private boolean previous37;
 	private boolean hasOpened;
 	private EntityPlayer player;
+	private boolean clickedLastTick = false;
+	private int selectedQuad = -1;
+	private Point lastMouseClicked = new Point(0, 0);
+	private Point currentRotation = new Point(315, -30);
 	
 	public CloakingMachineGUI(EntityPlayer player, TileEntityCloakingMachine tileEntity) 
 	{
@@ -83,16 +88,13 @@ public class CloakingMachineGUI extends GuiContainer
 		}
 		hasOpened = true;
 	}
-		
-	private boolean clickedLastTick = false;
 	
-	private int selectedQuad = -1;
-
 	@Override
 	public void drawScreen(int mouseX, int mouseY, float partialTicks) 
 	{
 		super.drawScreen(mouseX, mouseY, partialTicks);
 		GlStateManager.disableLighting();
+		GlStateManager.enableAlpha();
 		Minecraft.getMinecraft().getRenderManager().renderEngine.bindTexture(new ResourceLocation(CloakMod.MODID, "textures/gui/widgits/model-selection.png"));
 		this.drawModalRectWithCustomSizedTexture(this.guiLeft + 10 + 76, this.guiTop + 15, 0, 0, 11, 12, 11, 12);
 		
@@ -104,6 +106,8 @@ public class CloakingMachineGUI extends GuiContainer
 			Minecraft.getMinecraft().getRenderManager().renderEngine.bindTexture(new ResourceLocation(CloakMod.MODID, "textures/gui/widgits/one-face-selection.png"));
 			this.drawModalRectWithCustomSizedTexture(this.guiLeft + 172 + 78, this.guiTop + 15, 0, 0, 11, 12, 11, 12);
 		}
+		
+		
 		GlStateManager.enableLighting();
 
 		
@@ -170,8 +174,8 @@ public class CloakingMachineGUI extends GuiContainer
         GlStateManager.alphaFunc(516, 0.1F);
         GlStateManager.enableBlend();
         GlStateManager.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
-        GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
         GlStateManager.translate(this.width / 2f, this.height / 2f, 100.0F + this.zLevel);
+        GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
         GlStateManager.scale(1.0F, -1.0F, 1.0F);
         GlStateManager.scale(160F, 160F, 160F);
         GlStateManager.translate(0, 0.15F, 0);
@@ -206,6 +210,7 @@ public class CloakingMachineGUI extends GuiContainer
         		vertexData[l + 4] = Float.floatToRawIntBits(TextureStitchHandler.blockrender_overlay.getInterpolatedU((double)faceUV.getVertexU(j) * .999 + faceUV.getVertexU((j + 2) % 4) * .001));
         		vertexData[l + 5] = Float.floatToRawIntBits(TextureStitchHandler.blockrender_overlay.getInterpolatedV((double)faceUV.getVertexV(j) * .999 + faceUV.getVertexV((j + 2) % 4) * .001));
         	}
+        	
         	BakedQuad colorlessQuad = new BakedQuad(vertexData, quad.getTintIndex(), quad.getFace(), quad.getSprite(), quad.shouldApplyDiffuseLighting(), quad.getFormat());
 			Minecraft.getMinecraft().renderEngine.bindTexture(quad instanceof ExternalBakedQuad ? ((ExternalBakedQuad)quad).getLocation() : TextureMap.LOCATION_BLOCKS_TEXTURE);
 
@@ -257,7 +262,7 @@ public class CloakingMachineGUI extends GuiContainer
 		CloakNetwork.sendToServer(new PacketFaceSelectionAdvancedGUI(slotID, OldSlotID));
 	}
 	
-	private int getColorUnderMouse()
+	public static int getColorUnderMouse()
 	{
         IntBuffer intbuffer = BufferUtils.createIntBuffer(1);
         int[] ints = new int[1];
@@ -271,11 +276,7 @@ public class CloakingMachineGUI extends GuiContainer
 	{
 		this.drawDefaultBackground();
 		Minecraft.getMinecraft().getRenderManager().renderEngine.bindTexture(new ResourceLocation(CloakMod.MODID, "textures/gui/cloaking_machine.png"));
-//		this.drawModalRectWithCustomSizedTexture(this.width / 2 - 154, this.height / 2 - 109, 0, 0, 308, 218, 308, 218);
-		int i = (this.width - this.xSize) / 2;
-        int j = (this.height - this.ySize) / 2;
-        this.drawModalRectWithCustomSizedTexture(i, j, 0, 0, this.xSize, this.ySize, this.xSize, this.ySize);
-//        this.drawTexturedModalRect(i, j, 0, 0, this.xSize, this.ySize);
+        this.drawModalRectWithCustomSizedTexture((this.width - this.xSize) / 2, (this.height - this.ySize) / 2, 0, 0, this.xSize, this.ySize, this.xSize, this.ySize);
 		Minecraft.getMinecraft().getRenderManager().renderEngine.bindTexture(new ResourceLocation(CloakMod.MODID, "textures/gui/widgits/slot_background.png"));
 		for(Slot slot : this.inventorySlots.inventorySlots)
 			if(slot.isEnabled())
@@ -306,13 +307,6 @@ public class CloakingMachineGUI extends GuiContainer
 
         net.minecraftforge.client.model.pipeline.LightUtil.renderQuadColor(renderer, bakedquad, k);
     }
-
-	
-	
-	
-	private Point lastMouseClicked = new Point(0, 0);
-	
-	private Point currentRotation = new Point(315, -30);
 		
 	@Override
 	protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException 

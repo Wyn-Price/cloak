@@ -6,7 +6,7 @@ import com.wynprice.cloak.client.rendering.models.BlockCaptureModel;
 import com.wynprice.cloak.client.rendering.models.CloakBlockItemModel;
 import com.wynprice.cloak.client.rendering.models.ExternalCaptureModel;
 import com.wynprice.cloak.client.rendering.models.LiquidCaptureModel;
-import com.wynprice.cloak.common.blocks.BasicCloakingMachine;
+import com.wynprice.cloak.common.blocks.CloakingMachine;
 
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.util.ResourceLocation;

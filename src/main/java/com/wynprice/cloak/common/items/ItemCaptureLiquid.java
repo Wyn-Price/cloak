@@ -1,9 +1,15 @@
 package com.wynprice.cloak.common.items;
 
+import java.awt.Color;
+
+import com.wynprice.cloak.client.rendering.gui.CaptureCardDyeGUI;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockLiquid;
-import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
@@ -21,9 +27,11 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.BlockFluidBase;
 import net.minecraftforge.fluids.IFluidBlock;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.ItemStackHandler;
 
-public class ItemCaptureLiquid extends Item
+public class ItemCaptureLiquid extends Item implements ICaptureCard
 {
 	public ItemCaptureLiquid() 
 	{
@@ -31,9 +39,25 @@ public class ItemCaptureLiquid extends Item
 		setRegistryName("liquid_capture");
 	}
 	
+	@SideOnly(Side.CLIENT)
+	@Override
+	public void renderOntoColorWheel(CaptureCardDyeGUI parent, ItemStack stack, int colorint, int x, int y)
+	{
+		GlStateManager.enableBlend();
+		Color color = new Color(colorint);
+		GlStateManager.color(color.getRed() / 255f, color.getGreen() / 255f, color.getBlue() / 255f);
+		Minecraft.getMinecraft().renderEngine.bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
+		parent.drawTexturedModalRect(x, y, Minecraft.getMinecraft().getBlockRendererDispatcher().getBlockModelShapes().getTexture(NBTUtil.readBlockState(stack.getOrCreateSubCompound("capture_info"))), 50, 50);
+		GlStateManager.color(1f, 1f, 1f);
+		GlStateManager.disableBlend();
+	}
+	
 	@Override
 	public ActionResult<ItemStack> onItemRightClick(World worldIn, EntityPlayer playerIn, EnumHand handIn) 
 	{
+		Minecraft.getMinecraft().displayGuiScreen(new CaptureCardDyeGUI(playerIn.getHeldItem(handIn)));
+
+		
 		ItemStack stack = playerIn.getHeldItem(handIn);
 		NBTTagCompound nbt = new NBTTagCompound();
 		Vec3d startPos = new Vec3d(playerIn.posX, playerIn.posY + playerIn.getEyeHeight(), playerIn.posZ);
