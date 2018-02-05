@@ -33,7 +33,6 @@ public class CloakBlockItemBlock extends ItemBlock
 	@Override
 	public ActionResult<ItemStack> onItemRightClick(World worldIn, EntityPlayer playerIn, EnumHand handIn) 
 	{
-		System.out.println(playerIn.getHeldItem(handIn).getTagCompound());
 		if(GuiScreen.isCtrlKeyDown())
 			return new ActionResult<ItemStack>(EnumActionResult.SUCCESS, new ItemStack(this));
 		return super.onItemRightClick(worldIn, playerIn, handIn);

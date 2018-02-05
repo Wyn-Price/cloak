@@ -7,7 +7,6 @@ import org.lwjgl.util.vector.Vector3f;
 
 import com.google.common.collect.Lists;
 import com.wynprice.cloak.client.handlers.ExternalImageHandler;
-import com.wynprice.cloak.common.core.UVTransformer;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
@@ -22,10 +21,9 @@ import net.minecraft.client.renderer.block.model.ModelRotation;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTUtil;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.EnumFacing.Axis;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 
 public class ExternalCaptureModel extends BaseModelProxy

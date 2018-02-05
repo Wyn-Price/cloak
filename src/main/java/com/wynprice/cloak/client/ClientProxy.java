@@ -3,6 +3,8 @@ package com.wynprice.cloak.client;
 import java.lang.reflect.Field;
 import java.util.HashMap;
 
+import org.apache.commons.lang3.tuple.Pair;
+
 import com.wynprice.cloak.client.handlers.ExternalImageHandler;
 import com.wynprice.cloak.client.handlers.ModelBakeHandler;
 import com.wynprice.cloak.client.handlers.ParticleHandler;
@@ -170,18 +172,31 @@ public class ClientProxy extends CommonProxy
 			{
 				NBTTagCompound nbt = stack.getOrCreateSubCompound("rendering_info");
 		    	HashMap<Integer, ItemStack> currentModMap = TileEntityCloakingMachine.readFromNBTTag(nbt.getCompoundTag("mod_list"));
-				HashMap<Integer, ItemStack> overrideList = new HashMap<>();
+				HashMap<Integer, Pair<ItemStack, IBlockState>> overrideList = new HashMap<>();
 				for(int i : currentModMap.keySet())
 					if(currentModMap.get(i) != null && !currentModMap.get(i).isEmpty())
 					{
 						ItemStackHandler innerHandler = new ItemStackHandler();
 						innerHandler.deserializeNBT(currentModMap.get(i).getOrCreateSubCompound("capture_info").getCompoundTag("item"));
-						overrideList.put(i, innerHandler.getStackInSlot(0));
+						overrideList.put(i, Pair.of(innerHandler.getStackInSlot(0), NBTUtil.readBlockState(currentModMap.get(i).getOrCreateSubCompound("capture_info"))));
 					}
 								
 				
 				if(overrideList.containsKey(Math.floorDiv(tintIndex, 1000)))
-					return Minecraft.getMinecraft().getItemColors().colorMultiplier(overrideList.get(Math.floorDiv(tintIndex, 1000)), tintIndex % 1000);
+				{
+					int blockcolor = -1;
+					try
+					{
+						blockcolor = Minecraft.getMinecraft().getBlockColors().colorMultiplier(overrideList.get(Math.floorDiv(tintIndex, 1000)).getRight(), Minecraft.getMinecraft().world, Minecraft.getMinecraft().player.getPosition(), tintIndex - 1);
+					}
+					catch (Throwable e) 
+					{
+						;
+					}
+					if(blockcolor != -1)
+						return blockcolor;
+					return Minecraft.getMinecraft().getItemColors().colorMultiplier(overrideList.get(Math.floorDiv(tintIndex, 1000)).getLeft(), tintIndex % 1000);
+				}
 				
 				ItemStackHandler handler = new ItemStackHandler(3);
 				handler.deserializeNBT(nbt.getCompoundTag("ItemHandler"));

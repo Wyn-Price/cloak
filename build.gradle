@@ -57,14 +57,6 @@ dependencies {
 
 }
 
-//Adds the LoadingPlugin description to the manifest so forge finds it.
-jar {
-    manifest {
-        attributes 'FMLCorePlugin': 'com.wynprice.cloak.common.core.CloakCore',
-                'FMLCorePluginContainsFMLMod': 'true'
-    }
-}
-
 processResources {
     // this will ensure that this task is redone when the versions change.
     inputs.property "version", project.version

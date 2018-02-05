@@ -3,7 +3,9 @@ package com.wynprice.cloak.common.blocks;
 import java.util.List;
 import java.util.Random;
 
+import com.wynprice.cloak.client.handlers.ExternalImageHandler;
 import com.wynprice.cloak.client.handlers.ParticleHandler;
+import com.wynprice.cloak.client.rendering.particle.ParticleExternalDigging;
 import com.wynprice.cloak.common.items.CloakBlockItemBlock;
 import com.wynprice.cloak.common.registries.CloakBlocks;
 import com.wynprice.cloak.common.tileentity.TileEntityCloakBlock;
@@ -19,6 +21,7 @@ import net.minecraft.client.particle.ParticleManager;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving.SpawnPlacementType;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -26,9 +29,11 @@ import net.minecraft.nbt.NBTUtil;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.NonNullList;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.world.Explosion;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
@@ -63,11 +68,26 @@ public class CloakBlock extends Block implements ITileEntityProvider
 	}
 	
 	@Override
-	public void breakBlock(World worldIn, BlockPos pos, IBlockState state) 
+	public boolean removedByPlayer(IBlockState state, World world, BlockPos pos, EntityPlayer player,
+			boolean willHarvest) 
+	{
+		if(player instanceof EntityPlayerMP && !((EntityPlayerMP)player).interactionManager.isCreative())
+			dropBlock(world, pos);
+		return super.removedByPlayer(state, world, pos, player, willHarvest);
+	}
+	
+	@Override
+	public void onBlockDestroyedByExplosion(World worldIn, BlockPos pos, Explosion explosionIn) 
+	{
+		dropBlock(worldIn, pos);
+		super.onBlockDestroyedByExplosion(worldIn, pos, explosionIn);
+	}
+	
+	private void dropBlock(World worldIn, BlockPos pos)
 	{
 		ItemStack baseStack = new ItemStack(this);
 		TileEntity te = worldIn.getTileEntity(pos);
-		if(te instanceof TileEntityCloakBlock) //Change around NBT tag so itll stack with others of its kind
+		if(te instanceof TileEntityCloakBlock) //Change around NBT tag so it'll stack with others of its kind
 		{
 			NBTTagCompound data = ((TileEntityCloakBlock)te).writeRenderData(new NBTTagCompound());
 			
@@ -91,7 +111,6 @@ public class CloakBlock extends Block implements ITileEntityProvider
 		}
 		
 		spawnAsEntity(worldIn, pos, baseStack);
-		super.breakBlock(worldIn, pos, state);
 	}
 	
 	@Override
@@ -179,9 +198,16 @@ public class CloakBlock extends Block implements ITileEntityProvider
                 if (target.sideHit == EnumFacing.WEST) d0 = (double)i + axisalignedbb.minX - 0.10000000149011612D;
                 if (target.sideHit == EnumFacing.EAST) d0 = (double)i + axisalignedbb.maxX + 0.10000000149011612D;
                 IBlockState renderState = ((TileEntityCloakBlock)worldObj.getTileEntity(target.getBlockPos())).getRenderState();
-                manager.addEffect(((net.minecraft.client.particle.ParticleDigging)new net.minecraft.client.particle.ParticleDigging.Factory()
-                		.createParticle(0, worldObj, d0, d1, d2, 0, 0, 0, Block.getStateId(renderState.getBlock() == Blocks.AIR ? CloakBlocks.CLOAKING_MACHINE.getDefaultState() : renderState)))
-                		.setBlockPos(target.getBlockPos()).multiplyVelocity(0.2F).multipleParticleScaleBy(0.6F));
+                ItemStackHandler handler = new ItemStackHandler();
+                handler.deserializeNBT(((TileEntityCloakBlock)worldObj.getTileEntity(target.getBlockPos())).writeRenderData(new NBTTagCompound()).getCompoundTag("ItemHandler"));
+                if(ExternalImageHandler.SYNCED_RESOURCE_MAP.containsKey(handler.getStackInSlot(0).getOrCreateSubCompound("capture_info").getString("external_image")))
+                  manager.addEffect(new ParticleExternalDigging(ExternalImageHandler.SYNCED_RESOURCE_MAP.get(handler.getStackInSlot(0).getOrCreateSubCompound("capture_info").getString("external_image")), worldObj, d0, d1, d2, 0, 0, 0)
+                		  .setBlockPos(target.getBlockPos()).multiplyVelocity(0.2F).multipleParticleScaleBy(0.6F));
+                else
+	                manager.addEffect(((net.minecraft.client.particle.ParticleDigging)new net.minecraft.client.particle.ParticleDigging.Factory()
+	                		.createParticle(0, worldObj, d0, d1, d2, 0, 0, 0, Block.getStateId(renderState.getBlock() == Blocks.AIR ? CloakBlocks.CLOAKING_MACHINE.getDefaultState() : renderState)))
+	                		.setBlockPos(target.getBlockPos()).multiplyVelocity(0.2F).multipleParticleScaleBy(0.6F));
+               
                 return true;
             }
     		return false;
@@ -193,7 +219,7 @@ public class CloakBlock extends Block implements ITileEntityProvider
 	{
 		if(ParticleHandler.BLOCKBRAKERENDERMAP.get(pos) != null)
 		{
-			IBlockState state = ParticleHandler.BLOCKBRAKERENDERMAP.get(pos).getActualState(world, pos);
+			IBlockState state = ParticleHandler.BLOCKBRAKERENDERMAP.get(pos).getLeft().getActualState(world, pos);
 	        int i = 4;
 
 	        for (int j = 0; j < 4; ++j)
@@ -205,9 +231,13 @@ public class CloakBlock extends Block implements ITileEntityProvider
 	                    double d0 = ((double)j + 0.5D) / 4.0D;
 	                    double d1 = ((double)k + 0.5D) / 4.0D;
 	                    double d2 = ((double)l + 0.5D) / 4.0D;
-	                    manager.addEffect(((net.minecraft.client.particle.ParticleDigging)new net.minecraft.client.particle.ParticleDigging.Factory()
-	                    		.createParticle(0, world, (double)pos.getX() + d0, (double)pos.getY() + d1, (double)pos.getZ() + d2,
-	                    				d0 - 0.5D, d1 - 0.5D, d2 - 0.5D, Block.getStateId(state.getBlock() == Blocks.AIR ? CloakBlocks.CLOAKING_MACHINE.getDefaultState() : state))).setBlockPos(pos));
+	                    if(ExternalImageHandler.SYNCED_RESOURCE_MAP.containsKey(ParticleHandler.BLOCKBRAKERENDERMAP.get(pos).getRight()))
+	                    	manager.addEffect(new ParticleExternalDigging(ExternalImageHandler.SYNCED_RESOURCE_MAP.get(ParticleHandler.BLOCKBRAKERENDERMAP.get(pos).getRight()),  world, (double)pos.getX() + d0, (double)pos.getY() + d1, (double)pos.getZ() + d2, d0 - 0.5D, d1 - 0.5D, d2 - 0.5D).setBlockPos(pos));
+	                    else
+		                    manager.addEffect(((net.minecraft.client.particle.ParticleDigging)new net.minecraft.client.particle.ParticleDigging.Factory()
+		                    		.createParticle(0, world, (double)pos.getX() + d0, (double)pos.getY() + d1, (double)pos.getZ() + d2,
+		                    				d0 - 0.5D, d1 - 0.5D, d2 - 0.5D, Block.getStateId(state.getBlock() == Blocks.AIR ? CloakBlocks.CLOAKING_MACHINE.getDefaultState() : state)))
+		                    		.setBlockPos(pos));
 	                }
 	            }
 	        }

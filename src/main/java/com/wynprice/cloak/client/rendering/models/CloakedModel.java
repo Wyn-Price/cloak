@@ -10,12 +10,11 @@ import org.apache.commons.lang3.tuple.Pair;
 
 import com.google.common.collect.Lists;
 import com.wynprice.cloak.client.rendering.models.quads.ExternalBakedQuad;
-import com.wynprice.cloak.common.core.UVTransformer;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.BakedQuad;
-import net.minecraft.client.renderer.block.model.BlockFaceUV;
+import net.minecraft.client.renderer.block.model.BakedQuadRetextured;
 import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms.TransformType;
@@ -98,15 +97,14 @@ public class CloakedModel implements IBakedModel
 			{
 				int[] vertexData = new int[modelQuad.getVertexData().length];
 				System.arraycopy(modelQuad.getVertexData(), 0, vertexData, 0, vertexData.length);
-				BlockFaceUV faceUV = UVTransformer.getUV(modelQuad.getVertexData());
-				if(modelQuad.getFace() == EnumFacing.UP) faceUV = new BlockFaceUV(faceUV.uvs, 1); //Who knows why this has to be here. It just does
-				for(int j = 0; j < 4; j++)
-				{
-					int i = (vertexData.length / 4) * j;
-					vertexData[i + 4] = Float.floatToRawIntBits(Lists.newArrayList(faceUV.uvs[0], faceUV.uvs[0], faceUV.uvs[2], faceUV.uvs[2]).get(j) / 16f);
-					vertexData[i + 5] = Float.floatToRawIntBits(Lists.newArrayList(faceUV.uvs[1], faceUV.uvs[3], faceUV.uvs[3], faceUV.uvs[1]).get(j) / 16f);
-				}
 				BakedQuad newQuad = new ExternalBakedQuad(externalOverrideList.containsKey(l) ? externalOverrideList.get(l) : baseTextureExternal, vertexData, 0, modelQuad.getFace(), modelQuad.getSprite(), modelQuad.shouldApplyDiffuseLighting(), modelQuad.getFormat());
+				for (int i = 0; i < 4; ++i)
+		        {
+		            int j = newQuad.getFormat().getIntegerSize() * i;
+		            int uvIndex = newQuad.getFormat().getUvOffsetById(0) / 4;
+		            newQuad.getVertexData()[j + uvIndex] = Float.floatToRawIntBits((float)newQuad.getSprite().getUnInterpolatedU(Float.intBitsToFloat(newQuad.getVertexData()[j + uvIndex])) / 16f);
+		            newQuad.getVertexData()[j + uvIndex + 1] = Float.floatToRawIntBits((float)newQuad.getSprite().getUnInterpolatedV(Float.intBitsToFloat(newQuad.getVertexData()[j + uvIndex + 1])) / 16f);
+		        }
 				parentQuadMap.put(newQuad, modelQuad);
 				list.add(newQuad);
 			}
@@ -118,18 +116,8 @@ public class CloakedModel implements IBakedModel
 					textureQuads = blocklistPair.getKey().getQuads(blocklistPair.getRight(), null, rand);
 				for(BakedQuad renderQuad : textureQuads)
 				{
-					int[] modelVertex = new int[modelQuad.getVertexData().length];
-					System.arraycopy(modelQuad.getVertexData(), 0, modelVertex, 0, modelVertex.length);
-					BlockFaceUV faceUV = UVTransformer.getUV(modelQuad.getVertexData());
-					if(renderQuad.getFace() == EnumFacing.UP) faceUV = new BlockFaceUV(faceUV.uvs, 1); //Who knows why this has to be here. It just does
 					TextureAtlasSprite sprite = blocklistPair.getKey() == getMissingModel() ? Minecraft.getMinecraft().getBlockRendererDispatcher().getBlockModelShapes().getTexture(blocklistPair.getValue()) : renderQuad.getSprite();
-					for(int j = 0; j < 4; j++)
-					{
-						int i = (modelVertex.length / 4) * j;
-						modelVertex[i + 4] = Float.floatToRawIntBits(sprite.getInterpolatedU((double)faceUV.getVertexU(j) * .999 + faceUV.getVertexU((j + 2) % 4) * .001));
-						modelVertex[i + 4 + 1] = Float.floatToRawIntBits(sprite.getInterpolatedV((double)faceUV.getVertexV(j) * .999 + faceUV.getVertexV((j + 2) % 4) * .001));
-					}
-					BakedQuad newQuad = new BakedQuad(modelVertex, renderQuad.getTintIndex(), renderQuad.getFace(), renderQuad.getSprite(), renderQuad.shouldApplyDiffuseLighting(), renderQuad.getFormat());
+					BakedQuad newQuad = new BakedQuad(new BakedQuadRetextured(modelQuad, sprite).getVertexData(), renderQuad.getTintIndex(), renderQuad.getFace(), renderQuad.getSprite(), renderQuad.shouldApplyDiffuseLighting(), renderQuad.getFormat());
 					parentQuadMap.put(newQuad, modelQuad);
 					currentRenderingMap.put(newQuad, overrideList.containsKey(l) ? overrideList.get(l) : renderState);
 					list.add(newQuad);
