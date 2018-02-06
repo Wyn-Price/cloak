@@ -9,13 +9,11 @@ import com.wynprice.cloak.client.handlers.ExternalImageHandler;
 import com.wynprice.cloak.client.handlers.ModelBakeHandler;
 import com.wynprice.cloak.client.handlers.ParticleHandler;
 import com.wynprice.cloak.client.handlers.TextureStitchHandler;
-import com.wynprice.cloak.client.rendering.CloakedRenderingFactory;
+import com.wynprice.cloak.client.rendering.CloakingMachineItemRender;
 import com.wynprice.cloak.client.rendering.ExternalCaptureCardRenderer;
 import com.wynprice.cloak.client.rendering.ItemBlockCloakBlockRenderer;
 import com.wynprice.cloak.client.rendering.TileEntityCloakBlockRenderer;
 import com.wynprice.cloak.client.rendering.TileEntityCloakingMachineRenderer;
-import com.wynprice.cloak.client.rendering.models.BasicCloakingMachineModel;
-import com.wynprice.cloak.client.rendering.models.CloakedModel;
 import com.wynprice.cloak.client.rendering.world.CloakedRenderChunkFactory;
 import com.wynprice.cloak.common.CommonProxy;
 import com.wynprice.cloak.common.registries.CloakBlocks;
@@ -33,8 +31,6 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTUtil;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
 import net.minecraftforge.client.ForgeHooksClient;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
@@ -56,7 +52,8 @@ public class ClientProxy extends CommonProxy
 		
 		ForgeHooksClient.registerTESRItemStack(CloakItems.EXTERNAL_CARD, 0, ExternalCaptureCardRenderer.FakeTileEntity.class);
 		ForgeHooksClient.registerTESRItemStack(Item.getItemFromBlock(CloakBlocks.CLOAK_BLOCK), 0, ItemBlockCloakBlockRenderer.FakeTileEntity.class);
-		
+		ForgeHooksClient.registerTESRItemStack(Item.getItemFromBlock(CloakBlocks.CLOAKING_MACHINE), 0, CloakingMachineItemRender.FakeTileEntity.class);
+
 	}
 	
 	@Override
@@ -67,6 +64,7 @@ public class ClientProxy extends CommonProxy
 
 		registerItemColors();
 		setupChunkRenderFactory();	
+		
 	}
 	
 	private void setupChunkRenderFactory()
@@ -89,15 +87,9 @@ public class ClientProxy extends CommonProxy
 	private void registerTileEntityDispatchers()
 	{
 		ClientRegistry.bindTileEntitySpecialRenderer(TileEntityCloakBlock.class, new TileEntityCloakBlockRenderer());
-		ClientRegistry.bindTileEntitySpecialRenderer(TileEntityCloakingMachine.class, new TileEntityCloakingMachineRenderer(new CloakedRenderingFactory() {
+		ClientRegistry.bindTileEntitySpecialRenderer(TileEntityCloakingMachine.class, new TileEntityCloakingMachineRenderer());
 		
-			@Override
-			public CloakedModel createModel(World world, BlockPos pos, IBlockState modelState, IBlockState renderState) 
-			{
-				return new BasicCloakingMachineModel(modelState, renderState);
-			}
-		}));
-		
+		ClientRegistry.bindTileEntitySpecialRenderer(CloakingMachineItemRender.FakeTileEntity.class, new CloakingMachineItemRender());
 		ClientRegistry.bindTileEntitySpecialRenderer(ExternalCaptureCardRenderer.FakeTileEntity.class, new ExternalCaptureCardRenderer());
 		ClientRegistry.bindTileEntitySpecialRenderer(ItemBlockCloakBlockRenderer.FakeTileEntity.class, new ItemBlockCloakBlockRenderer());
 
@@ -153,7 +145,7 @@ public class ClientProxy extends CommonProxy
 				{
 					;
 				}
-				return tintIndex == 0 ? 0x2163A5 : liquidColor;
+				return tintIndex == 0 ? -1 : liquidColor;
 			}
 		}, CloakItems.LIQUDSTATE_CARD);
 		
@@ -161,7 +153,7 @@ public class ClientProxy extends CommonProxy
 			
 			@Override
 			public int colorMultiplier(ItemStack stack, int tintIndex) {
-				return tintIndex == 0 ? 0xA841A4 : -1;
+				return tintIndex == 0 ? -1 : -1;
 			}
 		}, CloakItems.EXTERNAL_CARD);
 		

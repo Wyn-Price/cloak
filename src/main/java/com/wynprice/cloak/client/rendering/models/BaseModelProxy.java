@@ -15,10 +15,12 @@ import net.minecraft.client.renderer.block.model.ItemOverrideList;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.util.EnumFacing;
 
-public abstract class BaseModelProxy implements IBakedModel
+public class BaseModelProxy implements IBakedModel
 {
 	
 	protected final IBakedModel oldModel;
+	
+	private boolean buildInRender = false;
 	
 	public BaseModelProxy(IBakedModel oldModel) 
 	{
@@ -40,7 +42,12 @@ public abstract class BaseModelProxy implements IBakedModel
 	@Override
 	public boolean isBuiltInRenderer() 
 	{
-		return false;
+		return buildInRender;
+	}
+	
+	public BaseModelProxy setBuildInRender(boolean buildInRender) {
+		this.buildInRender = buildInRender;
+		return this;
 	}
 
 	@Override

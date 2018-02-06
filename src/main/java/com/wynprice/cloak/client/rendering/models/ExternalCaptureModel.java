@@ -51,10 +51,12 @@ public class ExternalCaptureModel extends BaseModelProxy
 			ArrayList<BakedQuad> newList = new ArrayList<>();
 			for(EnumFacing face : EnumFacing.VALUES)
 			{
-				BakedQuad quad = BAKERY.makeBakedQuad(new Vector3f(4f, 4f, 7.5f), new Vector3f(12f, 12f, 8.5f), new BlockPartFace(face, 1, "",  new BlockFaceUV(new float[]{0f, 0f, 16f, 16f}, 0)),
+				BakedQuad quad = BAKERY.makeBakedQuad(new Vector3f(5.5f, 5f, 7.5f), new Vector3f(10.5f, 10f, 8.5f), new BlockPartFace(face, 1, "",  new BlockFaceUV(new float[]{0f, 0f, 16f, 16f}, 0)),
 						Minecraft.getMinecraft().getBlockRendererDispatcher().getBlockModelShapes().getTexture(Blocks.STONE.getDefaultState()), face, ModelRotation.X0_Y0, new BlockPartRotation(new Vector3f(0, 0, 0), Axis.X, 0f, false), false, true);
 
 				BlockFaceUV faceUV = new BlockFaceUV(new float[]{0f, 0f, 16f, 16f}, 0);
+				if(face == EnumFacing.EAST || face == EnumFacing.WEST)
+					faceUV = new BlockFaceUV(new float[]{0, 0, 4f, 16f},  0);
 				if(quad.getFace() == EnumFacing.UP) faceUV = new BlockFaceUV(faceUV.uvs, 1); //Who knows why this has to be here. It just does
 				for(int j = 0; j < 4; j++)
 				{

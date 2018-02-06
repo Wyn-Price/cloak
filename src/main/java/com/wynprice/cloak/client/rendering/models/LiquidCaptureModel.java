@@ -60,7 +60,7 @@ public class LiquidCaptureModel extends BaseModelProxy
 				renderStateQuads.addAll(renderModel.getQuads(renderState, facing, 0L));
 			renderStateQuads.addAll(renderModel.getQuads(renderState, null, 0L));
 			for(EnumFacing face : EnumFacing.VALUES)
-				list.add(BAKERY.makeBakedQuad(new Vector3f(4f, 4f, 7.5f), new Vector3f(12f, 12f, 8.5f), new BlockPartFace(face, 1, "",  new BlockFaceUV(new float[]{0f, 0f, 16f, 16f}, 0)),
+				list.add(BAKERY.makeBakedQuad(new Vector3f(4f, 5f, 7.5f), new Vector3f(12f, 10f, 8.5f), new BlockPartFace(face, 1, "",  new BlockFaceUV(new float[]{0f, 2f, 16f, 13f}, 0)),
 						Minecraft.getMinecraft().getBlockRendererDispatcher().getBlockModelShapes().getTexture(renderState), face, ModelRotation.X0_Y0, new BlockPartRotation(new Vector3f(0, 0, 0), Axis.X, 0f, false), false, true));
 		}
 		return list;

@@ -33,14 +33,14 @@ public class ExternalCaptureCard extends Item implements ICaptureCard
 	@Override
 	public ActionResult<ItemStack> onItemRightClick(World worldIn, EntityPlayer playerIn, EnumHand handIn) 
 	{
-		Minecraft.getMinecraft().displayGuiScreen(new CaptureCardDyeGUI(playerIn.getHeldItem(handIn)));
+//		Minecraft.getMinecraft().displayGuiScreen(new CaptureCardDyeGUI(playerIn.getHeldItem(handIn)));
 
 		
 		if(!playerIn.getHeldItem(handIn).hasTagCompound()) playerIn.getHeldItem(handIn).setTagCompound(new NBTTagCompound());
 		if(playerIn.isSneaking())
 			playerIn.getHeldItem(handIn).getTagCompound().setTag("capture_info", new NBTTagCompound());
-//		else if(worldIn.isRemote)
-//			openGui();
+		else if(worldIn.isRemote)
+			openGui();
 		else if(!worldIn.isRemote)
 			ServerExternalImageHandler.init();
 		return new ActionResult<ItemStack>(EnumActionResult.SUCCESS, playerIn.getHeldItem(handIn));

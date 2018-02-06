@@ -22,7 +22,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
-public class TileEntityCloakBlockRenderer extends TileEntityCloakingMachineRenderer<TileEntityCloakBlock>
+public class TileEntityCloakBlockRenderer extends BaseCloakingModelRenderer<TileEntityCloakBlock>
 {
 	public TileEntityCloakBlockRenderer() 
 	{

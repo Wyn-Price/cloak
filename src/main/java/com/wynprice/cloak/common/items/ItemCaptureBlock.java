@@ -6,7 +6,9 @@ import javax.vecmath.Matrix4f;
 
 import org.lwjgl.util.vector.Vector3f;
 
+import com.wynprice.cloak.CloakMod;
 import com.wynprice.cloak.client.rendering.gui.CaptureCardDyeGUI;
+import com.wynprice.cloak.client.rendering.tjr.TJR;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
@@ -31,6 +33,7 @@ import net.minecraft.util.ActionResult;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
@@ -50,7 +53,7 @@ public class ItemCaptureBlock extends Item implements ICaptureCard
 	@Override
 	public ActionResult<ItemStack> onItemRightClick(World worldIn, EntityPlayer playerIn, EnumHand handIn) 
 	{
-		Minecraft.getMinecraft().displayGuiScreen(new CaptureCardDyeGUI(playerIn.getHeldItem(handIn)));
+//		Minecraft.getMinecraft().displayGuiScreen(new CaptureCardDyeGUI(playerIn.getHeldItem(handIn)));
 		
 		if(!playerIn.getHeldItem(handIn).hasTagCompound()) playerIn.getHeldItem(handIn).setTagCompound(new NBTTagCompound());
 		if(playerIn.isSneaking())

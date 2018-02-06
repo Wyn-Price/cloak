@@ -57,9 +57,10 @@ public class BlockCaptureModel extends BaseModelProxy
 				for(int j = 0; j < 4; j++)
 				{
 					int i = (vertexData.length / 4) * j;
-					vertexData[i + 0] = Float.floatToRawIntBits(Float.intBitsToFloat(vertexData[i + 0]) * 0.3125f + 0.5f - 0.3125f / 2f);
-					vertexData[i + 1] = Float.floatToRawIntBits(Float.intBitsToFloat(vertexData[i + 1]) * 0.3125f + 0.5f - 0.3125f / 2f);
-					vertexData[i + 2] = Float.floatToRawIntBits(Float.intBitsToFloat(vertexData[i + 2]) * 0.3125f + 0.5f - 0.3125f / 2f);
+					float d = 4 / 16f;
+					vertexData[i + 0] = Float.floatToRawIntBits(Float.intBitsToFloat(vertexData[i + 0]) * d + 0.5f - d / 2f);
+					vertexData[i + 1] = Float.floatToRawIntBits(Float.intBitsToFloat(vertexData[i + 1]) * d + 0.5f - d / 2f - 0.5f / 16f);
+					vertexData[i + 2] = Float.floatToRawIntBits(Float.intBitsToFloat(vertexData[i + 2]) * d + 0.5f - d / 2f);
 				}
 				
 				list.add(new BakedQuad(vertexData, quad.getTintIndex() + 1, quad.getFace(), quad.getSprite(), quad.shouldApplyDiffuseLighting(), quad.getFormat()));

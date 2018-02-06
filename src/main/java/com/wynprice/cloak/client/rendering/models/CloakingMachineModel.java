@@ -24,10 +24,10 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumFacing.Axis;
 import scala.collection.parallel.ParIterableLike.Min;
 
-public class BasicCloakingMachineModel extends CloakedModel
+public class CloakingMachineModel extends CloakedModel
 {
 
-	public BasicCloakingMachineModel(IBlockState modelState, IBlockState renderState) {
+	public CloakingMachineModel(IBlockState modelState, IBlockState renderState) {
 		super(modelState, renderState);
 	}	
 		
@@ -49,7 +49,7 @@ public class BasicCloakingMachineModel extends CloakedModel
 				float xOrigin = Float.intBitsToFloat(vertexData[i + 0]) * size + 0.5f - size / 2f;
 				float zOrigin = Float.intBitsToFloat(vertexData[i + 2]) * size + 0.5f - size / 2f;
 				vertexData[i + 0] = Float.floatToRawIntBits((float) (0.5f + (xOrigin-0.5f)*Math.cos(angle) - (zOrigin-0.5f)*Math.sin(angle)));
-				vertexData[i + 1] = Float.floatToRawIntBits((float) (Float.intBitsToFloat(vertexData[i + 1]) * size + 1f));
+				vertexData[i + 1] = Float.floatToRawIntBits((float) (Float.intBitsToFloat(vertexData[i + 1]) * size + 1.3f));
 				vertexData[i + 2] = Float.floatToRawIntBits((float) (0.5f + (xOrigin-0.5f)*Math.sin(angle) + (zOrigin-0.5f)*Math.cos(angle)));
 			}
 			

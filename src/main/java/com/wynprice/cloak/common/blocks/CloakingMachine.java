@@ -53,6 +53,12 @@ public class CloakingMachine extends Block implements ITileEntityProvider
 	}
 	
 	@Override
+	public boolean shouldSideBeRendered(IBlockState blockState, IBlockAccess blockAccess, BlockPos pos,
+			EnumFacing side) {
+		return false;
+	}
+	
+	@Override
 	public void breakBlock(World worldIn, BlockPos pos, IBlockState state) 
 	{
 		if(worldIn.getTileEntity(pos) instanceof TileEntityCloakingMachine)
