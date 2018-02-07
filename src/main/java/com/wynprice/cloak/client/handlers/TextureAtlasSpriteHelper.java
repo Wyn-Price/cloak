@@ -9,7 +9,7 @@ public class TextureAtlasSpriteHelper
 	public static final TextureAtlasSprite FULL_SPRITE = new FakeAtlasSprite();
 	
 	
-	private static class FakeAtlasSprite extends TextureAtlasSprite
+	public static class FakeAtlasSprite extends TextureAtlasSprite
 	{
 
 		public FakeAtlasSprite() 
@@ -19,6 +19,13 @@ public class TextureAtlasSpriteHelper
 			this.setIconHeight(1);
 			this.initSprite(1, 1, 0, 0, false);
 		}
+		
+		public FakeAtlasSprite(String name)
+		{
+			super(name);
+		}
+		
+		
 		
 	}
 	

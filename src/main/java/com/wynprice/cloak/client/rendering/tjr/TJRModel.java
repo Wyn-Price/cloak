@@ -14,7 +14,6 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.EnumFaceDirection;
 import net.minecraft.client.renderer.EnumFaceDirection.VertexInformation;
 import net.minecraft.client.renderer.GlStateManager;
@@ -25,7 +24,8 @@ import net.minecraft.client.renderer.block.model.BlockPartRotation;
 import net.minecraft.client.renderer.block.model.FaceBakery;
 import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.block.model.ModelRotation;
-import net.minecraft.init.Blocks;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumFacing.Axis;
 import net.minecraft.util.JsonUtils;
@@ -59,7 +59,7 @@ public class TJRModel
 
 		for(TJRCube object : cubes)
 		{
-			object.setTjrmodel(this);
+			object.setTjrmodel(null, this);
 		}
 	}
 	
@@ -81,7 +81,12 @@ public class TJRModel
 		return textureWidth;
 	}
 	
-	public IBakedModel getBakedModel() 
+	/**
+	 * Converts the {@link TJRModel} to an {@link IBakedModel}.
+	 * @param sprite The sprite to be rendered with, leave null if you plan to do {@link TextureManager#bindTexture(net.minecraft.util.ResourceLocation)} before rendering
+	 * @return the converted {@link IBakedModel}
+	 */
+	public IBakedModel getBakedModel(TextureAtlasSprite sprite) 
 	{
 		ArrayList<TJRCube> allList = new ArrayList<>();
 		for(TJRCube cube : cubes)
@@ -97,14 +102,10 @@ public class TJRModel
 				Vector3f pos1 = 
 						Vector3f.add
 						(
-								Vector3f.add
-								(
-									Vector3f.add
-									(
-											cube.global_position, cube.offset, null),
-									new Vector3f(8, 8, 8), null
-								),
-								new Vector3f(0, 0, 0), null
+							Vector3f.add
+							(
+									cube.global_position, cube.offset, null),
+							new Vector3f(8, 8, 8), null
 						);
 				
 				Vector3f pos2 = 
@@ -116,23 +117,50 @@ public class TJRModel
 										(
 												cube.global_position, cube.offset, null
 										),
-										new Vector3f(cube.dimensions.x, cube.dimensions.y, cube.dimensions.z), null
+										cube.dimensions, null
 								), 
 								new Vector3f(8, 8, 8), null
 						);
 						
+				
+				BlockFaceUV faceUV = new BlockFaceUV(new float[]{0, 0, 16, 16}, 0);
+				
+				switch(face.getAxis())
+				{
+					case X:
+						faceUV = new BlockFaceUV(new float[]{0, 0, cube.dimensions.x, cube.dimensions.y}, 0);
+						break;
+					case Y:
+						faceUV = new BlockFaceUV(new float[]{0, 0, cube.dimensions.x, cube.dimensions.z}, 0);
+						break;
+					case Z:
+						faceUV = new BlockFaceUV(new float[]{0, 0, cube.dimensions.z, cube.dimensions.y}, 0);
+						break;
+				}
+				
 				BakedQuad newQuad = new FaceBakery().makeBakedQuad
 						(
 								pos1,
 								pos2,
-								new BlockPartFace(face, 0, "tjr:blockmodel", new BlockFaceUV(new float[]{0, 0, 16, 16}, 1)), 
-								Minecraft.getMinecraft().getBlockRendererDispatcher().getBlockModelShapes().getTexture(Blocks.STONE.getDefaultState()),
+								new BlockPartFace
+								(
+										face,
+										0,
+										"tjr:blockmodel",
+										faceUV
+								), 
+								TJR.getMissingNo().getParticleTexture(),
 								face,
 								ModelRotation.X0_Y0,
-								new BlockPartRotation(new Vector3f(0, 0, 0), Axis.Y, 0, false),
+								new BlockPartRotation
+								(
+										new Vector3f(0, 0, 0), 
+										Axis.Y, 
+										0, 
+										false),
 								false, 
 								false
-								);
+						);
 				
 				
 				float[] afloat = new float[EnumFacing.values().length];
@@ -147,32 +175,72 @@ public class TJRModel
 				{	
 			        VertexInformation vi = EnumFaceDirection.getFacing(face).getVertexInformation(i);
 			        Vector3f vector3f = new Vector3f(afloat[vi.xIndex], afloat[vi.yIndex], afloat[vi.zIndex]);
-			        this.rotateQuad(vector3f, new Vector3f(8, 16, 8), new Vector3f(180, 0, 0)); //For some reason, taulba flips the model during export.
+		        	this.rotateQuad(vector3f, cube.global_position, cube.global_rotaion); 
+
+
+		        	Vector3f rotationPoint = new Vector3f(0, 8, 0);
+		        	this.rotateQuad(rotationPoint, new Vector3f(), cube.getOriginalParent().global_rotaion);
+			        this.rotateQuad(vector3f, rotationPoint, new Vector3f(180, 0, 0)); //Tabula measures y coordinates top down, minecraft measures them top up, so just flip the model here
+			        
+			        int minV = face.getAxis() == Axis.Y ? 0 : (int) cube.dimensions.z;
+			        int minU = 0;
+			        
+			        if(face != EnumFacing.EAST)	//Probally an easier way to do this. Eh, it works
+			        {
+			        	minU += cube.dimensions.z;
+			        	
+				        if(face != EnumFacing.SOUTH && face != EnumFacing.DOWN)
+				        {
+				        	minU += cube.dimensions.x;
+				        
+					        if(face != EnumFacing.EAST && face != EnumFacing.UP)
+					        	minU += cube.dimensions.z;
+				        }
+			        }
+			        	
+				
+				
 			        int l = (newQuad.getVertexData().length / 4) * i;
 			        newQuad.getVertexData()[l + 0] = Float.floatToRawIntBits(vector3f.x);
 			        newQuad.getVertexData()[l + 1] = Float.floatToRawIntBits(vector3f.y);
 			        newQuad.getVertexData()[l + 2] = Float.floatToRawIntBits(vector3f.z);
+			        
+			        float relU = (new float[]{1f, 1f, 0f, 0f}[i] * faceUV.uvs[2] + minU + cube.textureOffX) / this.textureWidth;
+			        float relV = (new float[]{1f, 0f, 0f, 1f}[i] * faceUV.uvs[3] + minV + cube.textureOffY) / this.textureHeight;
+			        
+			        if(sprite != null)
+			        {			        	
+			        	newQuad.getVertexData()[l + 4] = Float.floatToRawIntBits(sprite.getInterpolatedU(relU * 16));
+			        	newQuad.getVertexData()[l + 5] = Float.floatToRawIntBits(sprite.getInterpolatedV(relV * 16));
+			        }
+			        else
+			        {
+				        newQuad.getVertexData()[l + 4] = Float.floatToRawIntBits(relU);
+				        newQuad.getVertexData()[l + 5] = Float.floatToRawIntBits(relV);
+			        }
 				}
 				
 				
 				
 				quadList.add(newQuad);
 			}
-		return new TJRBakedModel(quadList);
+		TJRBakedModel model =  new TJRBakedModel(sprite, quadList);
+		return model;
 	}
 	
-	public void rotateQuad(Vector3f quadPos, Vector3f origin, Vector3f angles)
+	public void rotateQuad(Vector3f quadPos, Vector3f origin, Vector3f vecAngels)
 	{
-		origin = new Vector3f(origin.x / 16f, origin.y / 16f, origin.z / 16f);
-		
-		Matrix4f matrix4f = new Matrix4f();
-		matrix4f.setIdentity();
-        Matrix4f.rotate(angles.x * 0.017453292F, new Vector3f(1.0F, 0.0F, 0.0F), matrix4f, matrix4f);
-        Matrix4f.rotate(angles.y * 0.017453292F, new Vector3f(0.0F, 1.0F, 0.0F), matrix4f, matrix4f);
-        Matrix4f.rotate(angles.z * 0.017453292F, new Vector3f(0.0F, 0.0F, 1.0F), matrix4f, matrix4f);
-        Vector4f vector4f = new Vector4f(quadPos.x - origin.x, quadPos.y - origin.y, quadPos.z - origin.z, 1.0F);
-        Matrix4f.transform(matrix4f, vector4f, vector4f);
-        quadPos.set(vector4f.x + origin.x, vector4f.y + origin.y, vector4f.z + origin.z);
+		origin = new Vector3f((origin.x + 8f) / 16f, (origin.y + 8f) / 16f, (origin.z + 8f) / 16f);
+		float[] angels = {vecAngels.x, vecAngels.y, vecAngels.z};
+		for(int i = 0; i < 3; i++)
+		{
+			Matrix4f matrix4f = new Matrix4f();
+			matrix4f.setIdentity();
+	        Matrix4f.rotate(angels[i] * 0.017453292F, new Vector3f(i == 0? 1 : 0, i == 1? 1 : 0, i == 2? 1 : 0), matrix4f, matrix4f);
+	        Vector4f vector4f = new Vector4f(quadPos.x - origin.x, quadPos.y - origin.y, quadPos.z - origin.z, 1.0F);
+	        Matrix4f.transform(matrix4f, vector4f, vector4f);
+	        quadPos.set(vector4f.x + origin.x, vector4f.y + origin.y, vector4f.z + origin.z);
+		}
 	}
 	
 	static class Deserializer implements JsonDeserializer<TJRModel>

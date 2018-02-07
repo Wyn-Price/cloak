@@ -12,9 +12,14 @@ public class TextureStitchHandler
 	
 	public static TextureAtlasSprite blockrender_overlay;
 	
+	public static TextureAtlasSprite cloaking_machine;
+	
 	@SubscribeEvent
 	public void onTextureStitchedPre(TextureStitchEvent.Pre event)
 	{
 		blockrender_overlay = event.getMap().registerSprite(new ResourceLocation(CloakMod.MODID, "gui/blockrender_overlay"));
+		cloaking_machine = event.getMap().registerSprite(new ResourceLocation(CloakMod.MODID, "blocks/cloaking_machine_model"));
+
 	}
+	
 }

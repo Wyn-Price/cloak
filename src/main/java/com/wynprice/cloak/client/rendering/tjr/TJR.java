@@ -9,6 +9,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.block.model.ModelBlock;
 import net.minecraft.nbt.JsonToNBT;
 import net.minecraft.nbt.NBTException;
@@ -35,5 +36,17 @@ public class TJR
 			e.printStackTrace();
 		}
 		return null;
+	}
+	
+	private static IBakedModel missingNo;
+	
+	public static void setMissingNo(IBakedModel missingNo) 
+	{
+		if(TJR.missingNo == null)
+			TJR.missingNo = missingNo;
+	}
+	
+	public static IBakedModel getMissingNo() {
+		return missingNo;
 	}
 }

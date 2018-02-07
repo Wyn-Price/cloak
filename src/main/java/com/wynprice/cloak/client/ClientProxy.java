@@ -9,7 +9,6 @@ import com.wynprice.cloak.client.handlers.ExternalImageHandler;
 import com.wynprice.cloak.client.handlers.ModelBakeHandler;
 import com.wynprice.cloak.client.handlers.ParticleHandler;
 import com.wynprice.cloak.client.handlers.TextureStitchHandler;
-import com.wynprice.cloak.client.rendering.CloakingMachineItemRender;
 import com.wynprice.cloak.client.rendering.ExternalCaptureCardRenderer;
 import com.wynprice.cloak.client.rendering.ItemBlockCloakBlockRenderer;
 import com.wynprice.cloak.client.rendering.TileEntityCloakBlockRenderer;
@@ -52,7 +51,6 @@ public class ClientProxy extends CommonProxy
 		
 		ForgeHooksClient.registerTESRItemStack(CloakItems.EXTERNAL_CARD, 0, ExternalCaptureCardRenderer.FakeTileEntity.class);
 		ForgeHooksClient.registerTESRItemStack(Item.getItemFromBlock(CloakBlocks.CLOAK_BLOCK), 0, ItemBlockCloakBlockRenderer.FakeTileEntity.class);
-		ForgeHooksClient.registerTESRItemStack(Item.getItemFromBlock(CloakBlocks.CLOAKING_MACHINE), 0, CloakingMachineItemRender.FakeTileEntity.class);
 
 	}
 	
@@ -89,7 +87,6 @@ public class ClientProxy extends CommonProxy
 		ClientRegistry.bindTileEntitySpecialRenderer(TileEntityCloakBlock.class, new TileEntityCloakBlockRenderer());
 		ClientRegistry.bindTileEntitySpecialRenderer(TileEntityCloakingMachine.class, new TileEntityCloakingMachineRenderer());
 		
-		ClientRegistry.bindTileEntitySpecialRenderer(CloakingMachineItemRender.FakeTileEntity.class, new CloakingMachineItemRender());
 		ClientRegistry.bindTileEntitySpecialRenderer(ExternalCaptureCardRenderer.FakeTileEntity.class, new ExternalCaptureCardRenderer());
 		ClientRegistry.bindTileEntitySpecialRenderer(ItemBlockCloakBlockRenderer.FakeTileEntity.class, new ItemBlockCloakBlockRenderer());
 

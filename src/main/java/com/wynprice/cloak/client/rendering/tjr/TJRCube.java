@@ -222,11 +222,19 @@ public class TJRCube
 		
 	}
 	
-	public void setTjrmodel(TJRModel tjrmodel) 
+	
+	private TJRCube parent;
+	
+	public TJRCube getOriginalParent() {
+		return parent == null ? this : parent.getOriginalParent();
+	}
+	
+	public void setTjrmodel(TJRCube parent, TJRModel tjrmodel) 
 	{
 		this.tjrmodel = tjrmodel;
 		for(TJRCube child : children)
-			child.setTjrmodel(this.tjrmodel);
+			child.setTjrmodel(this, this.tjrmodel);
+		this.parent = parent;
 	}
 	
 	
