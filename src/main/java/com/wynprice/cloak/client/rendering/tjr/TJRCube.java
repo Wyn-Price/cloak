@@ -3,7 +3,6 @@ package com.wynprice.cloak.client.rendering.tjr;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 
-import org.lwjgl.util.vector.Quaternion;
 import org.lwjgl.util.vector.Vector3f;
 
 import com.google.gson.JsonArray;
@@ -20,6 +19,7 @@ import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GLAllocation;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.JsonUtils;
 
 /**
@@ -39,6 +39,9 @@ public class TJRCube
 	public final int textureOffY;
 	public final boolean mirrorTX;
 	public final TJRCube[] children;
+	
+	public Vector3f global_position;
+	public Vector3f global_rotaion;
 
 	private TJRModel tjrmodel;
 	
@@ -50,7 +53,7 @@ public class TJRCube
 			boolean mirrorTX, TJRCube... children) 
 	{
 		this.name = name;
-		this.dimensions = dimensions;
+		this.dimensions = new Vector3f(dimensions.x, dimensions.y, dimensions.z);
 		this.position = position;
 		this.offset = offset;
 		this.rotation = rotation;
@@ -59,6 +62,9 @@ public class TJRCube
 		this.textureOffY = textureOffY;
 		this.mirrorTX = mirrorTX;
 		this.children = children;
+		
+		this.global_position = new Vector3f();
+		this.global_rotaion = new Vector3f();
 	}
 	
 	public void render(float scale)
@@ -71,9 +77,9 @@ public class TJRCube
 		GlStateManager.pushMatrix();
         GlStateManager.translate(this.position.x * scale, this.position.y * scale, this.position.z * scale);
         GlStateManager.translate(offset.x * scale, offset.y * scale, offset.z * scale);
-        GlStateManager.rotate(this.rotation.z, 0.0F, 0.0F, 1.0F);
-        GlStateManager.rotate(this.rotation.y, 0.0F, 1.0F, 0.0F);
-        GlStateManager.rotate(this.rotation.x, 1.0F, 0.0F, 0.0F);
+//        GlStateManager.rotate(this.rotation.z, 0.0F, 0.0F, 1.0F);
+//        GlStateManager.rotate(this.rotation.y, 0.0F, 1.0F, 0.0F);
+//        GlStateManager.rotate(this.rotation.x, 1.0F, 0.0F, 0.0F);
         GlStateManager.callList(this.displayList);
         GlStateManager.translate(-offset.x * scale, -offset.y * scale, -offset.z * scale);
         for(int k = 0; k < this.children.length; ++k)
@@ -103,11 +109,24 @@ public class TJRCube
 	     this.hasDrawn = true;
 	}
 	
-	 private void render(BufferBuilder builder, float scale, int texU, int texV, Vector3f offset, Vector3f dimension, float delta, boolean mirror) //delete
-	 {
-		 ;
-	 }
-	 
+	public void globalizeTransform(boolean isChild)
+	{
+		
+		if(!isChild)
+		{
+			this.global_position = new Vector3f(position);
+			this.global_rotaion = new Vector3f(rotation);
+		}
+
+		for(TJRCube child : children)
+		{
+			Vector3f.add(this.global_position, child.position, child.global_position);
+			Vector3f.add(this.global_rotaion, child.rotation, child.global_rotaion);
+
+			child.globalizeTransform(true);
+		}
+	}
+	
 	static class Deserializer implements JsonDeserializer<TJRCube>
 	{
 
