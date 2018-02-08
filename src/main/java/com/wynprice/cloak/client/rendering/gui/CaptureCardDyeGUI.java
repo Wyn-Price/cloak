@@ -46,6 +46,8 @@ public class CaptureCardDyeGUI extends GuiScreen
 		addButton(saturation_slider);
 		addButton(lightness_slider);
 		super.initGui();
+		
+		this.currentColorWheel = new Point(Minecraft.getMinecraft().displayWidth / 2, Minecraft.getMinecraft().displayHeight / 2);
 	}
 	
 	@Override
@@ -64,21 +66,23 @@ public class CaptureCardDyeGUI extends GuiScreen
 
 		int newColor = CloakingMachineGUI.getColorUnderMouse();
 		
+//		
 		if(colorPre != newColor && Mouse.isButtonDown(0))
+		{
 			this.currentColorWheel = new Point(Mouse.getX(), Mouse.getY());
+			this.saturation_slider.setValue((Math.hypot(this.currentColorWheel.x - Minecraft.getMinecraft().displayWidth / 2, this.currentColorWheel.y - Minecraft.getMinecraft().displayHeight / 2)) / 128 * 100);
+			this.saturation_slider.updateSlider();
+		}
 
-		
-//		if(this.prevColor != 0)
-//			this.drawRect(this.width / 2 - 10, this.height / 2 - 100, this.width / 2 + 10, this.height / 2 - 80, prevColor);
 		
 		Minecraft.getMinecraft().getRenderManager().renderEngine.bindTexture(new ResourceLocation(CloakMod.MODID, "textures/gui/widgits/color_wheel_border.png"));
 		this.drawModalRectWithCustomSizedTexture(this.width / 2 - 65, this.height / 2 - 65, 0, 0, 130, 130, 130, 130);
 		
 		Minecraft.getMinecraft().getRenderManager().renderEngine.bindTexture(new ResourceLocation(CloakMod.MODID, "textures/gui/widgits/color_wheel_cursor.png"));
-		this.drawModalRectWithCustomSizedTexture(this.currentColorWheel.x * new ScaledResolution(this.mc).getScaledWidth() / this.mc.displayWidth - 4, 
-				new ScaledResolution(this.mc).getScaledHeight() - this.currentColorWheel.y * new ScaledResolution(this.mc).getScaledHeight() / this.mc.displayHeight - 1 - 4, 0, 0, 8, 8, 8, 8);
+		this.drawModalRectWithCustomSizedTexture(currentColorWheel.x * new ScaledResolution(this.mc).getScaledWidth() / this.mc.displayWidth - 4, 
+				new ScaledResolution(this.mc).getScaledHeight() - currentColorWheel.y * new ScaledResolution(this.mc).getScaledHeight() / this.mc.displayHeight - 1 - 4, 0, 0, 8, 8, 8, 8);
 		
-
+		
 		if(stack.getItem() instanceof ICaptureCard)
 		{
 			IntBuffer intbuffer = BufferUtils.createIntBuffer(1);
@@ -94,10 +98,5 @@ public class CaptureCardDyeGUI extends GuiScreen
 		super.drawScreen(mouseX, mouseY, partialTicks);		
 
 	}
-	
-	@Override
-	protected void mouseClickMove(int mouseX, int mouseY, int clickedMouseButton, long timeSinceLastClick) 
-	{
-//		this.saturation_slider.
-	}
+
 }

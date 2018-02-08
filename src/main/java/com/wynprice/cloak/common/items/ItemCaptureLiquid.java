@@ -55,9 +55,6 @@ public class ItemCaptureLiquid extends Item implements ICaptureCard
 	@Override
 	public ActionResult<ItemStack> onItemRightClick(World worldIn, EntityPlayer playerIn, EnumHand handIn) 
 	{
-		Minecraft.getMinecraft().displayGuiScreen(new CaptureCardDyeGUI(playerIn.getHeldItem(handIn)));
-
-		
 		ItemStack stack = playerIn.getHeldItem(handIn);
 		NBTTagCompound nbt = new NBTTagCompound();
 		Vec3d startPos = new Vec3d(playerIn.posX, playerIn.posY + playerIn.getEyeHeight(), playerIn.posZ);

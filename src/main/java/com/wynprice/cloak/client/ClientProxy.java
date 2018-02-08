@@ -5,6 +5,7 @@ import java.util.HashMap;
 
 import org.apache.commons.lang3.tuple.Pair;
 
+import com.wynprice.cloak.client.handlers.CaptureCardHandler;
 import com.wynprice.cloak.client.handlers.ExternalImageHandler;
 import com.wynprice.cloak.client.handlers.ModelBakeHandler;
 import com.wynprice.cloak.client.handlers.ParticleHandler;
@@ -98,7 +99,8 @@ public class ClientProxy extends CommonProxy
 			{
 					new ModelBakeHandler(),
 					new TextureStitchHandler(),
-					new ParticleHandler()
+					new ParticleHandler(),
+					new CaptureCardHandler()
 			};
 		
 		for(Object o : handlers)
