@@ -1,6 +1,7 @@
 package com.wynprice.cloak.client.rendering.world;
 
 import org.apache.logging.log4j.core.util.Loader;
+import org.lwjgl.opengl.GLContext;
 
 import com.wynprice.cloak.common.CommonProxy;
 import com.wynprice.cloak.common.blocks.CloakBlock;
@@ -53,9 +54,7 @@ public class CloakChunkCache extends ChunkCache
 	@Override
 	public IBlockState getBlockState(BlockPos pos) 
 	{
-	
 		if(CommonProxy.isOptifine) return oldCache.getBlockState(pos); //If optifine is here, dont even try to do anything, it'll just cause more issues
-		
 		if(super.getBlockState(pos).getBlock() == CloakBlocks.CLOAK_BLOCK && this.getTileEntity(pos) instanceof BasicCloakedModelTileEntity)
 			if(!isStackSecondMethod("rebuildChunk", "func_178581_b") && !isStackSecondMethod("shouldSideBeRendered", "func_176225_a"))
 				return NBTUtil.readBlockState(((BasicCloakedModelTileEntity)this.getTileEntity(pos)).getHandler().getStackInSlot(1).getOrCreateSubCompound("capture_info"));

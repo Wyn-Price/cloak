@@ -89,5 +89,10 @@ public class BasicCloakedModelTileEntity extends BasicTileEntity
 		return true;
 	}
 	
+	@Override
+	public boolean hasFastRenderer() {
+		return true;
+	}
+	
 	
 }

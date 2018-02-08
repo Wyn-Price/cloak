@@ -8,11 +8,11 @@ import org.apache.commons.lang3.tuple.Pair;
 import com.wynprice.cloak.client.handlers.ExternalImageHandler;
 import com.wynprice.cloak.client.handlers.ModelBakeHandler;
 import com.wynprice.cloak.client.handlers.ParticleHandler;
+import com.wynprice.cloak.client.handlers.RenderingEvent;
 import com.wynprice.cloak.client.handlers.TextureStitchHandler;
 import com.wynprice.cloak.client.rendering.ExternalCaptureCardRenderer;
 import com.wynprice.cloak.client.rendering.ItemBlockCloakBlockRenderer;
 import com.wynprice.cloak.client.rendering.TileEntityCloakBlockRenderer;
-import com.wynprice.cloak.client.rendering.TileEntityCloakingMachineRenderer;
 import com.wynprice.cloak.client.rendering.world.CloakedRenderChunkFactory;
 import com.wynprice.cloak.common.CommonProxy;
 import com.wynprice.cloak.common.registries.CloakBlocks;
@@ -85,7 +85,7 @@ public class ClientProxy extends CommonProxy
 	private void registerTileEntityDispatchers()
 	{
 		ClientRegistry.bindTileEntitySpecialRenderer(TileEntityCloakBlock.class, new TileEntityCloakBlockRenderer());
-		ClientRegistry.bindTileEntitySpecialRenderer(TileEntityCloakingMachine.class, new TileEntityCloakingMachineRenderer());
+//		ClientRegistry.bindTileEntitySpecialRenderer(TileEntityCloakingMachine.class, new TileEntityCloakingMachineRenderer());
 		
 		ClientRegistry.bindTileEntitySpecialRenderer(ExternalCaptureCardRenderer.FakeTileEntity.class, new ExternalCaptureCardRenderer());
 		ClientRegistry.bindTileEntitySpecialRenderer(ItemBlockCloakBlockRenderer.FakeTileEntity.class, new ItemBlockCloakBlockRenderer());
@@ -98,7 +98,8 @@ public class ClientProxy extends CommonProxy
 			{
 					new ModelBakeHandler(),
 					new TextureStitchHandler(),
-					new ParticleHandler()
+					new ParticleHandler(),
+					new RenderingEvent()
 			};
 		
 		for(Object o : handlers)
