@@ -1,6 +1,7 @@
 package com.wynprice.brl.core;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.apache.commons.lang3.tuple.Pair;
@@ -129,19 +130,19 @@ public class BlockRendererDispatcherTransformer implements IClassTransformer
                 {
                     case MODEL:
                         ArrayList<IBakedModel> models = Lists.newArrayList(Minecraft.getMinecraft().getBlockRendererDispatcher().getModelForState(state));
-//                        state = state.getBlock().getExtendedState(state, blockAccess, pos);
-//                        if(state.getBlock() == CloakBlocks.CLOAK_BLOCK)
-//                        {
-//                        	CloakedModel model = new CloakedModel(Blocks.ACACIA_FENCE.getDefaultState(), Blocks.BEACON.getDefaultState());
-//                        	List<EnumFacing> facingList = new ArrayList<>();
-//                        	ArrayList<IBakedModel> modelList = new ArrayList<>();
-//                        	facingList.add(null);
-//                            for (EnumFacing enumfacing : EnumFacing.values()) facingList.add(enumfacing);
-//                        	for(EnumFacing face : facingList)
-//                        		for(BakedQuad quad : model.getQuads(Blocks.BEACON.getDefaultState(), face, 0L))
-//                        			modelList.add(new SingleQuadModel(model, quad, face));
-//                        	models = modelList;
-//                        }
+                        state = state.getBlock().getExtendedState(state, blockAccess, pos);
+                        if(state.getBlock() == CloakBlocks.CLOAK_BLOCK)
+                        {
+                        	CloakedModel model = new CloakedModel(Blocks.ACACIA_FENCE.getDefaultState(), Blocks.BEACON.getDefaultState());
+                        	List<EnumFacing> facingList = new ArrayList<>();
+                        	ArrayList<IBakedModel> modelList = new ArrayList<>();
+                        	facingList.add(null);
+                            for (EnumFacing enumfacing : EnumFacing.values()) facingList.add(enumfacing);
+                        	for(EnumFacing face : facingList)
+                        		for(BakedQuad quad : model.getQuads(Blocks.BEACON.getDefaultState(), face, 0L))
+                        			modelList.add(new SingleQuadModel(model, quad, face));
+                        	models = modelList;
+                        }
                         boolean retBool = true;
                         for(IBakedModel model : models)
                         	if(!Minecraft.getMinecraft().getBlockRendererDispatcher().getBlockModelRenderer().renderModel(blockAccess, model, state, pos, bufferBuilderIn, true))

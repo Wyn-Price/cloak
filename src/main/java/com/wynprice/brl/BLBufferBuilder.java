@@ -1,6 +1,7 @@
 package com.wynprice.brl;
 
 import java.nio.ByteBuffer;
+import java.util.ArrayList;
 
 import net.minecraft.client.renderer.BufferBuilder;
 
@@ -12,14 +13,13 @@ import net.minecraft.client.renderer.BufferBuilder;
  */
 public class BLBufferBuilder extends BufferBuilder
 {	
+	
+	public ArrayList<byte[]> extraRenders = new  ArrayList<>();
+	
     public BLBufferBuilder(int bufferSizeIn)
     {
 		super(bufferSizeIn);
     }
     
-    @Override
-    public ByteBuffer getByteBuffer() 
-    {
-    	return super.getByteBuffer();
-    }
+    
 }

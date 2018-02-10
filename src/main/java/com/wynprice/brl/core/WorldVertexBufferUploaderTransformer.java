@@ -16,6 +16,7 @@ import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.lwjgl.opengl.GL11;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.Opcodes;
@@ -31,14 +32,21 @@ import org.objectweb.asm.tree.VarInsnNode;
 
 import com.wynprice.brl.BLBufferBuilder;
 import com.wynprice.cloak.CloakMod;
+import com.wynprice.cloak.client.rendering.models.CloakedModel;
+import com.wynprice.cloak.common.tileentity.TileEntityCloakBlock;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.OpenGlHelper;
+import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
+import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.client.renderer.vertex.VertexFormatElement;
+import net.minecraft.init.Blocks;
 import net.minecraft.launchwrapper.IClassTransformer;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.FMLLog;
 
@@ -93,79 +101,38 @@ public class WorldVertexBufferUploaderTransformer implements IClassTransformer
 	
 	public static void draw(BufferBuilder bufferBuilderIn)//TODO if instanceof BLbufferBUilder, make list whole, and inirate through
     {				
-				
-        if(bufferBuilderIn instanceof BLBufferBuilder)
+		if (bufferBuilderIn.getVertexCount() > 0)
         {
-        	if (bufferBuilderIn.getVertexCount() > 0)
+            VertexFormat vertexformat = bufferBuilderIn.getVertexFormat();
+            int i = vertexformat.getNextOffset();
+            List<VertexFormatElement> list = vertexformat.getElements();
+            ByteBuffer bytebuffer = bufferBuilderIn.getByteBuffer();
+            
+            for (int j = 0; j < list.size(); ++j)
             {
-                VertexFormat vertexformat = bufferBuilderIn.getVertexFormat();
-                int stride = vertexformat.getNextOffset();
-                List<VertexFormatElement> list = vertexformat.getElements();
-                ByteBuffer bytebuffer = bufferBuilderIn.getByteBuffer();
-                
-                for (int element = 0; element < list.size(); ++element)
-                {
-                    VertexFormatElement vertexformatelement = list.get(element);
-                    VertexFormatElement.EnumUsage vertexformatelement$enumusage = vertexformatelement.getUsage();
-                    int k = vertexformatelement.getType().getGlConstant();
-                    int l = vertexformatelement.getIndex();
-                    bytebuffer.position(vertexformat.getOffset(element));
+                VertexFormatElement vertexformatelement = list.get(j);
+                VertexFormatElement.EnumUsage vertexformatelement$enumusage = vertexformatelement.getUsage();
+                int k = vertexformatelement.getType().getGlConstant();
+                int l = vertexformatelement.getIndex();
+                bytebuffer.position(vertexformat.getOffset(j));
 
-                    // moved to VertexFormatElement.preDraw
-                    vertexformatelement.getUsage().preDraw(vertexformat, element, stride, bytebuffer);
-                }
+                // moved to VertexFormatElement.preDraw
+                vertexformatelement.getUsage().preDraw(vertexformat, j, i, bytebuffer);
+            }
 
-                GlStateManager.glDrawArrays(bufferBuilderIn.getDrawMode(), 0, bufferBuilderIn.getVertexCount());
-                
-                int i1 = 0;
+            GlStateManager.glDrawArrays(bufferBuilderIn.getDrawMode(), 0, bufferBuilderIn.getVertexCount());
+            int i1 = 0;
 
-                for (int j1 = list.size(); i1 < j1; ++i1)
-                {
-                    VertexFormatElement vertexformatelement1 = list.get(i1);
-                    VertexFormatElement.EnumUsage vertexformatelement$enumusage1 = vertexformatelement1.getUsage();
-                    int k1 = vertexformatelement1.getIndex();
+            for (int j1 = list.size(); i1 < j1; ++i1)
+            {
+                VertexFormatElement vertexformatelement1 = list.get(i1);
+                VertexFormatElement.EnumUsage vertexformatelement$enumusage1 = vertexformatelement1.getUsage();
+                int k1 = vertexformatelement1.getIndex();
 
-                    // moved to VertexFormatElement.postDraw
-                    vertexformatelement1.getUsage().postDraw(vertexformat, i1, stride, bytebuffer);
-                }
+                // moved to VertexFormatElement.postDraw
+                vertexformatelement1.getUsage().postDraw(vertexformat, i1, i, bytebuffer);
             }
         }
-        else
-        {
-        	if (bufferBuilderIn.getVertexCount() > 0)
-            {
-                VertexFormat vertexformat = bufferBuilderIn.getVertexFormat();
-                int i = vertexformat.getNextOffset();
-                List<VertexFormatElement> list = vertexformat.getElements();
-                ByteBuffer bytebuffer = bufferBuilderIn.getByteBuffer();
-                
-                for (int j = 0; j < list.size(); ++j)
-                {
-                    VertexFormatElement vertexformatelement = list.get(j);
-                    VertexFormatElement.EnumUsage vertexformatelement$enumusage = vertexformatelement.getUsage();
-                    int k = vertexformatelement.getType().getGlConstant();
-                    int l = vertexformatelement.getIndex();
-                    bytebuffer.position(vertexformat.getOffset(j));
-
-                    // moved to VertexFormatElement.preDraw
-                    vertexformatelement.getUsage().preDraw(vertexformat, j, i, bytebuffer);
-                }
-
-                GlStateManager.glDrawArrays(bufferBuilderIn.getDrawMode(), 0, bufferBuilderIn.getVertexCount());
-                int i1 = 0;
-
-                for (int j1 = list.size(); i1 < j1; ++i1)
-                {
-                    VertexFormatElement vertexformatelement1 = list.get(i1);
-                    VertexFormatElement.EnumUsage vertexformatelement$enumusage1 = vertexformatelement1.getUsage();
-                    int k1 = vertexformatelement1.getIndex();
-
-                    // moved to VertexFormatElement.postDraw
-                    vertexformatelement1.getUsage().postDraw(vertexformat, i1, i, bytebuffer);
-                }
-            }
-        }
-
         bufferBuilderIn.reset();
     }
 }
