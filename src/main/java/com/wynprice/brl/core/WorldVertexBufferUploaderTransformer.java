@@ -18,7 +18,7 @@ import org.objectweb.asm.tree.MethodInsnNode;
 import org.objectweb.asm.tree.MethodNode;
 import org.objectweb.asm.tree.VarInsnNode;
 
-import com.wynprice.brl.BLBufferBuilder;
+import com.wynprice.brl.BRBufferBuilder;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BufferBuilder;
@@ -81,16 +81,16 @@ public class WorldVertexBufferUploaderTransformer implements IClassTransformer
 	
 	public static void draw(BufferBuilder bufferBuilderIn)
 	{
-		if(bufferBuilderIn instanceof BLBufferBuilder)
+		if(bufferBuilderIn instanceof BRBufferBuilder)
 		{
 			int bindedTexture = GL11.glGetInteger(GL11.GL_TEXTURE_BINDING_2D);
 			boolean flag = bindedTexture == Minecraft.getMinecraft().renderEngine.getTexture(TextureMap.LOCATION_BLOCKS_TEXTURE).getGlTextureId();
-			for(ResourceLocation location : ((BLBufferBuilder)bufferBuilderIn).builderMap.keySet())
+			for(ResourceLocation location : ((BRBufferBuilder)bufferBuilderIn).builderMap.keySet())
 			{
 				Minecraft.getMinecraft().renderEngine.bindTexture(location);
-				if(((BLBufferBuilder)bufferBuilderIn).builderMap.get(location) instanceof BLBufferBuilder)
-					throw new IllegalArgumentException("BLBufferBuilder was found nested inside another BLBufferBuilder. This should not happen");
-				draw(((BLBufferBuilder)bufferBuilderIn).builderMap.get(location));
+				if(((BRBufferBuilder)bufferBuilderIn).builderMap.get(location) instanceof BRBufferBuilder)
+					throw new IllegalArgumentException("BRBufferBuilder was found nested inside another BRBufferBuilder. This should not happen");
+				draw(((BRBufferBuilder)bufferBuilderIn).builderMap.get(location));
 			}
 			if(flag)
 			{

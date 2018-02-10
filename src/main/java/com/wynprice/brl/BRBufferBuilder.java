@@ -203,6 +203,10 @@ public class BRBufferBuilder extends BufferBuilder
 		return currentBuilder.tex(u, v);
 	}
 	
+	public boolean isDrawing() { //Needed for Optifine
+		return isDrawing;
+	}
+	
 	public void split(ResourceLocation location)
 	{
 		if(!builderMap.containsKey(location))

@@ -20,6 +20,7 @@ import com.wynprice.cloak.common.tileentity.TileEntityCloakBlock;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.texture.TextureMap;
+import net.minecraft.init.Blocks;
 import net.minecraft.nbt.NBTUtil;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
@@ -36,7 +37,10 @@ public class CloakBlockBRLFactory implements IBRLRenderFactory
 			return IBRLRenderFactory.super.getModels(access, pos, inState);
 		TileEntityCloakBlock te = (TileEntityCloakBlock)access.getTileEntity(pos);
 		IBlockState renderState = NBTUtil.readBlockState(te.getHandler().getStackInSlot(0).getOrCreateSubCompound("capture_info")).getActualState(access, pos);
-    	IBlockState modelState = NBTUtil.readBlockState(te.getHandler().getStackInSlot(1).getOrCreateSubCompound("capture_info")).getActualState(access, pos);
+    	IBlockState modelState = NBTUtil.readBlockState(te.getHandler().getStackInSlot(1).getOrCreateSubCompound("capture_info"));
+    	
+    	if(modelState.getBlock() != Blocks.FLOWER_POT)
+    			modelState = modelState.getActualState(access, pos);
     	
     	CloakedModel model = new CloakedModel(modelState, renderState);
     	HashMap<Integer, IBlockState> overrideList = new HashMap<>();

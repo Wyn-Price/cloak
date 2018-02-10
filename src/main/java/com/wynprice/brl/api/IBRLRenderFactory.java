@@ -19,7 +19,8 @@ public interface IBRLRenderFactory
 	
 	/**
 	 * Returns a list of all custom render info you want to be rendered.<br>
-	 * Please not that the position may not hold the correct IBlockState/TileEntity
+	 * Please not that the position may not hold the correct IBlockState/TileEntity<br>
+	 * Try to make this list as small as possible, as the larger the list, the slower it will be
 	 * @param access The world being rendered in
 	 * @param pos The position in the world
 	 * @param inState The IBlockState passed through {@link BlockRendererDispatcher#renderBlock(IBlockState, BlockPos, IBlockAccess, net.minecraft.client.renderer.BufferBuilder)}
@@ -27,5 +28,14 @@ public interface IBRLRenderFactory
 	default public List<BRLRenderInfo> getModels(IBlockAccess access, BlockPos pos, IBlockState inState)
 	{
 		return DEFAULT_FACTORY.getModels(access, pos, inState);
+	}
+	
+	
+	/**
+	 * Should {@link #getModels(IBlockAccess, BlockPos, IBlockState)} be cached. This recommended, especially if it requires lots of calculations
+	 */
+	default public boolean shouldCache()
+	{
+		return true;
 	}
 }

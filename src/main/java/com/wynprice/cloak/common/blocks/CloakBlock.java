@@ -27,6 +27,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTUtil;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
@@ -81,6 +82,12 @@ public class CloakBlock extends Block implements ITileEntityProvider
 	{
 		dropBlock(worldIn, pos);
 		super.onBlockDestroyedByExplosion(worldIn, pos, explosionIn);
+	}
+	
+	@Override
+	public BlockRenderLayer getBlockLayer() 
+	{
+		return BlockRenderLayer.CUTOUT_MIPPED;
 	}
 	
 	private void dropBlock(World worldIn, BlockPos pos)

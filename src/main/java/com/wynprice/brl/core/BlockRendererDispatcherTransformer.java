@@ -1,6 +1,7 @@
 package com.wynprice.brl.core;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import org.apache.commons.lang3.tuple.Pair;
@@ -18,10 +19,13 @@ import org.objectweb.asm.tree.MethodInsnNode;
 import org.objectweb.asm.tree.MethodNode;
 import org.objectweb.asm.tree.VarInsnNode;
 
+import com.google.common.collect.Lists;
 import com.wynprice.brl.BRBufferBuilder;
 import com.wynprice.brl.api.BRLRegistry;
 import com.wynprice.brl.api.BRLRenderInfo;
+import com.wynprice.brl.api.IBRLRenderFactory;
 
+import it.unimi.dsi.fastutil.Hash;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BlockFluidRenderer;
@@ -92,8 +96,7 @@ public class BlockRendererDispatcherTransformer implements IClassTransformer
         
 		return basicClass;
 	}
-	
-	
+		
 	public static boolean renderBlock(IBlockState state, BlockPos pos, IBlockAccess blockAccess, BufferBuilder bufferBuilderIn, BlockFluidRenderer fluidRender)
 	{
         try
@@ -120,7 +123,8 @@ public class BlockRendererDispatcherTransformer implements IClassTransformer
                 switch (enumblockrendertype)
                 {
                     case MODEL:
-                        List<BRLRenderInfo> renderInfos = BRLRegistry.getFactory(state.getBlock()).getModels(blockAccess, pos, state);
+                    	IBRLRenderFactory factory =  BRLRegistry.getFactory(state.getBlock());
+                        List<BRLRenderInfo> renderInfos = factory.getModels(blockAccess, pos, state);
                         boolean retBool = true;
                         for(BRLRenderInfo info : renderInfos)
                         {

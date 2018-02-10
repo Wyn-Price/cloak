@@ -6,7 +6,6 @@ import java.util.HashMap;
 import org.apache.commons.lang3.tuple.Pair;
 
 import com.wynprice.brl.api.BRLRegistry;
-import com.wynprice.brl.api.BRLRenderInfo;
 import com.wynprice.cloak.client.handlers.CaptureCardHandler;
 import com.wynprice.cloak.client.handlers.ExternalImageHandler;
 import com.wynprice.cloak.client.handlers.ModelBakeHandler;
@@ -15,13 +14,11 @@ import com.wynprice.cloak.client.handlers.TextureStitchHandler;
 import com.wynprice.cloak.client.rendering.CloakBlockBRLFactory;
 import com.wynprice.cloak.client.rendering.ExternalCaptureCardRenderer;
 import com.wynprice.cloak.client.rendering.ItemBlockCloakBlockRenderer;
-import com.wynprice.cloak.client.rendering.TileEntityCloakBlockRenderer;
 import com.wynprice.cloak.client.rendering.TileEntityCloakingMachineRenderer;
 import com.wynprice.cloak.client.rendering.world.CloakedRenderChunkFactory;
 import com.wynprice.cloak.common.CommonProxy;
 import com.wynprice.cloak.common.registries.CloakBlocks;
 import com.wynprice.cloak.common.registries.CloakItems;
-import com.wynprice.cloak.common.tileentity.TileEntityCloakBlock;
 import com.wynprice.cloak.common.tileentity.TileEntityCloakingMachine;
 
 import net.minecraft.block.state.IBlockState;
@@ -90,7 +87,7 @@ public class ClientProxy extends CommonProxy
 	
 	private void registerTileEntityDispatchers()
 	{
-		ClientRegistry.bindTileEntitySpecialRenderer(TileEntityCloakBlock.class, new TileEntityCloakBlockRenderer());
+//		ClientRegistry.bindTileEntitySpecialRenderer(TileEntityCloakBlock.class, new TileEntityCloakBlockRenderer());
 		ClientRegistry.bindTileEntitySpecialRenderer(TileEntityCloakingMachine.class, new TileEntityCloakingMachineRenderer());
 		
 		ClientRegistry.bindTileEntitySpecialRenderer(ExternalCaptureCardRenderer.FakeTileEntity.class, new ExternalCaptureCardRenderer());
