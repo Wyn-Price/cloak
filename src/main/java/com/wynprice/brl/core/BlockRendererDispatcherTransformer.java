@@ -18,7 +18,7 @@ import org.objectweb.asm.tree.MethodInsnNode;
 import org.objectweb.asm.tree.MethodNode;
 import org.objectweb.asm.tree.VarInsnNode;
 
-import com.wynprice.brl.BLBufferBuilder;
+import com.wynprice.brl.BRBufferBuilder;
 import com.wynprice.brl.api.BRLRegistry;
 import com.wynprice.brl.api.BRLRenderInfo;
 
@@ -124,8 +124,8 @@ public class BlockRendererDispatcherTransformer implements IClassTransformer
                         boolean retBool = true;
                         for(BRLRenderInfo info : renderInfos)
                         {
-                        	if(bufferBuilderIn instanceof BLBufferBuilder)
-                        		((BLBufferBuilder)bufferBuilderIn).split(info.getLocation());
+                        	if(bufferBuilderIn instanceof BRBufferBuilder)
+                        		((BRBufferBuilder)bufferBuilderIn).split(info.getLocation());
                         	
                         	if(!Minecraft.getMinecraft().getBlockRendererDispatcher().getBlockModelRenderer().renderModel(blockAccess, info.getModel(), info.getState(), pos, bufferBuilderIn, true))
                         		retBool = false;

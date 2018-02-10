@@ -15,7 +15,7 @@ import net.minecraft.util.math.Vec3d;
  * @author Wyn Price
  *
  */
-public class BLBufferBuilder extends BufferBuilder
+public class BRBufferBuilder extends BufferBuilder
 {
 	
 	private BufferBuilder currentBuilder;
@@ -24,7 +24,7 @@ public class BLBufferBuilder extends BufferBuilder
 	
 	public final HashMap<ResourceLocation, BufferBuilder> builderMap = new HashMap<>();
 	
-	public BLBufferBuilder(int bufferSizeIn) {
+	public BRBufferBuilder(int bufferSizeIn) {
 		super(0); //Be 0, as this class isnt technically used as a bufferbuilder
 		this.bufferSize = bufferSizeIn;
 		this.currentBuilder = new BufferBuilder(this.bufferSize);

@@ -16,7 +16,7 @@ import org.objectweb.asm.tree.MethodNode;
 import org.objectweb.asm.tree.TypeInsnNode;
 import org.objectweb.asm.tree.VarInsnNode;
 
-import com.wynprice.brl.BLBufferBuilder;
+import com.wynprice.brl.BRBufferBuilder;
 
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.launchwrapper.IClassTransformer;
@@ -78,9 +78,9 @@ public class RegionRenderCacheBuilderTransformer implements IClassTransformer
 	
 	public static void initRegionRenderCache(BufferBuilder[] worldRenderers)
 	{
-		 worldRenderers[BlockRenderLayer.SOLID.ordinal()] = new BLBufferBuilder(2097152);
-	     worldRenderers[BlockRenderLayer.CUTOUT.ordinal()] = new BLBufferBuilder(131072);
-	     worldRenderers[BlockRenderLayer.CUTOUT_MIPPED.ordinal()] = new BLBufferBuilder(131072);
-	     worldRenderers[BlockRenderLayer.TRANSLUCENT.ordinal()] = new BLBufferBuilder(262144);
+		 worldRenderers[BlockRenderLayer.SOLID.ordinal()] = new BRBufferBuilder(2097152);
+	     worldRenderers[BlockRenderLayer.CUTOUT.ordinal()] = new BRBufferBuilder(131072);
+	     worldRenderers[BlockRenderLayer.CUTOUT_MIPPED.ordinal()] = new BRBufferBuilder(131072);
+	     worldRenderers[BlockRenderLayer.TRANSLUCENT.ordinal()] = new BRBufferBuilder(262144);
 	}
 }
