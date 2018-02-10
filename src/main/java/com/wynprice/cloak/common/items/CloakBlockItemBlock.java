@@ -2,15 +2,12 @@ package com.wynprice.cloak.common.items;
 
 import java.util.HashMap;
 
-import com.wynprice.cloak.common.registries.CloakBlocks;
 import com.wynprice.cloak.common.tileentity.TileEntityCloakBlock;
 
 import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemBlock;
@@ -23,7 +20,6 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraftforge.items.ItemStackHandler;
 
 public class CloakBlockItemBlock extends ItemBlock
 {
@@ -35,15 +31,6 @@ public class CloakBlockItemBlock extends ItemBlock
 	@Override
 	public ActionResult<ItemStack> onItemRightClick(World worldIn, EntityPlayer playerIn, EnumHand handIn) 
 	{
-		Minecraft.getMinecraft().addScheduledTask(new Runnable() {
-			
-			@Override
-			public void run() {
-				System.out.println(System.currentTimeMillis());
-				Minecraft.getMinecraft().getTextureMapBlocks().loadTextureAtlas(Minecraft.getMinecraft().getResourceManager());
-				System.out.println(System.currentTimeMillis());				
-			}
-		});
 		if(GuiScreen.isCtrlKeyDown())
 			return new ActionResult<ItemStack>(EnumActionResult.SUCCESS, new ItemStack(this));
 		return super.onItemRightClick(worldIn, playerIn, handIn);

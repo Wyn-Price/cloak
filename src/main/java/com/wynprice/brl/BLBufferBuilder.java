@@ -203,7 +203,7 @@ public class BLBufferBuilder extends BufferBuilder
 		return currentBuilder.tex(u, v);
 	}
 	
-	public void setAsTexture(ResourceLocation location)
+	public void split(ResourceLocation location)
 	{
 		if(!builderMap.containsKey(location))
 		{

@@ -5,11 +5,14 @@ import java.util.HashMap;
 
 import org.apache.commons.lang3.tuple.Pair;
 
+import com.wynprice.brl.api.BRLRegistry;
+import com.wynprice.brl.api.BRLRenderInfo;
 import com.wynprice.cloak.client.handlers.CaptureCardHandler;
 import com.wynprice.cloak.client.handlers.ExternalImageHandler;
 import com.wynprice.cloak.client.handlers.ModelBakeHandler;
 import com.wynprice.cloak.client.handlers.ParticleHandler;
 import com.wynprice.cloak.client.handlers.TextureStitchHandler;
+import com.wynprice.cloak.client.rendering.CloakBlockBRLFactory;
 import com.wynprice.cloak.client.rendering.ExternalCaptureCardRenderer;
 import com.wynprice.cloak.client.rendering.ItemBlockCloakBlockRenderer;
 import com.wynprice.cloak.client.rendering.TileEntityCloakBlockRenderer;
@@ -52,7 +55,9 @@ public class ClientProxy extends CommonProxy
 		
 		ForgeHooksClient.registerTESRItemStack(CloakItems.EXTERNAL_CARD, 0, ExternalCaptureCardRenderer.FakeTileEntity.class);
 		ForgeHooksClient.registerTESRItemStack(Item.getItemFromBlock(CloakBlocks.CLOAK_BLOCK), 0, ItemBlockCloakBlockRenderer.FakeTileEntity.class);
-
+		
+		BRLRegistry.registerFactory(CloakBlocks.CLOAK_BLOCK, new CloakBlockBRLFactory());
+		
 	}
 	
 	@Override

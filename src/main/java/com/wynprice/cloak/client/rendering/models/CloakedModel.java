@@ -82,10 +82,7 @@ public class CloakedModel implements IBakedModel
 	}
 	
 	protected HashMap<BakedQuad, IBlockState> currentRenderingMap = new HashMap<>();
-	
-	
-	protected HashMap<BakedQuad, ResourceLocation> externalMap = new HashMap<>();
-	
+		
 	private List<BakedQuad> getQuadsInternal(IBlockState state, EnumFacing side, long rand) 
 	{
 		rand = 0L;
@@ -134,12 +131,7 @@ public class CloakedModel implements IBakedModel
 		if(state == null) state = Blocks.STONE.getDefaultState();
 		return state;
 	}
-	
-	public ResourceLocation getExternalLocation(BakedQuad quad)
-	{
-		return externalMap.get(quad);
-	}
-	
+
 	public boolean isParentSelected(BakedQuad currentQuad, int selected)
 	{ 
         return getParentID(currentQuad) == selected && selected != -1;

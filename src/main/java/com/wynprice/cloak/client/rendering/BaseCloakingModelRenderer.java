@@ -111,7 +111,7 @@ public class BaseCloakingModelRenderer<T extends BasicCloakedModelTileEntity> ex
             	tessellator.getBuffer().begin(GL11.GL_QUADS, DefaultVertexFormats.BLOCK);
     			Minecraft.getMinecraft().renderEngine.bindTexture(quad instanceof ExternalBakedQuad ? ((ExternalBakedQuad)quad).getLocation() : TextureMap.LOCATION_BLOCKS_TEXTURE);
 	    		IBlockState blockstate = model.getStateFromQuad(quad);
-	    		Minecraft.getMinecraft().getBlockRendererDispatcher().getBlockModelRenderer().renderModel(new CloakLightAccess(world, te.getPos()), new SingleQuadModel(model, quad, quad.getFace()), blockstate, te.getPos(), tessellator.getBuffer(), false);
+//	    		Minecraft.getMinecraft().getBlockRendererDispatcher().getBlockModelRenderer().renderModel(new CloakLightAccess(world, te.getPos()), new SingleQuadModel(model, quad, quad.getFace()), blockstate, te.getPos(), tessellator.getBuffer(), false);
 	            tessellator.draw();
 	    	}
         Tessellator.getInstance().getBuffer().setTranslation(0, 0, 0);
