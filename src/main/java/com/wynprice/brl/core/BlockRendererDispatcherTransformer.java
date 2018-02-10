@@ -129,24 +129,29 @@ public class BlockRendererDispatcherTransformer implements IClassTransformer
                 switch (enumblockrendertype)
                 {
                     case MODEL:
-                        ArrayList<IBakedModel> models = Lists.newArrayList(Minecraft.getMinecraft().getBlockRendererDispatcher().getModelForState(state));
+                        ArrayList<Pair<ResourceLocation, IBakedModel>> models = Lists.newArrayList(Pair.of(TextureMap.LOCATION_BLOCKS_TEXTURE, Minecraft.getMinecraft().getBlockRendererDispatcher().getModelForState(state)));
                         state = state.getBlock().getExtendedState(state, blockAccess, pos);
                         if(state.getBlock() == CloakBlocks.CLOAK_BLOCK)
                         {
                         	CloakedModel model = new CloakedModel(Blocks.ACACIA_FENCE.getDefaultState(), Blocks.BEACON.getDefaultState());
                         	List<EnumFacing> facingList = new ArrayList<>();
-                        	ArrayList<IBakedModel> modelList = new ArrayList<>();
+                        	ArrayList<Pair<ResourceLocation, IBakedModel>> modelList = new ArrayList<>();
                         	facingList.add(null);
                             for (EnumFacing enumfacing : EnumFacing.values()) facingList.add(enumfacing);
                         	for(EnumFacing face : facingList)
                         		for(BakedQuad quad : model.getQuads(Blocks.BEACON.getDefaultState(), face, 0L))
-                        			modelList.add(new SingleQuadModel(model, quad, face));
+                        			modelList.add(Pair.of(face == EnumFacing.UP ? TextureMap.LOCATION_BLOCKS_TEXTURE : new ResourceLocation(CloakMod.MODID, "textures/test.png"), new SingleQuadModel(model, quad, face)));
                         	models = modelList;
                         }
                         boolean retBool = true;
-                        for(IBakedModel model : models)
-                        	if(!Minecraft.getMinecraft().getBlockRendererDispatcher().getBlockModelRenderer().renderModel(blockAccess, model, state, pos, bufferBuilderIn, true))
+                        for(Pair<ResourceLocation, IBakedModel> pairedModel : models)
+                        {
+                        	if(bufferBuilderIn instanceof BLBufferBuilder)
+                        		((BLBufferBuilder)bufferBuilderIn).setAsTexture(pairedModel.getKey());
+                        	
+                        	if(!Minecraft.getMinecraft().getBlockRendererDispatcher().getBlockModelRenderer().renderModel(blockAccess, pairedModel.getRight(), state, pos, bufferBuilderIn, true))
                         		retBool = false;
+                        }
                         return retBool;
                     case ENTITYBLOCK_ANIMATED:
                         return false;
