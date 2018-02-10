@@ -1,10 +1,10 @@
 package com.wynprice.cloak.client.rendering;
 
+import com.wynprice.brl.tcn.TJR;
+import com.wynprice.brl.tcn.TJRModel;
 import com.wynprice.cloak.CloakMod;
 import com.wynprice.cloak.client.rendering.models.CloakedModel;
 import com.wynprice.cloak.client.rendering.models.CloakingMachineModel;
-import com.wynprice.cloak.client.rendering.tjr.TJR;
-import com.wynprice.cloak.client.rendering.tjr.TJRModel;
 import com.wynprice.cloak.common.tileentity.TileEntityCloakingMachine;
 
 import net.minecraft.block.state.IBlockState;

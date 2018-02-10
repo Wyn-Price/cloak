@@ -6,9 +6,9 @@ import javax.vecmath.Matrix4f;
 
 import org.lwjgl.util.vector.Vector3f;
 
+import com.wynprice.brl.tcn.TJR;
 import com.wynprice.cloak.CloakMod;
 import com.wynprice.cloak.client.rendering.gui.CaptureCardDyeGUI;
-import com.wynprice.cloak.client.rendering.tjr.TJR;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;

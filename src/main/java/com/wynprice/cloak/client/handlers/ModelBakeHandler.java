@@ -1,5 +1,6 @@
 package com.wynprice.cloak.client.handlers;
 
+import com.wynprice.brl.tcn.TJR;
 import com.wynprice.cloak.CloakMod;
 import com.wynprice.cloak.client.rendering.TileEntityCloakingMachineRenderer;
 import com.wynprice.cloak.client.rendering.models.BaseModelProxy;
@@ -7,7 +8,6 @@ import com.wynprice.cloak.client.rendering.models.BlockCaptureModel;
 import com.wynprice.cloak.client.rendering.models.CloakBlockItemModel;
 import com.wynprice.cloak.client.rendering.models.ExternalCaptureModel;
 import com.wynprice.cloak.client.rendering.models.LiquidCaptureModel;
-import com.wynprice.cloak.client.rendering.tjr.TJR;
 
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.util.ResourceLocation;
