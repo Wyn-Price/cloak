@@ -6,6 +6,7 @@ import javax.vecmath.Matrix4f;
 
 import org.lwjgl.util.vector.Vector3f;
 
+import com.wynprice.brl.addons.plastic.BufferedPlastic;
 import com.wynprice.cloak.client.rendering.gui.CaptureCardDyeGUI;
 
 import net.minecraft.block.state.IBlockState;
@@ -50,6 +51,12 @@ public class ItemCaptureBlock extends Item implements ICaptureCard
 	@Override
 	public ActionResult<ItemStack> onItemRightClick(World worldIn, EntityPlayer playerIn, EnumHand handIn) 
 	{
+		if(worldIn.isRemote)
+		{
+			BufferedPlastic.plastic = !BufferedPlastic.plastic;
+			Minecraft.getMinecraft().renderGlobal.loadRenderers();
+		}
+		
 		if(!playerIn.getHeldItem(handIn).hasTagCompound()) playerIn.getHeldItem(handIn).setTagCompound(new NBTTagCompound());
 		if(playerIn.isSneaking())
 			playerIn.getHeldItem(handIn).getTagCompound().setTag("capture_info", new NBTTagCompound());

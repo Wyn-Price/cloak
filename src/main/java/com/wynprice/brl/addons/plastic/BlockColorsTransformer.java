@@ -95,9 +95,13 @@ public class BlockColorsTransformer implements IClassTransformer
 		return basicClass;
 	}
 	
+	@Deprecated //TODO redo this bit. Its wayy to buggy
 	public static int colorMultiplier(Map<IRegistryDelegate<Block>, IBlockColor> blockColorMap, IBlockState state, @Nullable IBlockAccess blockAccess, @Nullable BlockPos pos, int renderPass)
 	{
-		
+		if(Thread.currentThread().getStackTrace()[4].getClassName().equals(VertexLighterFlat.class.getName()))
+			renderPass--;
+		if(renderPass == -1 && !BufferedPlastic.plastic)
+			return -1;
 		ArrayList<Block> noColorBlocks = Lists.newArrayList
 				(
 					Blocks.WATER,
@@ -107,7 +111,10 @@ public class BlockColorsTransformer implements IClassTransformer
 				);
 		IBlockColor iblockcolor = blockColorMap.get(state.getBlock().delegate);
         return 
-        		iblockcolor == null || iblockcolor.colorMultiplier(state, blockAccess, pos, renderPass) == 0xFFFFFF || iblockcolor.colorMultiplier(state, blockAccess, pos, renderPass) == -1|| noColorBlocks.contains(state.getBlock()) ? 
+        		iblockcolor == null || (BufferedPlastic.plastic && (iblockcolor.colorMultiplier(state, blockAccess, pos, renderPass) == 0xFFFFFF
+        							|| iblockcolor.colorMultiplier(state, blockAccess, pos, renderPass) == -1
+        							|| noColorBlocks.contains(state.getBlock()))) ? 
+        									
         				BufferedPlastic.plastic ? 
 	        						BufferedPlastic.getImageColor(Minecraft.getMinecraft().getBlockRendererDispatcher().getBlockModelShapes().getTexture(state)) :
 	        						-1 

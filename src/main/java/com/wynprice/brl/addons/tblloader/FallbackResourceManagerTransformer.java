@@ -71,7 +71,7 @@ public class FallbackResourceManagerTransformer implements IClassTransformer
         method.instructions.add(new FieldInsnNode(Opcodes.GETFIELD, "net/minecraft/client/resources/FallbackResourceManager", BetterRenderCore.isDebofEnabled ? "field_110540_a" : "resourcePacks", "Ljava/util/List;"));
         method.instructions.add(new VarInsnNode(Opcodes.ALOAD, 0));
         method.instructions.add(new FieldInsnNode(Opcodes.GETFIELD, "net/minecraft/client/resources/FallbackResourceManager", "frmMetadataSerializer", "Lnet/minecraft/client/resources/data/MetadataSerializer;"));
-        method.instructions.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "com/wynprice/brl/addons/techneloader/FallbackResourceManagerTransformer", "getResource", "(Lnet/minecraft/util/ResourceLocation;Ljava/util/List;Lnet/minecraft/client/resources/data/MetadataSerializer;)Lnet/minecraft/client/resources/IResource;", false));
+        method.instructions.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "com/wynprice/brl/addons/tblloader/FallbackResourceManagerTransformer", "getResource", "(Lnet/minecraft/util/ResourceLocation;Ljava/util/List;Lnet/minecraft/client/resources/data/MetadataSerializer;)Lnet/minecraft/client/resources/IResource;", false));
 	    method.instructions.add(new InsnNode(Opcodes.ARETURN));
 	    method.instructions.add(endLabel);
 	    

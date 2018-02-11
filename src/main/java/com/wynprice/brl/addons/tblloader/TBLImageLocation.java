@@ -25,6 +25,7 @@ public class TBLImageLocation extends ResourceLocation
 		for(ResourceLocation key : STREAMS.keySet())
 			if(new ResourceLocation(key.getResourceDomain(), "textures/" + key.getResourcePath() + ".png").equals(location))
 				return new ByteArrayInputStream(STREAMS.get(key).toByteArray());
+
 		return null;
 	}
 	

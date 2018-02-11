@@ -128,7 +128,7 @@ public class ClientProxy extends CommonProxy
 				}
 				ItemStackHandler handler = new ItemStackHandler(1);
 				handler.deserializeNBT(stack.getOrCreateSubCompound("capture_info").getCompoundTag("item"));
-				return tintIndex == 0 ? -1 : handler.getStackInSlot(0).isEmpty() ? -1 : blockColor == -1 ? Minecraft.getMinecraft().getItemColors().colorMultiplier(handler.getStackInSlot(0), tintIndex - 1) : blockColor;
+				return tintIndex == 1 || tintIndex == 2 ? -1 : handler.getStackInSlot(0).isEmpty() ? -1 : blockColor == -1 ? Minecraft.getMinecraft().getItemColors().colorMultiplier(handler.getStackInSlot(0), tintIndex - 1) : blockColor;
 			}
 		}, CloakItems.BLOCKSTATE_CARD);
 		
@@ -146,7 +146,7 @@ public class ClientProxy extends CommonProxy
 				{
 					;
 				}
-				return tintIndex == 0 ? -1 : liquidColor;
+				return tintIndex == 1 ? -1 : liquidColor;
 			}
 		}, CloakItems.LIQUDSTATE_CARD);
 		
