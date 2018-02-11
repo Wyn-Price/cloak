@@ -102,13 +102,12 @@ public class BlockColorsTransformer implements IClassTransformer
 				(
 					Blocks.WATER,
 					Blocks.FLOWING_WATER,
-					Blocks.DOUBLE_PLANT,
 					Blocks.RED_FLOWER,
 					Blocks.YELLOW_FLOWER
 				);
 		IBlockColor iblockcolor = blockColorMap.get(state.getBlock().delegate);
         return 
-        		iblockcolor == null || iblockcolor.colorMultiplier(state, blockAccess, pos, renderPass) == 0xFFFFFF || noColorBlocks.contains(state.getBlock())? 
+        		iblockcolor == null || iblockcolor.colorMultiplier(state, blockAccess, pos, renderPass) == 0xFFFFFF || iblockcolor.colorMultiplier(state, blockAccess, pos, renderPass) == -1|| noColorBlocks.contains(state.getBlock()) ? 
         				BufferedPlastic.plastic ? 
 	        						BufferedPlastic.getImageColor(Minecraft.getMinecraft().getBlockRendererDispatcher().getBlockModelShapes().getTexture(state)) :
 	        						-1 

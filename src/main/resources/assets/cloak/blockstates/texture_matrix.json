@@ -1,0 +1,5 @@
+{
+    "variants": {
+        "normal": { "model": "cloak:texture_matrix" }
+    }
+}

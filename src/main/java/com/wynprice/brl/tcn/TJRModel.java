@@ -1,12 +1,17 @@
 package com.wynprice.brl.tcn;
 
+import java.awt.image.BufferedImage;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.function.Function;
 
 import org.lwjgl.util.vector.Matrix4f;
 import org.lwjgl.util.vector.Vector3f;
 import org.lwjgl.util.vector.Vector4f;
 
+import com.google.common.collect.Lists;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
@@ -14,6 +19,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.EnumFaceDirection;
 import net.minecraft.client.renderer.EnumFaceDirection.VertexInformation;
 import net.minecraft.client.renderer.GlStateManager;
@@ -24,11 +30,18 @@ import net.minecraft.client.renderer.block.model.BlockPartRotation;
 import net.minecraft.client.renderer.block.model.FaceBakery;
 import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.block.model.ModelRotation;
+import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureManager;
+import net.minecraft.client.renderer.texture.TextureMap;
+import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumFacing.Axis;
+import net.minecraftforge.client.event.TextureStitchEvent;
+import net.minecraftforge.client.model.IModel;
+import net.minecraftforge.common.model.IModelState;
 import net.minecraft.util.JsonUtils;
+import net.minecraft.util.ResourceLocation;
 
 /**
  * Class to hold all the infomation about the model, the texturesize, the scale, stuff like that
@@ -36,7 +49,7 @@ import net.minecraft.util.JsonUtils;
  * @author Wyn Price
  *
  */
-public class TJRModel 
+public class TJRModel implements IModel
 {
 	private final String modelName;
 	private final String authorName;
@@ -45,7 +58,12 @@ public class TJRModel
 	private final int textureHeight;
 	private final Vector3f scale;
 	private final TJRCube[] cubes;
-
+	
+	private BufferedImage image;
+	private ResourceLocation location;
+	private TextureAtlasSprite sprite;
+	
+	public static final HashMap<String, ResourceLocation> RESOURCECACHEMAP = new HashMap<>();
 	
 	private TJRModel(String modelName, String authorName, int projVersion, int textureWidth, int textureHeight, Vector3f scale, TJRCube... cubes)
 	{
@@ -61,6 +79,15 @@ public class TJRModel
 		{
 			object.setTjrmodel(null, this);
 		}
+	}
+	
+	public void setImage(BufferedImage image) 
+	{
+		this.image = image;
+		if(!RESOURCECACHEMAP.containsKey(modelName))	
+			RESOURCECACHEMAP.put(modelName, Minecraft.getMinecraft().getTextureManager().getDynamicTextureLocation(this.modelName, new DynamicTexture(image)));
+		location = RESOURCECACHEMAP.get(modelName);
+
 	}
 	
 	public void render(float scale)
@@ -79,6 +106,16 @@ public class TJRModel
 	
 	public int getTextureWidth() {
 		return textureWidth;
+	}
+	
+	/**
+	 * Converts the {@link TJRModel} to an {@link IBakedModel}.
+	 * Uses the texture set during texture stitching, if there is one
+	 * @return the converted {@link IBakedModel}
+	 */
+	public IBakedModel bake()
+	{
+		return getBakedModel(sprite);
 	}
 	
 	/**
@@ -149,7 +186,7 @@ public class TJRModel
 										"tjr:blockmodel",
 										faceUV
 								), 
-								TJR.getMissingNo().getParticleTexture(),
+								this.sprite,
 								face,
 								ModelRotation.X0_Y0,
 								new BlockPartRotation
@@ -277,5 +314,17 @@ public class TJRModel
 			 return aren;
 		}
 		
+	}
+
+	@Override
+	public IBakedModel bake(IModelState state, VertexFormat format,
+			Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter) 
+	{
+		return bake();
+	}
+	
+	public void registerTexture(TextureMap map)
+	{
+		this.sprite = map.registerSprite(location);
 	}
 }

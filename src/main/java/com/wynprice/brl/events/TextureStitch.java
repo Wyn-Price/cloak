@@ -15,17 +15,26 @@ import java.nio.ByteBuffer;
 import org.lwjgl.BufferUtils;
 
 import com.wynprice.brl.addons.plastic.BufferedPlastic;
+import com.wynprice.brl.tcn.TCNZipHandler;
+import com.wynprice.brl.tcn.TJRModel;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
-public class PostTextureStitch 
+public class TextureStitch 
 {
 	
 	@SubscribeEvent
-	public void onModelBake(TextureStitchEvent.Post event)
+	public void onTextureStitchPre(TextureStitchEvent.Pre event)
+	{
+		for(TJRModel model : TCNZipHandler.LOADED_MODELS)
+			model.registerTexture(event.getMap());
+	}
+	
+	@SubscribeEvent
+	public void onTextureStitchPost(TextureStitchEvent.Post event)
 	{
 		
 		BufferedPlastic.setTextureID(-1);

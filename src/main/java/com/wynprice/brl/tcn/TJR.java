@@ -3,6 +3,7 @@ package com.wynprice.brl.tcn;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.Reader;
 import java.nio.charset.StandardCharsets;
 
 import com.google.gson.Gson;
@@ -10,12 +11,8 @@ import com.google.gson.GsonBuilder;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.IBakedModel;
-import net.minecraft.client.renderer.block.model.ModelBlock;
-import net.minecraft.nbt.JsonToNBT;
-import net.minecraft.nbt.NBTException;
 import net.minecraft.util.JsonUtils;
 import net.minecraft.util.ResourceLocation;
-import scala.util.parsing.json.JSON;
 
 public class TJR 
 {
@@ -30,12 +27,17 @@ public class TJR
 	{
 		try {
 			InputStream stream = Minecraft.getMinecraft().getResourceManager().getResource(location).getInputStream();
-			return JsonUtils.gsonDeserialize(SERIALIZER, new InputStreamReader(stream, StandardCharsets.UTF_8), TJRModel.class, false);
+			return getModel(new InputStreamReader(stream, StandardCharsets.UTF_8));
 		} catch (IOException e) 
 		{
 			e.printStackTrace();
 		}
 		return null;
+	}
+	
+	public static TJRModel getModel(Reader reader)
+	{
+		return JsonUtils.gsonDeserialize(SERIALIZER, reader, TJRModel.class, false);
 	}
 	
 	private static IBakedModel missingNo;

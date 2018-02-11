@@ -1,5 +1,5 @@
 {
     "variants": { 
-        "normal": { "model": "cloak:cloaking_machine" }
+        "normal": { "model": "cloak:cloaking_machine.tbl" }
     }
 }

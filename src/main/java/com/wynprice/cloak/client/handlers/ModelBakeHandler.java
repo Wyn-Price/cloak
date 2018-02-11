@@ -1,5 +1,6 @@
 package com.wynprice.cloak.client.handlers;
 
+import com.wynprice.brl.tcn.TCNZipHandler;
 import com.wynprice.brl.tcn.TJR;
 import com.wynprice.cloak.CloakMod;
 import com.wynprice.cloak.client.rendering.TileEntityCloakingMachineRenderer;
@@ -37,8 +38,9 @@ public class ModelBakeHandler
 					event.getModelRegistry().putObject(location, new CloakBlockItemModel(event.getModelRegistry().getObject(location)));
 				if(loc.equals("external_capture"))
 					event.getModelRegistry().putObject(location, new ExternalCaptureModel(event.getModelRegistry().getObject(location)));
-				if(loc.equals("cloaking_machine"))
-					event.getModelRegistry().putObject(location, TJR.getModel(CLOAKING_MACHINE_MODEL_LOCATION).getBakedModel(TextureStitchHandler.cloaking_machine));
+//				if(loc.equals("cloaking_machine"))
+//					event.getModelRegistry().putObject(location, TCNZipHandler.getZipFile(new ResourceLocation("cloak:block/cloaking_machine"))
+//								.bake());
 			}
 
 	}

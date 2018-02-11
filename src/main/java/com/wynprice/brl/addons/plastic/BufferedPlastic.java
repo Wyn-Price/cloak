@@ -51,7 +51,8 @@ public class BufferedPlastic
 	                buffer.put((byte) 0xFF); 
 	                buffer.put((byte) 0xFF);
 	                buffer.put((byte) 0xFF);
-	                buffer.put((byte) ((pixel >> 24) & 0xFF)); 
+	                byte alpha = (byte) ((pixel >> 24) & 0xFF);
+	                buffer.put((byte) (alpha == 0 ? 0 : 255)); 
 	            }
 	        }
 
