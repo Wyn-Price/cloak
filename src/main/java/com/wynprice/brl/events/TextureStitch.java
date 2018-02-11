@@ -15,8 +15,8 @@ import java.nio.ByteBuffer;
 import org.lwjgl.BufferUtils;
 
 import com.wynprice.brl.addons.plastic.BufferedPlastic;
-import com.wynprice.brl.tcn.TCNZipHandler;
-import com.wynprice.brl.tcn.TJRModel;
+import com.wynprice.brl.addons.tblloader.TBLZipHandler;
+import com.wynprice.brl.addons.tblloader.TBLModel;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.TextureMap;
@@ -29,7 +29,7 @@ public class TextureStitch
 	@SubscribeEvent
 	public void onTextureStitchPre(TextureStitchEvent.Pre event)
 	{
-		for(TJRModel model : TCNZipHandler.LOADED_MODELS)
+		for(TBLModel model : TBLZipHandler.LOADED_MODELS)
 			model.registerTexture(event.getMap());
 	}
 	

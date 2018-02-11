@@ -1,4 +1,4 @@
-package com.wynprice.brl.tcn;
+package com.wynprice.brl.addons.tblloader;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -19,7 +19,6 @@ import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GLAllocation;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.util.EnumFacing;
 import net.minecraft.util.JsonUtils;
 
 /**
@@ -27,7 +26,7 @@ import net.minecraft.util.JsonUtils;
  * @author Wyn Price
  *
  */
-public class TJRCube 
+public class TBLCube 
 {
 	public final String name;
 	public final Vector3f dimensions;
@@ -38,19 +37,19 @@ public class TJRCube
 	public final int textureOffX;
 	public final int textureOffY;
 	public final boolean mirrorTX;
-	public final TJRCube[] children;
+	public final TBLCube[] children;
 	
 	public Vector3f global_position;
 	public Vector3f global_rotaion;
 
-	private TJRModel tjrmodel;
+	private TBLModel tjrmodel;
 	
 	private int displayList;
     private boolean hasDrawn;
 	
-	private TJRCube(String name, Vector3f dimensions, Vector3f position,
+	private TBLCube(String name, Vector3f dimensions, Vector3f position,
 			Vector3f offset, Vector3f rotation, Vector3f scale, int textureOffX, int textureOffY,
-			boolean mirrorTX, TJRCube... children) 
+			boolean mirrorTX, TBLCube... children) 
 	{
 		this.name = name;
 		this.dimensions = new Vector3f(dimensions.x, dimensions.y, dimensions.z);
@@ -89,9 +88,9 @@ public class TJRCube
         GlStateManager.popMatrix();
 	}
 	
-	public void addChildren(ArrayList<TJRCube> list)
+	public void addChildren(ArrayList<TBLCube> list)
 	{
-		for(TJRCube cube : children)
+		for(TBLCube cube : children)
 		{
 			list.add(cube);
 			cube.addChildren(list);
@@ -118,7 +117,7 @@ public class TJRCube
 			this.global_rotaion = new Vector3f(rotation);
 		}
 
-		for(TJRCube child : children)
+		for(TBLCube child : children)
 		{
 			Vector3f.add(this.global_position, child.position, child.global_position);
 			Vector3f.add(this.global_rotaion, child.rotation, child.global_rotaion);
@@ -127,15 +126,15 @@ public class TJRCube
 		}
 	}
 	
-	static class Deserializer implements JsonDeserializer<TJRCube>
+	static class Deserializer implements JsonDeserializer<TBLCube>
 	{
 
 		@Override
-		public TJRCube deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
+		public TBLCube deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
 				throws JsonParseException 
 		{
 			JsonObject object = json.getAsJsonObject();
-			return new TJRCube(
+			return new TBLCube(
 					object.get("name").getAsString(), 
 					getVec3f(object, "dimensions"), 
 					getVec3f(object, "position"),
@@ -204,17 +203,17 @@ public class TJRCube
 			return aint;
 		}
 		
-		private TJRCube[] getChildren(JsonObject object, JsonDeserializationContext context)
+		private TBLCube[] getChildren(JsonObject object, JsonDeserializationContext context)
 		{
 			if(!object.has("children"))
-				return new TJRCube[0];
+				return new TBLCube[0];
 			
 			JsonArray jsonarray = JsonUtils.getJsonArray(object, "children");
-			TJRCube[] jaint = new TJRCube[jsonarray.size()];
+			TBLCube[] jaint = new TBLCube[jsonarray.size()];
 			
 			for (int i = 0; i < jaint.length; ++i)
             {
-            	jaint[i] = context.deserialize(jsonarray.get(i), TJRCube.class);
+            	jaint[i] = context.deserialize(jsonarray.get(i), TBLCube.class);
             }
 			
 			return jaint;
@@ -223,16 +222,16 @@ public class TJRCube
 	}
 	
 	
-	private TJRCube parent;
+	private TBLCube parent;
 	
-	public TJRCube getOriginalParent() {
+	public TBLCube getOriginalParent() {
 		return parent == null ? this : parent.getOriginalParent();
 	}
 	
-	public void setTjrmodel(TJRCube parent, TJRModel tjrmodel) 
+	public void setTjrmodel(TBLCube parent, TBLModel tjrmodel) 
 	{
 		this.tjrmodel = tjrmodel;
-		for(TJRCube child : children)
+		for(TBLCube child : children)
 			child.setTjrmodel(this, this.tjrmodel);
 		this.parent = parent;
 	}

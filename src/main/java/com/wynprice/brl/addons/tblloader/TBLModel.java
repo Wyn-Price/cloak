@@ -1,17 +1,19 @@
-package com.wynprice.brl.tcn;
+package com.wynprice.brl.addons.tblloader;
 
 import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.function.Function;
+
+import javax.imageio.ImageIO;
 
 import org.lwjgl.util.vector.Matrix4f;
 import org.lwjgl.util.vector.Vector3f;
 import org.lwjgl.util.vector.Vector4f;
 
-import com.google.common.collect.Lists;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
@@ -37,19 +39,18 @@ import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumFacing.Axis;
-import net.minecraftforge.client.event.TextureStitchEvent;
-import net.minecraftforge.client.model.IModel;
-import net.minecraftforge.common.model.IModelState;
 import net.minecraft.util.JsonUtils;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.client.model.IModel;
+import net.minecraftforge.common.model.IModelState;
 
 /**
  * Class to hold all the infomation about the model, the texturesize, the scale, stuff like that
- * @see TJRCube
+ * @see TBLCube
  * @author Wyn Price
  *
  */
-public class TJRModel implements IModel
+public class TBLModel implements IModel
 {
 	private final String modelName;
 	private final String authorName;
@@ -57,7 +58,7 @@ public class TJRModel implements IModel
 	private final int textureWidth;
 	private final int textureHeight;
 	private final Vector3f scale;
-	private final TJRCube[] cubes;
+	private final TBLCube[] cubes;
 	
 	private BufferedImage image;
 	private ResourceLocation location;
@@ -65,7 +66,7 @@ public class TJRModel implements IModel
 	
 	public static final HashMap<String, ResourceLocation> RESOURCECACHEMAP = new HashMap<>();
 	
-	private TJRModel(String modelName, String authorName, int projVersion, int textureWidth, int textureHeight, Vector3f scale, TJRCube... cubes)
+	private TBLModel(String modelName, String authorName, int projVersion, int textureWidth, int textureHeight, Vector3f scale, TBLCube... cubes)
 	{
 		this.modelName = modelName;
 		this.authorName = authorName;
@@ -75,7 +76,7 @@ public class TJRModel implements IModel
 		this.scale = scale;
 		this.cubes = cubes;
 
-		for(TJRCube object : cubes)
+		for(TBLCube object : cubes)
 		{
 			object.setTjrmodel(null, this);
 		}
@@ -85,7 +86,16 @@ public class TJRModel implements IModel
 	{
 		this.image = image;
 		if(!RESOURCECACHEMAP.containsKey(modelName))	
-			RESOURCECACHEMAP.put(modelName, Minecraft.getMinecraft().getTextureManager().getDynamicTextureLocation(this.modelName, new DynamicTexture(image)));
+		{
+			ResourceLocation location = Minecraft.getMinecraft().getTextureManager().getDynamicTextureLocation(this.modelName, new DynamicTexture(image));
+			ByteArrayOutputStream byteArrayOut = new ByteArrayOutputStream();
+			try {
+				ImageIO.write(image, "png", byteArrayOut);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			RESOURCECACHEMAP.put(modelName, new TBLImageLocation(location, byteArrayOut));
+		}
 		location = RESOURCECACHEMAP.get(modelName);
 
 	}
@@ -94,7 +104,7 @@ public class TJRModel implements IModel
 	{
 		GlStateManager.rotate(180, 0, 0, 1); //not sure why this needs to be here. I think an issue with .tbl exporting?
 		GlStateManager.scale(this.scale.x / 16f, this.scale.y / 16f, this.scale.z / 16f);
-		for(TJRCube object : cubes)
+		for(TBLCube object : cubes)
 			object.render(scale);
 		GlStateManager.scale(this.scale.x * 16f, this.scale.y * 16f, this.scale.z * 16f);
 		GlStateManager.rotate(-180, 0, 0, 1);		
@@ -109,7 +119,7 @@ public class TJRModel implements IModel
 	}
 	
 	/**
-	 * Converts the {@link TJRModel} to an {@link IBakedModel}.
+	 * Converts the {@link TBLModel} to an {@link IBakedModel}.
 	 * Uses the texture set during texture stitching, if there is one
 	 * @return the converted {@link IBakedModel}
 	 */
@@ -119,21 +129,21 @@ public class TJRModel implements IModel
 	}
 	
 	/**
-	 * Converts the {@link TJRModel} to an {@link IBakedModel}.
+	 * Converts the {@link TBLModel} to an {@link IBakedModel}.
 	 * @param sprite The sprite to be rendered with, leave null if you plan to do {@link TextureManager#bindTexture(net.minecraft.util.ResourceLocation)} before rendering
 	 * @return the converted {@link IBakedModel}
 	 */
 	public IBakedModel getBakedModel(TextureAtlasSprite sprite) 
 	{
-		ArrayList<TJRCube> allList = new ArrayList<>();
-		for(TJRCube cube : cubes)
+		ArrayList<TBLCube> allList = new ArrayList<>();
+		for(TBLCube cube : cubes)
 		{
 			allList.add(cube);
 			cube.addChildren(allList);
 			cube.globalizeTransform(false);
 		}
 		ArrayList<BakedQuad> quadList = new ArrayList<>();
-		for(TJRCube cube : allList)
+		for(TBLCube cube : allList)
 			for(EnumFacing face : EnumFacing.VALUES)
 			{				
 				Vector3f pos1 = 
@@ -259,9 +269,9 @@ public class TJRModel implements IModel
 				
 				
 				
-				quadList.add(new TJRUVQuad(newQuad, faceUV));
+				quadList.add(new TBLUVQuad(newQuad, faceUV));
 			}
-		TJRBakedModel model =  new TJRBakedModel(sprite, quadList);
+		TBLBakedModel model =  new TBLBakedModel(sprite, quadList);
 		return model;
 	}
 	
@@ -280,35 +290,35 @@ public class TJRModel implements IModel
 		}
 	}
 	
-	static class Deserializer implements JsonDeserializer<TJRModel>
+	static class Deserializer implements JsonDeserializer<TBLModel>
 	{
 
 		@Override
-		public TJRModel deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
+		public TBLModel deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
 				throws JsonParseException 
 		{
 			JsonObject object = json.getAsJsonObject();            
-			return new TJRModel(
+			return new TBLModel(
 					object.get("modelName").getAsString(),
 					object.get("authorName").getAsString(),
 					object.get("projVersion").getAsInt(),
 					object.get("textureWidth").getAsInt(),
 					object.get("textureHeight").getAsInt(),
-					TJRCube.Deserializer.getVec3f(object, "scale"), 
+					TBLCube.Deserializer.getVec3f(object, "scale"), 
 					getRenderObjects(object, context));
 		}
 		
-		private TJRCube[] getRenderObjects(JsonObject object, JsonDeserializationContext context)
+		private TBLCube[] getRenderObjects(JsonObject object, JsonDeserializationContext context)
 		{
-			 TJRCube[] aren = new TJRCube[0];
+			 TBLCube[] aren = new TBLCube[0];
 			 if(object.has("cubes"))
 	         {
 				JsonArray jsonarray = JsonUtils.getJsonArray(object, "cubes");
-	            aren = new TJRCube[jsonarray.size()];
+	            aren = new TBLCube[jsonarray.size()];
 
 	            for(int i = 0; i < jsonarray.size(); i++)
 	            {
-	            	aren[i] = (context.deserialize(jsonarray.get(i), TJRCube.class));
+	            	aren[i] = (context.deserialize(jsonarray.get(i), TBLCube.class));
 	            }
 	         }
 			 return aren;

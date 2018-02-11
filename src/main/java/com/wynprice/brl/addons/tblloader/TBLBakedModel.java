@@ -1,4 +1,4 @@
-package com.wynprice.brl.tcn;
+package com.wynprice.brl.addons.tblloader;
 
 import java.util.List;
 
@@ -13,21 +13,21 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
-import net.minecraft.client.renderer.block.model.ItemOverrideList;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms.TransformType;
+import net.minecraft.client.renderer.block.model.ItemOverrideList;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 
-public class TJRBakedModel implements IBakedModel
+public class TBLBakedModel implements IBakedModel
 {
 	
 	private final List<BakedQuad> quads;
 	
 	private final TextureAtlasSprite sprite;
 	
-	public TJRBakedModel(TextureAtlasSprite sprite, List<BakedQuad> quads) 
+	public TBLBakedModel(TextureAtlasSprite sprite, List<BakedQuad> quads) 
 	{
 		this.quads = quads;
 		this.sprite = sprite;

@@ -1,4 +1,4 @@
-package com.wynprice.brl.tcn;
+package com.wynprice.brl.addons.tblloader;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -14,16 +14,16 @@ import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.util.JsonUtils;
 import net.minecraft.util.ResourceLocation;
 
-public class TJR 
+public class TBLRegistry 
 {
 	
 	public static final Gson SERIALIZER = (new GsonBuilder())
-			.registerTypeAdapter(TJRModel.class, new TJRModel.Deserializer())
-			.registerTypeAdapter(TJRCube.class, new TJRCube.Deserializer())
+			.registerTypeAdapter(TBLModel.class, new TBLModel.Deserializer())
+			.registerTypeAdapter(TBLCube.class, new TBLCube.Deserializer())
 			.create();
 	
 	
-	public static TJRModel getModel(ResourceLocation location)
+	public static TBLModel getModel(ResourceLocation location)
 	{
 		try {
 			InputStream stream = Minecraft.getMinecraft().getResourceManager().getResource(location).getInputStream();
@@ -35,17 +35,17 @@ public class TJR
 		return null;
 	}
 	
-	public static TJRModel getModel(Reader reader)
+	public static TBLModel getModel(Reader reader)
 	{
-		return JsonUtils.gsonDeserialize(SERIALIZER, reader, TJRModel.class, false);
+		return JsonUtils.gsonDeserialize(SERIALIZER, reader, TBLModel.class, false);
 	}
 	
 	private static IBakedModel missingNo;
 	
 	public static void setMissingNo(IBakedModel missingNo) 
 	{
-		if(TJR.missingNo == null)
-			TJR.missingNo = missingNo;
+		if(TBLRegistry.missingNo == null)
+			TBLRegistry.missingNo = missingNo;
 	}
 	
 	public static IBakedModel getMissingNo() {

@@ -1,4 +1,4 @@
-package com.wynprice.brl.addons.techneloader;
+package com.wynprice.brl.addons.tblloader;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -6,18 +6,14 @@ import java.nio.charset.StandardCharsets;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import com.wynprice.brl.tcn.TCNZipHandler;
-import com.wynprice.cloak.CloakMod;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.IResourceManager;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.client.gui.ForgeGuiFactory.ForgeConfigGui.ModIDEntry;
 import net.minecraftforge.client.model.ICustomModelLoader;
 import net.minecraftforge.client.model.IModel;
-import net.minecraftforge.fml.common.Mod;
 
-public class TechneModelLoader implements ICustomModelLoader
+public class TBLModelLoader implements ICustomModelLoader
 {
 
 	@Override
@@ -34,7 +30,6 @@ public class TechneModelLoader implements ICustomModelLoader
 			try
 			{
 				Minecraft.getMinecraft().getResourceManager().getResource(new ResourceLocation(modelLocation.getResourceDomain() + ":" + modelLocation.getResourcePath() + ".tbl")).getInputStream();
-				System.out.println(modelLocation);
 			}
 			catch (IOException e2) 
 			{
@@ -73,7 +68,7 @@ public class TechneModelLoader implements ICustomModelLoader
 	@Override
 	public IModel loadModel(ResourceLocation modelLocation) throws Exception 
 	{
-		return TCNZipHandler.getZipFile(modelLocation);
+		return TBLZipHandler.getZipFile(modelLocation);
 	}
 
 }

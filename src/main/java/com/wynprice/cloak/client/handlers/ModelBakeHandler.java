@@ -1,10 +1,7 @@
 package com.wynprice.cloak.client.handlers;
 
-import com.wynprice.brl.tcn.TCNZipHandler;
-import com.wynprice.brl.tcn.TJR;
+import com.wynprice.brl.addons.tblloader.TBLRegistry;
 import com.wynprice.cloak.CloakMod;
-import com.wynprice.cloak.client.rendering.TileEntityCloakingMachineRenderer;
-import com.wynprice.cloak.client.rendering.models.BaseModelProxy;
 import com.wynprice.cloak.client.rendering.models.BlockCaptureModel;
 import com.wynprice.cloak.client.rendering.models.CloakBlockItemModel;
 import com.wynprice.cloak.client.rendering.models.ExternalCaptureModel;
@@ -25,7 +22,7 @@ public class ModelBakeHandler
 	{
 		for(ModelResourceLocation location : event.getModelRegistry().getKeys())
 			if(location.equals(new ModelResourceLocation(new ResourceLocation("minecraft:builtin/missing"), "missing")))
-				TJR.setMissingNo(event.getModelRegistry().getObject(location));
+				TBLRegistry.setMissingNo(event.getModelRegistry().getObject(location));
 		for(ModelResourceLocation location : event.getModelRegistry().getKeys())
 			if(location.getResourceDomain().equals(CloakMod.MODID))
 			{
@@ -39,7 +36,7 @@ public class ModelBakeHandler
 				if(loc.equals("external_capture"))
 					event.getModelRegistry().putObject(location, new ExternalCaptureModel(event.getModelRegistry().getObject(location)));
 //				if(loc.equals("cloaking_machine"))
-//					event.getModelRegistry().putObject(location, TCNZipHandler.getZipFile(new ResourceLocation("cloak:block/cloaking_machine"))
+//					event.getModelRegistry().putObject(location, TBLZipHandler.getZipFile(new ResourceLocation("cloak:block/cloaking_machine"))
 //								.bake());
 			}
 

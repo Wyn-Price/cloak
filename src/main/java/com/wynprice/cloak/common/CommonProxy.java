@@ -3,7 +3,6 @@ package com.wynprice.cloak.common;
 import org.apache.logging.log4j.core.util.Loader;
 
 import com.wynprice.cloak.CloakMod;
-import com.wynprice.cloak.client.handlers.ParticleHandler;
 import com.wynprice.cloak.common.handlers.CloakGUIHandler;
 import com.wynprice.cloak.common.handlers.UpdateHandler;
 import com.wynprice.cloak.common.network.CloakNetwork;

@@ -1,4 +1,4 @@
-package com.wynprice.brl.tcn;
+package com.wynprice.brl.addons.tblloader;
 
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
@@ -22,7 +22,7 @@ import com.google.gson.JsonParser;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.ResourceLocation;
 
-public class TCNZipHandler 
+public class TBLZipHandler 
 {
 	
 	
@@ -36,9 +36,9 @@ public class TCNZipHandler
 		
 	});
 	
-	public static final ArrayList<TJRModel> LOADED_MODELS = new ArrayList<>();
+	public static final ArrayList<TBLModel> LOADED_MODELS = new ArrayList<>();
 	
-	public static TJRModel getZipFile(ResourceLocation location)
+	public static TBLModel getZipFile(ResourceLocation location)
 	{
 		
 		String errorFileName = "";
@@ -95,7 +95,7 @@ public class TCNZipHandler
 		{
 			ZipEntry entry = zipStream.getNextEntry();
 			
-			TJRModel model = null;
+			TBLModel model = null;
 			BufferedImage texture = null; 
 			
 			while(entry != null)
@@ -110,7 +110,7 @@ public class TCNZipHandler
 						out += (char)len;
 					}
 					
-					model = TJR.getModel(new StringReader(out));
+					model = TBLRegistry.getModel(new StringReader(out));
 				}
 				else if(entry.getName().split("\\.")[entry.getName().split("\\.").length - 1].equals("png"))
 				{

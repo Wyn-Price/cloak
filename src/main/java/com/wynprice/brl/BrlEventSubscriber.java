@@ -1,6 +1,6 @@
 package com.wynprice.brl;
 
-import com.wynprice.brl.addons.techneloader.TechneModelLoader;
+import com.wynprice.brl.addons.tblloader.TBLModelLoader;
 import com.wynprice.brl.events.TextureStitch;
 
 import net.minecraftforge.client.model.ModelLoaderRegistry;
@@ -20,7 +20,7 @@ public class BrlEventSubscriber
 					new TextureStitch()
 			};
 		
-		ModelLoaderRegistry.registerLoader(new TechneModelLoader());
+		ModelLoaderRegistry.registerLoader(new TBLModelLoader());
 				
 		for(Object o : objects)
 			MinecraftForge.EVENT_BUS.register(o);

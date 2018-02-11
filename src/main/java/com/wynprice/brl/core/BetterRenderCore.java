@@ -28,7 +28,9 @@ public class BetterRenderCore implements IFMLLoadingPlugin {
         				
         				//TODO make so it relies on config, other mods may interfier otherwise
         				"com.wynprice.brl.addons.plastic.BlockColorsTransformer",
-        				"com.wynprice.brl.addons.plastic.BakedQuadTransformer"
+        				"com.wynprice.brl.addons.plastic.BakedQuadTransformer",
+        				
+        				"com.wynprice.brl.addons.techneloader.FallbackResourceManagerTransformer"
 
         		};
     	
