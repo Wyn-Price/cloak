@@ -51,7 +51,7 @@ public class ItemCaptureBlock extends Item implements ICaptureCard
 	@Override
 	public ActionResult<ItemStack> onItemRightClick(World worldIn, EntityPlayer playerIn, EnumHand handIn) 
 	{
-		if(worldIn.isRemote)
+		if(worldIn.isRemote)//TODO change
 		{
 			BufferedPlastic.plastic = !BufferedPlastic.plastic;
 			Minecraft.getMinecraft().renderGlobal.loadRenderers();
