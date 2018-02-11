@@ -33,7 +33,9 @@ public interface IBRLRenderFactory
 	
 	/**
 	 * Should {@link #getModels(IBlockAccess, BlockPos, IBlockState)} be cached. This recommended, especially if it requires lots of calculations
+	 * @deprecated not in use at the moment. Plan to add somthing like this in the future
 	 */
+	@Deprecated
 	default public boolean shouldCache()
 	{
 		return true;

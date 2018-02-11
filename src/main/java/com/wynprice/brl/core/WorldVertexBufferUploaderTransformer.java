@@ -19,6 +19,7 @@ import org.objectweb.asm.tree.MethodNode;
 import org.objectweb.asm.tree.VarInsnNode;
 
 import com.wynprice.brl.BRBufferBuilder;
+import com.wynprice.brl.addons.plastic.BufferedPlastic;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BufferBuilder;
@@ -55,7 +56,8 @@ public class WorldVertexBufferUploaderTransformer implements IClassTransformer
 	    method.instructions.add(new LineNumberNode(52, startLabel));
 	    	    
 	    LocalVariableNode bufferBuilderIn = new LocalVariableNode(BetterRenderCore.isDebofEnabled ? "p_181679_1_" : "bufferBuilderIn", "Lnet/minecraft/client/renderer/BufferBuilder;", null, startLabel, endLabel, 1);
-	
+	    
+	    method.localVariables.add(bufferBuilderIn);
 	    method.instructions.add(new VarInsnNode(Opcodes.ALOAD, 1));
 	    method.instructions.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "com/wynprice/brl/core/WorldVertexBufferUploaderTransformer", "draw", "(Lnet/minecraft/client/renderer/BufferBuilder;)V", false));
 	    method.instructions.add(new InsnNode(Opcodes.RETURN));
@@ -87,10 +89,17 @@ public class WorldVertexBufferUploaderTransformer implements IClassTransformer
 			boolean flag = bindedTexture == Minecraft.getMinecraft().renderEngine.getTexture(TextureMap.LOCATION_BLOCKS_TEXTURE).getGlTextureId();
 			for(ResourceLocation location : ((BRBufferBuilder)bufferBuilderIn).builderMap.keySet())
 			{
-				Minecraft.getMinecraft().renderEngine.bindTexture(location);
-				if(((BRBufferBuilder)bufferBuilderIn).builderMap.get(location) instanceof BRBufferBuilder)
+				BufferBuilder builder = ((BRBufferBuilder)bufferBuilderIn).builderMap.get(location);
+				
+				if(BufferedPlastic.plastic)
+					GlStateManager.bindTexture(BufferedPlastic.getTextureID());
+				else
+					Minecraft.getMinecraft().renderEngine.bindTexture(location);
+				
+				if(builder instanceof BRBufferBuilder)
 					throw new IllegalArgumentException("BRBufferBuilder was found nested inside another BRBufferBuilder. This should not happen");
-				draw(((BRBufferBuilder)bufferBuilderIn).builderMap.get(location));
+				
+				draw(builder);
 			}
 			if(flag)
 			{

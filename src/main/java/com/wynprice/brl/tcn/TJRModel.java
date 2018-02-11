@@ -222,7 +222,7 @@ public class TJRModel
 				
 				
 				
-				quadList.add(newQuad);
+				quadList.add(new TJRUVQuad(newQuad, faceUV));
 			}
 		TJRBakedModel model =  new TJRBakedModel(sprite, quadList);
 		return model;

@@ -1,10 +1,9 @@
 package com.wynprice.brl.core;
 
+import java.awt.Color;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
-import org.apache.commons.lang3.tuple.Pair;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.Opcodes;
@@ -21,22 +20,20 @@ import org.objectweb.asm.tree.VarInsnNode;
 
 import com.google.common.collect.Lists;
 import com.wynprice.brl.BRBufferBuilder;
+import com.wynprice.brl.addons.plastic.BufferedPlastic;
 import com.wynprice.brl.api.BRLRegistry;
 import com.wynprice.brl.api.BRLRenderInfo;
 import com.wynprice.brl.api.IBRLRenderFactory;
 
-import it.unimi.dsi.fastutil.Hash;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BlockFluidRenderer;
 import net.minecraft.client.renderer.BufferBuilder;
-import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.crash.CrashReport;
 import net.minecraft.crash.CrashReportCategory;
 import net.minecraft.launchwrapper.IClassTransformer;
 import net.minecraft.util.EnumBlockRenderType;
 import net.minecraft.util.ReportedException;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.WorldType;
@@ -69,6 +66,7 @@ public class BlockRendererDispatcherTransformer implements IClassTransformer
 	    LocalVariableNode pos = new LocalVariableNode(BetterRenderCore.isDebofEnabled ? "p_175018_2_" : "pos", "Lnet/minecraft/util/math/BlockPos;", null, startLabel, endLabel, 1);
 	    LocalVariableNode blockAccess = new LocalVariableNode(BetterRenderCore.isDebofEnabled ? "p_175018_3_" : "blockAccess", "Lnet/minecraft/world/IBlockAccess;", null, startLabel, endLabel, 2);
 	    LocalVariableNode bufferBuilderIn = new LocalVariableNode(BetterRenderCore.isDebofEnabled ? "p_175018_4_" : "bufferBuilderIn", "Lnet/minecraft/client/renderer/BufferBuilder;", null, startLabel, endLabel, 3);
+        method.localVariables.addAll(Lists.newArrayList(new LocalVariableNode[]{state, pos, blockAccess, bufferBuilderIn})); //Not required, but reccomended
 
 	    method.instructions.add(new VarInsnNode(Opcodes.ALOAD, 1));
 	    method.instructions.add(new VarInsnNode(Opcodes.ALOAD, 2));
@@ -130,7 +128,7 @@ public class BlockRendererDispatcherTransformer implements IClassTransformer
                         {
                         	if(bufferBuilderIn instanceof BRBufferBuilder)
                         		((BRBufferBuilder)bufferBuilderIn).split(info.getLocation());
-                        	
+                        	                        	
                         	if(!Minecraft.getMinecraft().getBlockRendererDispatcher().getBlockModelRenderer().renderModel(blockAccess, info.getModel(), info.getState(), pos, bufferBuilderIn, true))
                         		retBool = false;
                         }

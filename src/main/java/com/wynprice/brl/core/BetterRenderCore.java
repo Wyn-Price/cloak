@@ -24,7 +24,12 @@ public class BetterRenderCore implements IFMLLoadingPlugin {
         		{
         				"com.wynprice.brl.core.BlockRendererDispatcherTransformer",
         				"com.wynprice.brl.core.RegionRenderCacheBuilderTransformer",
-        				"com.wynprice.brl.core.WorldVertexBufferUploaderTransformer"
+        				"com.wynprice.brl.core.WorldVertexBufferUploaderTransformer",
+        				
+        				//TODO make so it relies on config, other mods may interfier otherwise
+        				"com.wynprice.brl.addons.plastic.BlockColorsTransformer",
+        				"com.wynprice.brl.addons.plastic.BakedQuadTransformer"
+
         		};
     	
     	return stringList;
@@ -41,7 +46,8 @@ public class BetterRenderCore implements IFMLLoadingPlugin {
     }
 
     @Override
-    public void injectData(Map<String, Object> data) {
+    public void injectData(Map<String, Object> data) 
+    {
         isDebofEnabled = (boolean) data.get("runtimeDeobfuscationEnabled");
     }
 

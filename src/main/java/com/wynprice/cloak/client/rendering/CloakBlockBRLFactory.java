@@ -18,6 +18,7 @@ import com.wynprice.cloak.common.registries.CloakItems;
 import com.wynprice.cloak.common.tileentity.TileEntityCloakBlock;
 
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.init.Blocks;
@@ -72,7 +73,6 @@ public class CloakBlockBRLFactory implements IBRLRenderFactory
     	
     	for(ResourceLocation location : modelmap.keySet())
     		renderInfos.add(new BRLRenderInfo(modelmap.get(location).getLeft(), modelmap.get(location).getRight(), location));
-    	Collections.reverse(renderInfos);
 		return renderInfos;
 	}
 
