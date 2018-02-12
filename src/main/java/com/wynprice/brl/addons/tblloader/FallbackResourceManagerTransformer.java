@@ -1,10 +1,8 @@
 package com.wynprice.brl.addons.tblloader;
 
-import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,18 +24,14 @@ import org.objectweb.asm.tree.VarInsnNode;
 
 import com.google.common.collect.Lists;
 import com.wynprice.brl.core.BetterRenderCore;
-import com.wynprice.cloak.CloakMod;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.FallbackResourceManager;
 import net.minecraft.client.resources.IResource;
 import net.minecraft.client.resources.IResourcePack;
 import net.minecraft.client.resources.SimpleResource;
 import net.minecraft.client.resources.data.MetadataSerializer;
 import net.minecraft.launchwrapper.IClassTransformer;
-import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraft.util.ResourceLocation;	
 
 public class FallbackResourceManagerTransformer implements IClassTransformer
 {
@@ -46,44 +40,59 @@ public class FallbackResourceManagerTransformer implements IClassTransformer
 	{
 		if(!transformedName.equals("net.minecraft.client.resources.FallbackResourceManager"))
 			return basicClass;
-				
-		String methodName = BetterRenderCore.isDebofEnabled ? "func_110536_a" : "getResource";
-		String methodDesc = "(Lnet/minecraft/util/ResourceLocation;)Lnet/minecraft/client/resources/IResource;";
+		
+		String getResMethodName = BetterRenderCore.isDebofEnabled ? "func_110536_a" : "getResource";
+		String getResMethodDesc = "(Lnet/minecraft/util/ResourceLocation;)Lnet/minecraft/client/resources/IResource;";
+		
+		
+		String getStreamMethodName = BetterRenderCore.isDebofEnabled ? "func_177245_a" : "getInputStream";
+		String getStreamMethodDesc = "(Lnet/minecraft/util/ResourceLocation;Lnet/minecraft/client/resources/IResourcePack;)Ljava/io/InputStream;";
 		
 		ClassNode node = new ClassNode();
 	    ClassReader reader = new ClassReader(basicClass);
 	    reader.accept(node, 0);
 	    
-	    MethodNode method = new MethodNode(Opcodes.ACC_PUBLIC, methodName, methodDesc, null, new String[0]);
 	    
 	    LabelNode startLabel = new LabelNode();
 	    LabelNode endLabel = new LabelNode();
-
-	    method.instructions = new InsnList();
-	    method.instructions.add(startLabel);
-        method.instructions.add(new LineNumberNode(41, startLabel));
-        
-        LocalVariableNode location = new LocalVariableNode(BetterRenderCore.isDebofEnabled ? "p_177245_1_" : "location", "Lnet/minecraft/util/ResourceLocation;", null, startLabel, endLabel, 0);
-        method.localVariables.addAll(Lists.newArrayList(new LocalVariableNode[]{location}));
+	    MethodNode getResMethod = new MethodNode(Opcodes.ACC_PUBLIC, getResMethodName, getResMethodDesc, null, new String[0]);
+	    getResMethod.instructions = new InsnList();
+	    getResMethod.instructions.add(startLabel);
+        getResMethod.instructions.add(new LineNumberNode(41, startLabel));
+        getResMethod.instructions.add(new VarInsnNode(Opcodes.ALOAD, 1));
+        getResMethod.instructions.add(new VarInsnNode(Opcodes.ALOAD, 0));
+        getResMethod.instructions.add(new FieldInsnNode(Opcodes.GETFIELD, "net/minecraft/client/resources/FallbackResourceManager", BetterRenderCore.isDebofEnabled ? "field_110540_a" : "resourcePacks", "Ljava/util/List;"));
+        getResMethod.instructions.add(new VarInsnNode(Opcodes.ALOAD, 0));
+        getResMethod.instructions.add(new FieldInsnNode(Opcodes.GETFIELD, "net/minecraft/client/resources/FallbackResourceManager", BetterRenderCore.isDebofEnabled ? "field_110539_b" : "frmMetadataSerializer", "Lnet/minecraft/client/resources/data/MetadataSerializer;"));
+        getResMethod.instructions.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "com/wynprice/brl/addons/tblloader/FallbackResourceManagerTransformer", "getResource", "(Lnet/minecraft/util/ResourceLocation;Ljava/util/List;Lnet/minecraft/client/resources/data/MetadataSerializer;)Lnet/minecraft/client/resources/IResource;", false));
+	    getResMethod.instructions.add(new InsnNode(Opcodes.ARETURN));
+	    getResMethod.instructions.add(endLabel);
 	    
-        method.instructions.add(new VarInsnNode(Opcodes.ALOAD, 1));
-        method.instructions.add(new VarInsnNode(Opcodes.ALOAD, 0));
-        method.instructions.add(new FieldInsnNode(Opcodes.GETFIELD, "net/minecraft/client/resources/FallbackResourceManager", BetterRenderCore.isDebofEnabled ? "field_110540_a" : "resourcePacks", "Ljava/util/List;"));
-        method.instructions.add(new VarInsnNode(Opcodes.ALOAD, 0));
-        method.instructions.add(new FieldInsnNode(Opcodes.GETFIELD, "net/minecraft/client/resources/FallbackResourceManager", "frmMetadataSerializer", "Lnet/minecraft/client/resources/data/MetadataSerializer;"));
-        method.instructions.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "com/wynprice/brl/addons/tblloader/FallbackResourceManagerTransformer", "getResource", "(Lnet/minecraft/util/ResourceLocation;Ljava/util/List;Lnet/minecraft/client/resources/data/MetadataSerializer;)Lnet/minecraft/client/resources/IResource;", false));
-	    method.instructions.add(new InsnNode(Opcodes.ARETURN));
-	    method.instructions.add(endLabel);
+	    startLabel = new LabelNode();
+	    endLabel = new LabelNode();
+	    MethodNode getStreamMethod = new MethodNode(Opcodes.ACC_PUBLIC, getStreamMethodName, getStreamMethodDesc, null, new String[0]);
+	    getStreamMethod.instructions = new InsnList();
+	    getStreamMethod.instructions.add(startLabel);
+        getStreamMethod.instructions.add(new LineNumberNode(75, startLabel));
+        getStreamMethod.instructions.add(new VarInsnNode(Opcodes.ALOAD, 2));
+        getStreamMethod.instructions.add(new VarInsnNode(Opcodes.ALOAD, 1));
+        getStreamMethod.instructions.add(new MethodInsnNode(Opcodes.INVOKEINTERFACE, "net/minecraft/client/resources/IResourcePack", BetterRenderCore.isDebofEnabled ? "func_110590_a" : "getInputStream", "(Lnet/minecraft/util/ResourceLocation;)Ljava/io/InputStream;", true));
+	    getStreamMethod.instructions.add(new InsnNode(Opcodes.ARETURN));
+	    getStreamMethod.instructions.add(endLabel);
 	    
 	    ArrayList<MethodNode> nodes = new ArrayList<>();
         for(MethodNode m : node.methods)
-        	if(!m.desc.equalsIgnoreCase(methodDesc) || !m.name.equalsIgnoreCase(methodName))
+        	if(!((m.desc.equalsIgnoreCase(getResMethodDesc) && m.name.equalsIgnoreCase(getResMethodName)) ||
+        		 (m.desc.equalsIgnoreCase(getStreamMethodDesc) && m.name.equalsIgnoreCase(getStreamMethodName)) ))
         		nodes.add(m);
         
-        nodes.add(method);
+        nodes.add(getResMethod);
+        nodes.add(getStreamMethod);
         
         node.methods.clear();
         node.methods.addAll(nodes);
+        
+        
         
         ClassWriter writer = new ClassWriter(ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES);
         node.accept(writer);
@@ -130,8 +139,12 @@ public class FallbackResourceManagerTransformer implements IClassTransformer
 
     protected static InputStream getInputStream(ResourceLocation location, IResourcePack resourcePack) throws IOException
     {
-        InputStream inputstream = resourcePack.getInputStream(location);
-        return inputstream;
+        return resourcePack.getInputStream(location);
+    }
+    
+    protected InputStream getInputStream2(ResourceLocation location, IResourcePack resourcePack) throws IOException
+    {
+        return resourcePack.getInputStream(location);
     }
 
     private static void checkResourcePath(ResourceLocation p_188552_1_) throws IOException
@@ -141,8 +154,7 @@ public class FallbackResourceManagerTransformer implements IClassTransformer
             throw new IOException("Invalid relative path to resource: " + p_188552_1_);
         }
     }
-
-
+      
     static ResourceLocation getLocationMcmeta(ResourceLocation location)
     {
         return new ResourceLocation(location.getResourceDomain(), location.getResourcePath() + ".mcmeta");
