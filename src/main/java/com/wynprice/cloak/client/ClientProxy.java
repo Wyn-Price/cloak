@@ -1,11 +1,11 @@
 package com.wynprice.cloak.client;
 
-import java.lang.reflect.Field;
 import java.util.HashMap;
 
 import org.apache.commons.lang3.tuple.Pair;
 
 import com.wynprice.brl.api.BRLRegistry;
+import com.wynprice.cloak.client.handlers.BLRHandler;
 import com.wynprice.cloak.client.handlers.CaptureCardHandler;
 import com.wynprice.cloak.client.handlers.ExternalImageHandler;
 import com.wynprice.cloak.client.handlers.ModelBakeHandler;
@@ -15,7 +15,6 @@ import com.wynprice.cloak.client.rendering.CloakBlockBRLFactory;
 import com.wynprice.cloak.client.rendering.ExternalCaptureCardRenderer;
 import com.wynprice.cloak.client.rendering.ItemBlockCloakBlockRenderer;
 import com.wynprice.cloak.client.rendering.TileEntityCloakingMachineRenderer;
-import com.wynprice.cloak.client.rendering.world.CloakedRenderChunkFactory;
 import com.wynprice.cloak.common.CommonProxy;
 import com.wynprice.cloak.common.registries.CloakBlocks;
 import com.wynprice.cloak.common.registries.CloakItems;
@@ -23,8 +22,6 @@ import com.wynprice.cloak.common.tileentity.TileEntityCloakingMachine;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.RenderGlobal;
-import net.minecraft.client.renderer.chunk.IRenderChunkFactory;
 import net.minecraft.client.renderer.color.IItemColor;
 import net.minecraft.client.renderer.color.ItemColors;
 import net.minecraft.item.Item;
@@ -63,27 +60,10 @@ public class ClientProxy extends CommonProxy
 		super.init(event);
 		ExternalImageHandler.init();		
 
-		registerItemColors();
-		setupChunkRenderFactory();	
+		registerItemColors();	
 		
 	}
-	
-	private void setupChunkRenderFactory()
-	{
-		try
-		{
-			for(Field field : RenderGlobal.class.getDeclaredFields())
-				if(field.getType() == IRenderChunkFactory.class)
-				{
-					field.setAccessible(true);
-					field.set(Minecraft.getMinecraft().renderGlobal, new CloakedRenderChunkFactory((IRenderChunkFactory) field.get(Minecraft.getMinecraft().renderGlobal)));
-					field.setAccessible(false);
-				}
-		}
-		catch (Throwable e) {
-			e.printStackTrace();
-		}
-	}
+
 	
 	private void registerTileEntityDispatchers()
 	{
@@ -102,7 +82,8 @@ public class ClientProxy extends CommonProxy
 					new ModelBakeHandler(),
 					new TextureStitchHandler(),
 					new ParticleHandler(),
-					new CaptureCardHandler()
+					new CaptureCardHandler(),
+					new BLRHandler()
 			};
 		
 		for(Object o : handlers)
@@ -128,7 +109,7 @@ public class ClientProxy extends CommonProxy
 				}
 				ItemStackHandler handler = new ItemStackHandler(1);
 				handler.deserializeNBT(stack.getOrCreateSubCompound("capture_info").getCompoundTag("item"));
-				return tintIndex == 1 || tintIndex == 2 ? -1 : handler.getStackInSlot(0).isEmpty() ? -1 : blockColor == -1 ? Minecraft.getMinecraft().getItemColors().colorMultiplier(handler.getStackInSlot(0), tintIndex - 1) : blockColor;
+				return tintIndex == 0 ? -1 : handler.getStackInSlot(0).isEmpty() ? -1 : blockColor == -1 ? Minecraft.getMinecraft().getItemColors().colorMultiplier(handler.getStackInSlot(0), tintIndex - 1) : blockColor;
 			}
 		}, CloakItems.BLOCKSTATE_CARD);
 		
@@ -146,7 +127,7 @@ public class ClientProxy extends CommonProxy
 				{
 					;
 				}
-				return tintIndex == 1 ? -1 : liquidColor;
+				return tintIndex == 0 ? -1 : liquidColor;
 			}
 		}, CloakItems.LIQUDSTATE_CARD);
 		

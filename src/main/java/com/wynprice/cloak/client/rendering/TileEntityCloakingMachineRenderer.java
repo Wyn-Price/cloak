@@ -2,7 +2,6 @@ package com.wynprice.cloak.client.rendering;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 
 import org.lwjgl.opengl.GL11;
@@ -13,33 +12,22 @@ import com.wynprice.cloak.client.rendering.models.CloakingMachineModel;
 import com.wynprice.cloak.client.rendering.models.SingleQuadModel;
 import com.wynprice.cloak.client.rendering.models.quads.ExternalBakedQuad;
 import com.wynprice.cloak.common.registries.CloakItems;
-import com.wynprice.cloak.common.tileentity.BasicCloakedModelTileEntity;
 import com.wynprice.cloak.common.tileentity.TileEntityCloakingMachine;
-import com.wynprice.cloak.common.world.CloakLightAccess;
 
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockChest;
-import net.minecraft.block.BlockEnderChest;
-import net.minecraft.block.BlockSign;
-import net.minecraft.block.BlockSkull;
-import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.BlockRendererDispatcher;
 import net.minecraft.client.renderer.BufferBuilder;
-import net.minecraft.client.renderer.DestroyBlockProgress;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.block.model.BakedQuad;
-import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTUtil;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
@@ -105,7 +93,7 @@ public class TileEntityCloakingMachineRenderer extends TileEntitySpecialRenderer
             	tessellator.getBuffer().begin(GL11.GL_QUADS, DefaultVertexFormats.BLOCK);
     			Minecraft.getMinecraft().renderEngine.bindTexture(quad instanceof ExternalBakedQuad ? ((ExternalBakedQuad)quad).getLocation() : TextureMap.LOCATION_BLOCKS_TEXTURE);
 	    		IBlockState blockstate = model.getStateFromQuad(quad);
-	    		Minecraft.getMinecraft().getBlockRendererDispatcher().getBlockModelRenderer().renderModel(new CloakLightAccess(world, te.getPos()), new SingleQuadModel(model, quad, quad.getFace()), blockstate, te.getPos(), tessellator.getBuffer(), false);
+	    		Minecraft.getMinecraft().getBlockRendererDispatcher().getBlockModelRenderer().renderModel(world, new SingleQuadModel(model, quad, quad.getFace()), blockstate, te.getPos(), tessellator.getBuffer(), false);
 	            tessellator.draw();
 	    	}
         Tessellator.getInstance().getBuffer().setTranslation(0, 0, 0);

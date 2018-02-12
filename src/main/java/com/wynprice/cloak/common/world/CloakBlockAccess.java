@@ -36,9 +36,7 @@ public class CloakBlockAccess implements IBlockAccess
 	public IBlockState getBlockState(BlockPos pos) 
 	{
 		if(access.getBlockState(pos).getBlock() == CloakBlocks.CLOAK_BLOCK && this.getTileEntity(pos) instanceof BasicCloakedModelTileEntity)
-		{
 			return NBTUtil.readBlockState(((BasicCloakedModelTileEntity)this.getTileEntity(pos)).getHandler().getStackInSlot(1).getOrCreateSubCompound("capture_info"));
-		}
 
 		return access.getBlockState(pos);
 	}	

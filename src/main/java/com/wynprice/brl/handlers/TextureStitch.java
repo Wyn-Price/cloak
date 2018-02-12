@@ -1,4 +1,4 @@
-package com.wynprice.brl.events;
+package com.wynprice.brl.handlers;
 
 import static org.lwjgl.opengl.GL11.GL_RGB;
 import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;

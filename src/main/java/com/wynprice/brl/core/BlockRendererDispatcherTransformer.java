@@ -1,6 +1,5 @@
 package com.wynprice.brl.core;
 
-import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,10 +19,10 @@ import org.objectweb.asm.tree.VarInsnNode;
 
 import com.google.common.collect.Lists;
 import com.wynprice.brl.BRBufferBuilder;
-import com.wynprice.brl.addons.plastic.BufferedPlastic;
 import com.wynprice.brl.api.BRLRegistry;
 import com.wynprice.brl.api.BRLRenderInfo;
 import com.wynprice.brl.api.IBRLRenderFactory;
+import com.wynprice.brl.events.BRLGetStateEvent;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
@@ -94,9 +93,15 @@ public class BlockRendererDispatcherTransformer implements IClassTransformer
         
 		return basicClass;
 	}
-		
+	
 	public static boolean renderBlock(IBlockState state, BlockPos pos, IBlockAccess blockAccess, BufferBuilder bufferBuilderIn, BlockFluidRenderer fluidRender)
 	{
+		
+		BRLGetStateEvent event = new BRLGetStateEvent(blockAccess, state, pos).post();
+		
+		state = event.getState();
+		blockAccess = event.getAccess();
+		
         try
         {
             EnumBlockRenderType enumblockrendertype = state.getRenderType();
@@ -121,6 +126,7 @@ public class BlockRendererDispatcherTransformer implements IClassTransformer
                 switch (enumblockrendertype)
                 {
                     case MODEL:
+                    
                     	IBRLRenderFactory factory =  BRLRegistry.getFactory(state.getBlock());
                         List<BRLRenderInfo> renderInfos = factory.getModels(blockAccess, pos, state);
                         boolean retBool = true;
@@ -128,9 +134,12 @@ public class BlockRendererDispatcherTransformer implements IClassTransformer
                         {
                         	if(bufferBuilderIn instanceof BRBufferBuilder)
                         		((BRBufferBuilder)bufferBuilderIn).split(info.getLocation());
-                        	                        	
-                        	if(!Minecraft.getMinecraft().getBlockRendererDispatcher().getBlockModelRenderer().renderModel(blockAccess, info.getModel(), info.getState(), pos, bufferBuilderIn, true))
-                        		retBool = false;
+
+                        	{
+                        		if(!Minecraft.getMinecraft().getBlockRendererDispatcher().getBlockModelRenderer().renderModel(blockAccess, info.getModel(), info.getState(), pos, bufferBuilderIn, true))
+                        			retBool = false;
+
+                        	}
                         }
                         return retBool;
                     case ENTITYBLOCK_ANIMATED:
