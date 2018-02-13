@@ -16,7 +16,7 @@ import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 
-@Mod(modid = "brl", name = "BetterRenderLib", version = "0.1")
+@Mod(modid = "brl", name = "BetterRenderLib", version = "0.2.0")
 public class BrlMod 
 {
 	

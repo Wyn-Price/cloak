@@ -31,7 +31,7 @@ public class BufferedPlastic
 	public static BufferedImage image;
 	
 	
-	public static boolean plastic = true;
+	public static boolean plastic = false;
 
 	private static int textureID = -1;
 	

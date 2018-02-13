@@ -93,18 +93,18 @@ public class BlockRendererDispatcherTransformer implements IClassTransformer
 	    initMethod.instructions.add(new TypeInsnNode(Opcodes.NEW, "net/minecraft/client/renderer/ChestRenderer"));
 	    initMethod.instructions.add(new InsnNode(Opcodes.DUP));
 	    initMethod.instructions.add(new MethodInsnNode(Opcodes.INVOKESPECIAL, "net/minecraft/client/renderer/ChestRenderer", "<init>", "()V", false));
-	    initMethod.instructions.add(new FieldInsnNode(Opcodes.PUTFIELD, "net/minecraft/client/renderer/BlockRendererDispatcher", "chestRenderer", "Lnet/minecraft/client/renderer/ChestRenderer;"));
+	    initMethod.instructions.add(new FieldInsnNode(Opcodes.PUTFIELD, "net/minecraft/client/renderer/BlockRendererDispatcher", BetterRenderCore.isDebofEnabled ? "field_175024_d" : "chestRenderer", "Lnet/minecraft/client/renderer/ChestRenderer;"));
 	    
 	    initMethod.instructions.add(new VarInsnNode(Opcodes.ALOAD, 0));
 	    initMethod.instructions.add(new VarInsnNode(Opcodes.ALOAD, 1));
-	    initMethod.instructions.add(new FieldInsnNode(Opcodes.PUTFIELD, "net/minecraft/client/renderer/BlockRendererDispatcher", "blockModelShapes", "Lnet/minecraft/client/renderer/BlockModelShapes;"));
+	    initMethod.instructions.add(new FieldInsnNode(Opcodes.PUTFIELD, "net/minecraft/client/renderer/BlockRendererDispatcher", BetterRenderCore.isDebofEnabled ? "field_175028_a" : "blockModelShapes", "Lnet/minecraft/client/renderer/BlockModelShapes;"));
 	    
 	    initMethod.instructions.add(new VarInsnNode(Opcodes.ALOAD, 0));
 	    initMethod.instructions.add(new TypeInsnNode(Opcodes.NEW, "net/minecraftforge/client/model/pipeline/ForgeBlockModelRenderer"));
 	    initMethod.instructions.add(new InsnNode(Opcodes.DUP));
 	    initMethod.instructions.add(new VarInsnNode(Opcodes.ALOAD, 2));
 	    initMethod.instructions.add(new MethodInsnNode(Opcodes.INVOKESPECIAL, "net/minecraftforge/client/model/pipeline/ForgeBlockModelRenderer", "<init>", "(Lnet/minecraft/client/renderer/color/BlockColors;)V", false));
-	    initMethod.instructions.add(new FieldInsnNode(Opcodes.PUTFIELD, "net/minecraft/client/renderer/BlockRendererDispatcher", "blockModelRenderer", "Lnet/minecraft/client/renderer/BlockModelRenderer;"));
+	    initMethod.instructions.add(new FieldInsnNode(Opcodes.PUTFIELD, "net/minecraft/client/renderer/BlockRendererDispatcher", BetterRenderCore.isDebofEnabled ? "field_175027_c": "blockModelRenderer", "Lnet/minecraft/client/renderer/BlockModelRenderer;"));
 	    
 	    initMethod.instructions.add(new VarInsnNode(Opcodes.ALOAD, 0));
 	    initMethod.instructions.add(new TypeInsnNode(Opcodes.NEW, "net/minecraft/client/renderer/BlockFluidRenderer"));
@@ -114,7 +114,7 @@ public class BlockRendererDispatcherTransformer implements IClassTransformer
 	    initMethod.instructions.add(new VarInsnNode(Opcodes.ALOAD, 2));
 	    initMethod.instructions.add(new MethodInsnNode(Opcodes.INVOKESPECIAL, "com/wynprice/brl/addons/plastic/PlasticLiquidColors", "<init>", "(Lnet/minecraft/client/renderer/color/BlockColors;)V", false));
 	    initMethod.instructions.add(new MethodInsnNode(Opcodes.INVOKESPECIAL, "net/minecraft/client/renderer/BlockFluidRenderer", "<init>", "(Lnet/minecraft/client/renderer/color/BlockColors;)V", false));
-	    initMethod.instructions.add(new FieldInsnNode(Opcodes.PUTFIELD, "net/minecraft/client/renderer/BlockRendererDispatcher", "fluidRenderer", "Lnet/minecraft/client/renderer/BlockFluidRenderer;"));
+	    initMethod.instructions.add(new FieldInsnNode(Opcodes.PUTFIELD, "net/minecraft/client/renderer/BlockRendererDispatcher", BetterRenderCore.isDebofEnabled ? "field_175025_e" : "fluidRenderer", "Lnet/minecraft/client/renderer/BlockFluidRenderer;"));
 	    
 	    initMethod.instructions.add(new InsnNode(Opcodes.RETURN));
 	    initMethod.instructions.add(endLabel);
