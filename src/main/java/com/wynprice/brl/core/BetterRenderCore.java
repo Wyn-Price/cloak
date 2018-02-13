@@ -22,14 +22,13 @@ public class BetterRenderCore implements IFMLLoadingPlugin {
     {
     	String[] stringList = new String[] 
         		{
+        				//Main
         				"com.wynprice.brl.core.BlockRendererDispatcherTransformer",
         				"com.wynprice.brl.core.RegionRenderCacheBuilderTransformer",
         				"com.wynprice.brl.core.WorldVertexBufferUploaderTransformer",
         				
-        				//TODO make so it relies on config, other mods may interfier otherwise
-        				"com.wynprice.brl.addons.plastic.BlockColorsTransformer",
-        				"com.wynprice.brl.addons.plastic.BakedQuadTransformer",
-        				
+        				//Addons
+        				"com.wynprice.brl.addons.plastic.ForgeBlockModelRendererTransformer",
         				"com.wynprice.brl.addons.tblloader.FallbackResourceManagerTransformer"
 
         		};

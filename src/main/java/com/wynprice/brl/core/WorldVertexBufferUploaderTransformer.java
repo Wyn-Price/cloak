@@ -24,7 +24,6 @@ import com.wynprice.brl.addons.plastic.BufferedPlastic;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.client.renderer.vertex.VertexFormatElement;
@@ -83,6 +82,7 @@ public class WorldVertexBufferUploaderTransformer implements IClassTransformer
 	
 	public static void draw(BufferBuilder bufferBuilderIn)
 	{
+		
 		if(bufferBuilderIn instanceof BRBufferBuilder)
 		{
 			int bindedTexture = GL11.glGetInteger(GL11.GL_TEXTURE_BINDING_2D);
@@ -90,7 +90,6 @@ public class WorldVertexBufferUploaderTransformer implements IClassTransformer
 			for(ResourceLocation location : ((BRBufferBuilder)bufferBuilderIn).builderMap.keySet())
 			{
 				BufferBuilder builder = ((BRBufferBuilder)bufferBuilderIn).builderMap.get(location);
-				
 				if(BufferedPlastic.plastic)
 					GlStateManager.bindTexture(BufferedPlastic.getTextureID());
 				else
@@ -101,7 +100,7 @@ public class WorldVertexBufferUploaderTransformer implements IClassTransformer
 				
 				draw(builder);
 			}
-			if(flag)
+			if(flag || BufferedPlastic.plastic)
 			{
 				Minecraft.getMinecraft().renderEngine.bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
 			}

@@ -40,6 +40,10 @@ public class CloakBlockBRLFactory implements IBRLRenderFactory
 		IBlockState renderState = NBTUtil.readBlockState(te.getHandler().getStackInSlot(0).getOrCreateSubCompound("capture_info")).getActualState(access, pos);
     	IBlockState modelState = NBTUtil.readBlockState(te.getHandler().getStackInSlot(1).getOrCreateSubCompound("capture_info"));
     	
+    	if(renderState.getBlock() == Blocks.AIR || modelState.getBlock() == Blocks.AIR)
+			return IBRLRenderFactory.super.getModels(access, pos, inState);
+ 
+    	
     	if(modelState.getBlock() != Blocks.FLOWER_POT)
     			modelState = modelState.getActualState(access, pos);
     	

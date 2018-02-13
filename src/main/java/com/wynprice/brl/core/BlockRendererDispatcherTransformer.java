@@ -15,6 +15,7 @@ import org.objectweb.asm.tree.LineNumberNode;
 import org.objectweb.asm.tree.LocalVariableNode;
 import org.objectweb.asm.tree.MethodInsnNode;
 import org.objectweb.asm.tree.MethodNode;
+import org.objectweb.asm.tree.TypeInsnNode;
 import org.objectweb.asm.tree.VarInsnNode;
 
 import com.google.common.collect.Lists;
@@ -36,6 +37,7 @@ import net.minecraft.util.ReportedException;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.WorldType;
+import scala.tools.cmd.gen.AnyValReps.AnyValNum.Op;
 
 public class BlockRendererDispatcherTransformer implements IClassTransformer
 {
@@ -46,43 +48,85 @@ public class BlockRendererDispatcherTransformer implements IClassTransformer
 		if(!transformedName.equals("net.minecraft.client.renderer.BlockRendererDispatcher"))
 			return basicClass;
 		
-		String methodName = BetterRenderCore.isDebofEnabled ? "func_175018_a" : "renderBlock";
-		String methodDesc = "(Lnet/minecraft/block/state/IBlockState;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/world/IBlockAccess;Lnet/minecraft/client/renderer/BufferBuilder;)Z";
+		String renderBlockMethodName = BetterRenderCore.isDebofEnabled ? "func_175018_a" : "renderBlock";
+		String renderBlockMethodDesc = "(Lnet/minecraft/block/state/IBlockState;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/world/IBlockAccess;Lnet/minecraft/client/renderer/BufferBuilder;)Z";
+		
+		String initMethodName = "<init>";
+		String initMethodDesc = "(Lnet/minecraft/client/renderer/BlockModelShapes;Lnet/minecraft/client/renderer/color/BlockColors;)V";
 		
 		ClassNode node = new ClassNode();
 	    ClassReader reader = new ClassReader(basicClass);
 	    reader.accept(node, 0);
 	    
-	    MethodNode method = new MethodNode(Opcodes.ACC_PUBLIC, methodName, methodDesc, null, new String[0]);
-	    
+	    MethodNode renderBlockMethod = new MethodNode(Opcodes.ACC_PUBLIC, renderBlockMethodName, renderBlockMethodDesc, null, new String[0]);
 	    LabelNode startLabel = new LabelNode();
 	    LabelNode endLabel = new LabelNode();
-	    method.instructions = new InsnList();
-	    method.instructions.add(startLabel);
-        method.instructions.add(new LineNumberNode(52, startLabel));
-	    	    
+	    renderBlockMethod.instructions = new InsnList();
+	    renderBlockMethod.instructions.add(startLabel);
+        renderBlockMethod.instructions.add(new LineNumberNode(52, startLabel));
 	    LocalVariableNode state = new LocalVariableNode(BetterRenderCore.isDebofEnabled ? "p_175018_1_" : "state", "Lnet/minecraft/block/state/IBlockState;", null, startLabel, endLabel, 0);
 	    LocalVariableNode pos = new LocalVariableNode(BetterRenderCore.isDebofEnabled ? "p_175018_2_" : "pos", "Lnet/minecraft/util/math/BlockPos;", null, startLabel, endLabel, 1);
 	    LocalVariableNode blockAccess = new LocalVariableNode(BetterRenderCore.isDebofEnabled ? "p_175018_3_" : "blockAccess", "Lnet/minecraft/world/IBlockAccess;", null, startLabel, endLabel, 2);
 	    LocalVariableNode bufferBuilderIn = new LocalVariableNode(BetterRenderCore.isDebofEnabled ? "p_175018_4_" : "bufferBuilderIn", "Lnet/minecraft/client/renderer/BufferBuilder;", null, startLabel, endLabel, 3);
-        method.localVariables.addAll(Lists.newArrayList(new LocalVariableNode[]{state, pos, blockAccess, bufferBuilderIn})); //Not required, but reccomended
-
-	    method.instructions.add(new VarInsnNode(Opcodes.ALOAD, 1));
-	    method.instructions.add(new VarInsnNode(Opcodes.ALOAD, 2));
-	    method.instructions.add(new VarInsnNode(Opcodes.ALOAD, 3));
-	    method.instructions.add(new VarInsnNode(Opcodes.ALOAD, 4));
-	    method.instructions.add(new VarInsnNode(Opcodes.ALOAD, 0));
-        method.instructions.add(new FieldInsnNode(Opcodes.GETFIELD, "net/minecraft/client/renderer/BlockRendererDispatcher", BetterRenderCore.isDebofEnabled ? "field_175025_e" : "fluidRenderer" , "Lnet/minecraft/client/renderer/BlockFluidRenderer;"));
-	    method.instructions.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "com/wynprice/brl/core/BlockRendererDispatcherTransformer", "renderBlock", "(Lnet/minecraft/block/state/IBlockState;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/world/IBlockAccess;Lnet/minecraft/client/renderer/BufferBuilder;Lnet/minecraft/client/renderer/BlockFluidRenderer;)Z", false));
-	    method.instructions.add(new InsnNode(Opcodes.IRETURN));
-	    method.instructions.add(endLabel);
+        renderBlockMethod.localVariables.addAll(Lists.newArrayList(new LocalVariableNode[]{state, pos, blockAccess, bufferBuilderIn})); //Not required, but reccomended
+	    renderBlockMethod.instructions.add(new VarInsnNode(Opcodes.ALOAD, 1));
+	    renderBlockMethod.instructions.add(new VarInsnNode(Opcodes.ALOAD, 2));
+	    renderBlockMethod.instructions.add(new VarInsnNode(Opcodes.ALOAD, 3));
+	    renderBlockMethod.instructions.add(new VarInsnNode(Opcodes.ALOAD, 4));
+	    renderBlockMethod.instructions.add(new VarInsnNode(Opcodes.ALOAD, 0));
+        renderBlockMethod.instructions.add(new FieldInsnNode(Opcodes.GETFIELD, "net/minecraft/client/renderer/BlockRendererDispatcher", BetterRenderCore.isDebofEnabled ? "field_175025_e" : "fluidRenderer" , "Lnet/minecraft/client/renderer/BlockFluidRenderer;"));
+	    renderBlockMethod.instructions.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "com/wynprice/brl/core/BlockRendererDispatcherTransformer", "renderBlock", "(Lnet/minecraft/block/state/IBlockState;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/world/IBlockAccess;Lnet/minecraft/client/renderer/BufferBuilder;Lnet/minecraft/client/renderer/BlockFluidRenderer;)Z", false));
+	    renderBlockMethod.instructions.add(new InsnNode(Opcodes.IRETURN));
+	    renderBlockMethod.instructions.add(endLabel);
+	    
+	    
+	    MethodNode initMethod = new MethodNode(Opcodes.ACC_PUBLIC, initMethodName, initMethodDesc, null, new String[0]);
+	    startLabel = new LabelNode();
+	    endLabel = new LabelNode();
+	    initMethod.instructions = new InsnList();
+	    initMethod.instructions.add(startLabel);
+        initMethod.instructions.add(new LineNumberNode(30, startLabel));
+	    initMethod.instructions.add(new VarInsnNode(Opcodes.ALOAD, 0));
+	    initMethod.instructions.add(new MethodInsnNode(Opcodes.INVOKESPECIAL, "java/lang/Object", "<init>", "()V", false));
+	    
+	    initMethod.instructions.add(new VarInsnNode(Opcodes.ALOAD, 0));
+	    initMethod.instructions.add(new TypeInsnNode(Opcodes.NEW, "net/minecraft/client/renderer/ChestRenderer"));
+	    initMethod.instructions.add(new InsnNode(Opcodes.DUP));
+	    initMethod.instructions.add(new MethodInsnNode(Opcodes.INVOKESPECIAL, "net/minecraft/client/renderer/ChestRenderer", "<init>", "()V", false));
+	    initMethod.instructions.add(new FieldInsnNode(Opcodes.PUTFIELD, "net/minecraft/client/renderer/BlockRendererDispatcher", "chestRenderer", "Lnet/minecraft/client/renderer/ChestRenderer;"));
+	    
+	    initMethod.instructions.add(new VarInsnNode(Opcodes.ALOAD, 0));
+	    initMethod.instructions.add(new VarInsnNode(Opcodes.ALOAD, 1));
+	    initMethod.instructions.add(new FieldInsnNode(Opcodes.PUTFIELD, "net/minecraft/client/renderer/BlockRendererDispatcher", "blockModelShapes", "Lnet/minecraft/client/renderer/BlockModelShapes;"));
+	    
+	    initMethod.instructions.add(new VarInsnNode(Opcodes.ALOAD, 0));
+	    initMethod.instructions.add(new TypeInsnNode(Opcodes.NEW, "net/minecraftforge/client/model/pipeline/ForgeBlockModelRenderer"));
+	    initMethod.instructions.add(new InsnNode(Opcodes.DUP));
+	    initMethod.instructions.add(new VarInsnNode(Opcodes.ALOAD, 2));
+	    initMethod.instructions.add(new MethodInsnNode(Opcodes.INVOKESPECIAL, "net/minecraftforge/client/model/pipeline/ForgeBlockModelRenderer", "<init>", "(Lnet/minecraft/client/renderer/color/BlockColors;)V", false));
+	    initMethod.instructions.add(new FieldInsnNode(Opcodes.PUTFIELD, "net/minecraft/client/renderer/BlockRendererDispatcher", "blockModelRenderer", "Lnet/minecraft/client/renderer/BlockModelRenderer;"));
+	    
+	    initMethod.instructions.add(new VarInsnNode(Opcodes.ALOAD, 0));
+	    initMethod.instructions.add(new TypeInsnNode(Opcodes.NEW, "net/minecraft/client/renderer/BlockFluidRenderer"));
+	    initMethod.instructions.add(new InsnNode(Opcodes.DUP));
+	    initMethod.instructions.add(new TypeInsnNode(Opcodes.NEW, "com/wynprice/brl/addons/plastic/PlasticLiquidColors"));
+	    initMethod.instructions.add(new InsnNode(Opcodes.DUP));
+	    initMethod.instructions.add(new VarInsnNode(Opcodes.ALOAD, 2));
+	    initMethod.instructions.add(new MethodInsnNode(Opcodes.INVOKESPECIAL, "com/wynprice/brl/addons/plastic/PlasticLiquidColors", "<init>", "(Lnet/minecraft/client/renderer/color/BlockColors;)V", false));
+	    initMethod.instructions.add(new MethodInsnNode(Opcodes.INVOKESPECIAL, "net/minecraft/client/renderer/BlockFluidRenderer", "<init>", "(Lnet/minecraft/client/renderer/color/BlockColors;)V", false));
+	    initMethod.instructions.add(new FieldInsnNode(Opcodes.PUTFIELD, "net/minecraft/client/renderer/BlockRendererDispatcher", "fluidRenderer", "Lnet/minecraft/client/renderer/BlockFluidRenderer;"));
+	    
+	    initMethod.instructions.add(new InsnNode(Opcodes.RETURN));
+	    initMethod.instructions.add(endLabel);
 	    
 	    ArrayList<MethodNode> nodes = new ArrayList<>();
         for(MethodNode m : node.methods)
-        	if(!m.desc.equalsIgnoreCase(methodDesc) || !m.name.equalsIgnoreCase(methodName))
+        	if(!((m.desc.equalsIgnoreCase(renderBlockMethodDesc) && m.name.equalsIgnoreCase(renderBlockMethodName)) ||
+        			m.desc.equalsIgnoreCase(initMethodDesc) && m.name.equalsIgnoreCase(initMethodName)))
         		nodes.add(m);
         
-        nodes.add(method);
+        nodes.add(renderBlockMethod);
+        nodes.add(initMethod);
         
         node.methods.clear();
         node.methods.addAll(nodes);
