@@ -26,16 +26,16 @@ minecraft {
     mappings = "snapshot_20171003"
 }
 
-//repositories {
-//  maven {
-//    // BetterRenderLib maven
-//    name = "Wyn Price Maven"
-//    url = "http://maven.wynprice.com"
-//  }
-//}
+repositories {
+  maven {
+    // BetterRenderLib maven
+    name = "Wyn Price Maven"
+    url = "http://maven.wynprice.com"
+  }
+}
 
 dependencies {
-   // deobfProvided "com.wynprice:BetterRenderLib:0.1.0"
+    deobfProvided "com.wynprice:BetterRenderLib:0.2.1"
 }
 
 //Adds the LoadingPlugin description to the manifest so forge finds it.
