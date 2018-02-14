@@ -2,6 +2,7 @@
 item.block_capture.name=Block Capture Card
 item.liquid_capture.name=Liquid Capture Card
 item.external_capture.name=External Capture Card
+item.texture_matrix.name=Texture Matrix
 
 #blocks
 tile.cloak_block.name=Cloak Block
