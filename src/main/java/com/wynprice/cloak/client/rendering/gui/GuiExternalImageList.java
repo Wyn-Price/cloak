@@ -55,7 +55,7 @@ public class GuiExternalImageList extends GuiListExtended
 		HashMap<String, GuiExternalImageEntry> stringMap = new HashMap<>();
 		for(GuiExternalImageEntry entry : this.entries)
 			stringMap.put(entry.fileName, entry);
-		
+				
 		if(parent.name.getText().isEmpty() || parent.name.getText().startsWith(" "))
 			guiList.addAll(entries);
 		else
@@ -66,7 +66,7 @@ public class GuiExternalImageList extends GuiListExtended
 		HashMap<String, GuiExternalImageEntry> guiMap = new HashMap<>();
 		for(GuiExternalImageEntry geie : guiList)
 			guiMap.put(geie.fileName, geie);
-		ArrayList<String> stringList = new ArrayList<>(stringMap.keySet());
+		ArrayList<String> stringList = new ArrayList<>(guiMap.keySet());
 		Collections.sort(stringList);
 		for(String string : stringList)
 			searchEntiries.add(stringMap.get(string));

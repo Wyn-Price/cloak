@@ -1,9 +1,7 @@
 package com.wynprice.cloak.client.rendering.particle;
 
 import com.wynprice.cloak.client.handlers.TextureAtlasSpriteHelper;
-import com.wynprice.cloak.common.blocks.TextureMatrix;
 
-import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.particle.ParticleDigging;
 import net.minecraft.client.renderer.BufferBuilder;

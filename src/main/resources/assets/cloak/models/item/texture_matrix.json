@@ -1,3 +1,5 @@
 {
-    "parent": "cloak:block/texture_matrix"
-}
+    "parent": "item/generated",
+    "textures": {
+        "layer0": "cloak:items/texture_matrix"
+    }}

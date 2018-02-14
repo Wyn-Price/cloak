@@ -6,6 +6,7 @@ import com.wynprice.cloak.CloakMod;
 import com.wynprice.cloak.common.items.ExternalCaptureCard;
 import com.wynprice.cloak.common.items.ItemCaptureBlock;
 import com.wynprice.cloak.common.items.ItemCaptureLiquid;
+import com.wynprice.cloak.common.items.TextureMatrix;
 
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.item.Item;
@@ -20,11 +21,15 @@ public class CloakItems
 	public static final Item LIQUDSTATE_CARD = new ItemCaptureLiquid();
 	public static final Item EXTERNAL_CARD = new ExternalCaptureCard();
 	
+	public static final Item TEXTURE_MATRIX = new TextureMatrix();
+	
 	public static void preInit()
 	{
 		regItem(BLOCKSTATE_CARD);
 		regItem(LIQUDSTATE_CARD);
 		regItem(EXTERNAL_CARD);
+		
+		regItem(TEXTURE_MATRIX, 1);
 	}
 	
 	public static void regRenders()
